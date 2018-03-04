@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "BingCheat",
+  "version": "0.1",
+  "icons": { "16": "18x18.png",
+    "48": "18x18.png",
+    "128": "18x18.png"},
+
+  "background": {
+    "persistent": true,
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [{
+    "matches": ["https://trends.google.com/trends/hottrends/atom/feed?pn=p*"],
+    "js": ["content.js"]
+  }],
+
+  "browser_action": {
+    "default_title": "Bing Cheat"
+  },
+
+  "permissions": ["activeTab",
+    "https://www.bing.com/search?q=*",
+    "webRequest",
+    "webRequestBlocking"]
+}
