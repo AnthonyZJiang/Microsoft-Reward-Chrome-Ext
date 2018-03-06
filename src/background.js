@@ -7,6 +7,8 @@ var _searchWordArray = new Array();
 var _i = 0;
 var _isPCSearchCompleted = false;
 var _isMbSearchCompleted = false;
+var _maxPoints;
+var _earnedPoints;
 
 function getGoogleTrends(_i) {
 	var xhr = new XMLHttpRequest();
@@ -49,7 +51,11 @@ function appendWords(doc){
 		getGoogleTrends(_i);
 	}else{
 		// if we have got enough search words
-		_i = 0;
+		if (_isPCSearchCompleted)
+			_i = _maxPCSearch;
+		else
+			_i = 0;
+
 		alert('Search word list has been built. Number of searches: ' + _searchWordArray.length.toString() + ".\n\nPC and mobile searches will begin in background after OK button is clicked.\n\nProgress can be tracked from the badge text.");
 		
 		// start PC search
@@ -71,7 +77,11 @@ function bingPCSearch() {
 			} else {
 				// if reached max, do mobile search
 				console.log("PC search completed. Number of searches: ", _i);
-				_i = 0;
+				if (_isMbSearchCompleted)
+					_i = _maxMbSearch;
+				else
+					_i = 0;
+
 				// change user-agent to mobile browser and blocking request.
 				chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {urls: ['https://www.bing.com/search?q=*']}, ['blocking', 'requestHeaders']);
 				bingMbSearch();
@@ -111,41 +121,42 @@ function bingMbSearch() {
 }
 
 function checkStatus(){
-	var xHttp = new XMLHttpRequest();
-	xHttp.open("GET", "https://account.microsoft.com/rewards/pointsbreakdown", false);
-	xHttp.send();
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "https://account.microsoft.com/rewards/pointsbreakdown", false);
+	try{
+		xhr.send();
+	} catch (ex) {
+		// if fail, most likely the user has been logged out of Microsoft account.
+		alert('Fail to check completion status. You need to open the Microsoft reward page and log into your account first.')
+	}
+
 	console.log("request sent!")
-	if (xHttp.readyState == 4 && xHttp.status == 200) {
-		var p = new DOMParser(); 
-		var doc = p.parseFromString(xHttp.responseText, "text/html");
+	if (xhr.readyState == 4 && xhr.status == 200) {
+		let p = new DOMParser(); 
+		let doc = p.parseFromString(xhr.responseText, "text/html");
 		const regexPCSearch = /(?="classification\.Tag":"PCSearch",)[A-z,"._:0-9]*/g;
 		const regexMbSearch = /(?="classification\.Tag":"MobileSearch",)[A-z,"._:0-9]*/g;
-		var str = doc.getElementsByTagName('script')[21].text;
+		const regexPointStatus = /(?="dailyPoint":\[)[A-z,"._:0-9{]*/g;
+		let str = doc.getElementsByTagName('script')[21].text;
 		let m;
-		while ((m = regexPCSearch.exec(str)) !== null) {
-			// This is necessary to avoid infinite loops with zero-width matches
-			if (m.index === regexPCSearch.lastIndex) {
-				regexPCSearch.lastIndex++;
-			}
-			
+		if ((m = regexPCSearch.exec(str)) !== null){
 			_isPCSearchCompleted = JSON.parse("{"+ m[0] +"}").complete == 'True';
 		}
-		while ((m = regexMbSearch.exec(str)) !== null) {
-			// This is necessary to avoid infinite loops with zero-width matches
-			if (m.index === regexMbSearch.lastIndex) {
-			regexMbSearch.lastIndex++;
-			}
-			
+		if ((m = regexMbSearch.exec(str)) !== null){
 			_isMbSearchCompleted = JSON.parse("{"+ m[0] +"}").complete == 'True';
+		}
+		if ((m = regexPointStatus.exec(str)) !== null){
+			let mStr = "{"+ m[0] +"}]}";
+			_maxPoints = JSON.parse(mStr).dailyPoint[0].pointProgressMax;
+			_earnedPoints = JSON.parse(mStr).dailyPoint[0].pointProgress;
 		}
 		console.log('isPCSearchCompleted: ', _isPCSearchCompleted)
 		console.log('isMbSearchCompleted: ', _isMbSearchCompleted)
+		console.log('maxPoints: ', _maxPoints)
+		console.log('earnedPoints: ', _earnedPoints)
 	}
 
-	if (_isPCSearchCompleted && _isMbSearchCompleted)
-	{
-		chrome.browserAction.setBadgeText({text: "Done"});
-	}
+	chrome.browserAction.setBadgeText({text: (_earnedPoints/_maxPoints*100).toString().substr(0,4)});
 }
 
 function toMobileUA(details){
@@ -161,10 +172,12 @@ function toMobileUA(details){
 chrome.browserAction.onClicked.addListener(function (tab) {
 	_i = 0;
 	_searchWordArray = new Array();
+	
 	checkStatus();
+
 	if (_isPCSearchCompleted && _isMbSearchCompleted)
 	{
-		alert('You have completed both search quests today.')
+		alert('You have completed both search quests today.\n\n But you still have ' + (_maxPoints - _earnedPoints).toString() + ' points to earn today.')
 		return;
 	}	
 	getGoogleTrends(_i);
