@@ -50,6 +50,7 @@ function setBadge(status) {
 		chrome.browserAction.setIcon({path:"img/done.png"});
 		chrome.browserAction.setBadgeText({text: ''});
 		if (_sendCompleteNotification){
+			_sendCompleteNotification = false;
 			chrome.notifications.create('completeNotification', {
 				type: 'basic',
 				title: 'Microsoft Rewards',
