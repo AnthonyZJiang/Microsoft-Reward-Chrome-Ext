@@ -37,9 +37,9 @@ The colour of the action button icon changes depending on your completion status
 
 ![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy.png?raw=true) - doing work (completing search quests or promotion quests for example)
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warning.png?raw=true) - one or more quests are not completed (there are points to earn.). Also, you will see a badge showing number indicating how many points are unearned.
-
 ![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done.png?raw=true) - all points are earned.
+
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warning.png?raw=true) - error status, or there are more points to earn. In the first case, you will see a badge showing 'err' next to the icon; in the second case, the badge shows a number indicating points available to earn.
 
 # What's working and what's not working
 
@@ -47,10 +47,12 @@ The colour of the action button icon changes depending on your completion status
 
 - PC search quest
 - Mobile search quest
-- Shop to earn quest (URL clicking)
+- Notifying user about other quests
 
 ### Not working
+#### These are not likely going to work because it is MS's intention to prevent clicking or xhr bots.
 
+- Shop to earn quest (URL clicking)
 - Quiz quest
 - Url quest (hot word search quest, 10 points per quest)
 
