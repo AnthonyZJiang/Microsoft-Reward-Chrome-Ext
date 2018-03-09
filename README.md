@@ -33,9 +33,9 @@ User can click on the action button to force it to check quest completion status
 
 The colour of the action button icon changes depending on your completion status:
 
-![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/bingRwLogo@1x.png?raw=true) - Completion status unknown
+![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/bingRwLogo@1x.png?raw=true) - Completion status unknown.
 
-![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy.png?raw=true) - Doing work (completing search quests or promotion quests for example)
+![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy.png?raw=true) - Doing some background work (completing search quests or promotion quests for example).
 
 ![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done.png?raw=true) - All points are earned.
 
