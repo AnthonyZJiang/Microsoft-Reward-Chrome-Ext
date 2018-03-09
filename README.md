@@ -14,7 +14,7 @@ In general, it does two things in background every 30 minutes:
 3. Click `Load unpacked` and select `src` folder.
 4. Log into your Microsoft account. 
 
-The extension does not log your login information or account id at all. However, this would require you to log into your account if your login credential expires.
+The extension works with existing login credentials cached in your pc, so it does not log your login information or account id at all. However, to make this work, you have to log into your account if the cached credential expires (due to manual logging out, pc restart etc.).
 
 
 # How it works
