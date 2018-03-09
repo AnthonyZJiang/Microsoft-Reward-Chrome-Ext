@@ -4,6 +4,7 @@ const STATUS_NONE = 0;
 const STATUS_BUSY = 1;
 const STATUS_COMPLETE = 20;
 const STATUS_WARNING = 30;
+const STATUS_ERROR = 3;
 
 var _questingStatus = {
 	searchQuesting : STATUS_NONE,
@@ -59,10 +60,15 @@ function setCompletion() {
 	}
 	if (_questingStatus.promoQuesting == STATUS_COMPLETE && _questingStatus.sendPromoCompletionNotification) {
 		_questingStatus.sendPromoCompletionNotification = false;
+		let p = 0, pm = 0;
+		for (var i in _status.morePromotions) {
+			p += _status.morePromotions[i].progress;
+			pm += _status.morePromotions[i].max;
+		}
 		chrome.notifications.create('completeNotification', {
 			type: 'basic',
-			title: 'Microsoft Rewards',
-			message: 'All available promotion quests have been completed! \n\nMore could be on the way. Check back later or just leave it to me :).',
+			title: p.toString() + '/' + pm.toString(),
+			message: 'All available promotion quests have been completed! \n\nMore could be on the way, and I will let you know.',
 			iconUrl: 'img/bingRwLogo@3x.png',
 			buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Dismiss' }]
 		});
@@ -71,8 +77,8 @@ function setCompletion() {
 		_questingStatus.sendSearchCompletionNotification = false;
 		chrome.notifications.create('searchQuestCompletionNotification',{
             type: 'basic',
-            title: 'Microsoft Rewards',
-            message: 'Both search quests have been completed!',
+            title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
+            message: 'Search quests have been completed!',
             iconUrl: 'img/bingRwLogo@3x.png',
             buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Dismiss' }]
         })
@@ -90,6 +96,10 @@ function setBadge(status) {
 		chrome.browserAction.setIcon({path:"img/warning.png"});
 		chrome.browserAction.setBadgeText({text: (_status.dailyPoint.max - _status.dailyPoint.progress).toString()});
 		chrome.browserAction.setBadgeBackgroundColor({"color": [225, 185, 0, 100]}); 
+	} else if (status == STATUS_ERROR) {
+		chrome.browserAction.setIcon({path:"img/warning.png"});
+		chrome.browserAction.setBadgeText({text: 'err'});
+		chrome.browserAction.setBadgeBackgroundColor({"color": [225, 185, 0, 100]}); 
 	} else {
 		chrome.browserAction.setIcon({path:"img/bingRwLogo@1x.png"});
 		chrome.browserAction.setBadgeText({text: ''});
@@ -106,11 +116,12 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
 	if (notificationId == 'usedAllGoogleTrendPageNotification')	{ 
 		// this notification has no button
+		// failStatusCheckNotification
 	} else if (buttonIndex == 0) {
 		// for notificationIds:
 		// unfinishedPromotionNotification
 		// completeNotification
-		// failStatusCheckNotification
+		// notLoggedInNotification
 		// searchQuestCompletionNotification
 		chrome.tabs.create({
 			url: 'https://account.microsoft.com/rewards',

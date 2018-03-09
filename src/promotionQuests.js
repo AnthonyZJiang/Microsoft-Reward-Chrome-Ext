@@ -76,19 +76,22 @@ function checkPromotion(urlPromotion, userInterventionPromotion) {
         // notify user by notification if there are more points to grab
         var opt = {
             type: 'list',
-            title: 'Microsoft Rewards',
+            title: '',
             message: 'You still have some points left to get!',
             iconUrl: 'img/bingRwLogo@3xWarning.png',
-            items: [{title: 'You still have some points left to get!', message:''}],
-            buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Ignore or Later' }]
+            items: [],
+            buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Later' }]
         };
         // add promotions to notification list
+        var p = 0;
         for (let i in userInterventionPromotion) {
             opt.items.push(
                 { title: '- "' + userInterventionPromotion[i].title + '"',
-                    message: ' worth' + userInterventionPromotion[i].max.toString() + ' points'}
+                    message: ' worth ' + userInterventionPromotion[i].max.toString() + ' points'}
             );
+            p += userInterventionPromotion[i].max;
         }
+        opt.title = p.toString() + ' more points to earn!'
         chrome.notifications.create('unfinishedPromotionNotification', opt);
 
         // set completion
