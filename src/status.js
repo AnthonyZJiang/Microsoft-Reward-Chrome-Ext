@@ -151,7 +151,7 @@ function morePromotions(str) {
 
 function checkDate(){
 	let d;
-	if ((d = new Date().getDay) != _prevWeekDay){
+	if ((d = new Date().getDay()) != _prevWeekDay){
 		_prevWeekDay = d;
 		return false;
 	}
