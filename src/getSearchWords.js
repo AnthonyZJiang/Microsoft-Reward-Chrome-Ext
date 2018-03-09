@@ -10,6 +10,7 @@ function googleTrendRequest()   {
             type: 'list',
             title: 'Out of search words',
             message: 'All google trend pages have been used. Cannot carry on with both or one of the searches.',
+            iconUrl: 'img/bingRwLogo@3xWarning.png',
             items: [
                 {
                     title: 'Total number of search words:',
@@ -27,6 +28,9 @@ function googleTrendRequest()   {
             requireInteraction: true
         });
         _usedAllGoogleTrendPageNotificationFired = true;
+        // set completion
+        _questingStatus.searchQuesting = STATUS_WARNING;
+        setCompletion();
         return;
     }
 

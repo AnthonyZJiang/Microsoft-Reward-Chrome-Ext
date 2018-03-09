@@ -83,11 +83,11 @@ function bingSearchXHR() {
                     // do mobile search now.
                     bingSearch();
                 } else {
-                    // restore user-agent setting
-				    chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
+                    // when mobile search completes, restore user-agent setting
+                    chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
+                    // check if we have completed the quests after 10 seconds
+                    setTimeout(function() {checkSearchQuests();}, 10000);
                 }
-                // change badge
-                chrome.browserAction.setBadgeText({text: ''});
 			}
 		}
     };
@@ -99,6 +99,19 @@ function bingSearchXHR() {
     }
     xhr.open('GET', 'https://www.bing.com/search?q=' + _searchWordArray[i], true);
 	xhr.send();
+}
+
+function checkSearchQuests(){
+    // refresh status
+    checkCompletionStatus();
+    // are quests completed?
+    if (!_status.pcSearch.complete || !_status.mbSearch.complete){
+        doSearchQuests();
+    } else {
+        // when both quests are completed.
+        _questingStatus.searchQuesting = STATUS_COMPLETE;
+        setCompletion();
+    }
 }
 
 function toMobileUA(details){

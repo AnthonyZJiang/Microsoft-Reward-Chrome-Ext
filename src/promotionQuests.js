@@ -1,9 +1,6 @@
-var _urlPromotion;
-var _userInteractionPromotion;
-
 function doPromotionQuests(){
-    _urlPromotion = new Array();
-    _userInteractionPromotion = new Array();
+    var urlPromotion = new Array();
+    var userInterventionPromotion = new Array();
 
     _status.morePromotions.forEach(promo => {
         // if completed
@@ -13,63 +10,95 @@ function doPromotionQuests(){
         // if url promotion
         let url;
         if ((url = promo.url) != null){
-            _urlPromotion.push(promo);
-            promotionXHR(url);
+            urlPromotion.push(promo);
+            if (promo.cors){
+                corsPromotionXHR(url);
+            } else {
+                promotionXHR(url);
+            }
         } else { // otherwise, treat it as user interaction required promotion
-            _userInteractionPromotion.push(promo);
+            userInterventionPromotion.push(promo);
         }
     });
-
+   
     // check if we have got all the url promotions after 10 seconds
-    if (_urlPromotion.length) {
-        setTimeout(function() {
-            // refresh status
-            checkCompletionStatus();
-            // find the url promotion
-            for (let i in _urlPromotion) {
-                let promo;
-                if (!(promo = findPromotion(_urlPromotion[i], _status.morePromotions)).complete) {
-                    // if the promotion is still incomplete, treat it as user interaction required promotion
-                    _userInteractionPromotion.push(promo);
-                }
-            }
-            
-            // notify user by notification if nearing the end of day
-            var opt = {
-                type: 'list',
-                title: 'Microsoft Rewards',
-                message: 'You still have some points left to get!',
-                iconUrl: 'img/bingRwLogo@3x.png',
-                items: [{title: 'You still have some points left to get!', message:''}],
-                buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Ignore or Later' }]
-            };
-            for (let i in _userInteractionPromotion) {
-                opt.items.push(
-                    { title: '- "' + _userInteractionPromotion[i].title + '"',
-                      message: ' worth' + _userInteractionPromotion[i].max.toString() + ' points'}
-                );
-            }
-            chrome.notifications.create('unfinishedPromotionNotification', opt);
-
-            if (_status.dailyPoint.complete){
-                setBadge(STATUS_COMPLETE);
-            } else {
-                setBadge(STATUS_WARNING);
-            }
-            _sendCompleteNotification = false;
-        }, 2000);
+    if (urlPromotion.length) {
+        setTimeout(function() {checkPromotion(urlPromotion, userInterventionPromotion);}, 10000);
     }
+}
+
+function corsPromotionXHR(url){
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        if (this.readyState == 4 && this.status == 200){
+            console.log('Url promotion (CORS) request successful.')
+        }
+    };    
+    xhr.onerror = function() {
+        console.log('Url promotion (CORS) request unsuccessful. There was an error!');
+    };
+
+    // set properties for CORS
+    //xhr.withCredentials = true;
+    xhr.open('GET', 'https://corsanthony.herokuapp.com/'+url, true);
+    xhr.send();
 }
 
 function promotionXHR(url){
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
+    xhr.onload = function() {
         if (this.readyState == 4 && this.status == 200){
-            console.log('url promotion completed.')
+            console.log('Url promotion request successful.')
         }
+    };    
+    xhr.onerror = function() {
+        console.log('Url promotion request unsuccessful. There was an error!');
     };
+
+    // set properties for CORS
+    //xhr.withCredentials = true;
     xhr.open('GET', url, true);
     xhr.send();
+}
+
+function checkPromotion(urlPromotion, userInterventionPromotion) { 
+    // refresh status
+    checkCompletionStatus();
+    // find the url promotion
+    for (let i in urlPromotion) {
+        let promo;
+        if (!(promo = findPromotion(urlPromotion[i], _status.morePromotions)).complete) {
+            // if the promotion is still incomplete, treat it as user interaction required promotion
+            userInterventionPromotion.push(promo);
+        }
+    }
+    if (userInterventionPromotion.length) {
+        // notify user by notification if there are more points to grab
+        var opt = {
+            type: 'list',
+            title: 'Microsoft Rewards',
+            message: 'You still have some points left to get!',
+            iconUrl: 'img/bingRwLogo@3xWarning.png',
+            items: [{title: 'You still have some points left to get!', message:''}],
+            buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Ignore or Later' }]
+        };
+        // add promotions to notification list
+        for (let i in userInterventionPromotion) {
+            opt.items.push(
+                { title: '- "' + userInterventionPromotion[i].title + '"',
+                    message: ' worth' + userInterventionPromotion[i].max.toString() + ' points'}
+            );
+        }
+        chrome.notifications.create('unfinishedPromotionNotification', opt);
+
+        // set completion
+        _questingStatus.promoQuesting = STATUS_WARNING;
+        setCompletion();
+    } else {
+        // set completion
+        _questingStatus.promoQuesting = STATUS_COMPLETE;
+        setCompletion();  
+    }      
 }
 
 function findPromotion(promotion, promotionList){

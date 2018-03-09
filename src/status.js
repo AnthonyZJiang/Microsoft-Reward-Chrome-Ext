@@ -1,6 +1,7 @@
 const POINT_PER_SEARCH = 3;
 const ADDITIONAL_SEARCH = 5;
-const AVOID_PROMOTION_TITLE = ['shop to earn'];
+const AVOID_PROMOTION_TITLE = [''];
+const CORS_PROMOTION_TITLE = ['shop to earn']
 
 var _frame = null;
 var _prevWeekDay = -1;
@@ -66,7 +67,7 @@ function checkStatusInnerLoop(){
 		}
 	}
 
-	console.log('request sent!')
+	console.log('Status check request sent!')
 	if (xhr.readyState == 4 && xhr.status == 200) {
 		let p = new DOMParser(); 
 		let doc = p.parseFromString(xhr.responseText, 'text/html');	
@@ -79,6 +80,9 @@ function checkStatusInnerLoop(){
 		_status.morePromotions = morePromotions(str);
 		_status.pcSearch.numSearch = (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH;
 		_status.mbSearch.numSearch = (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH;
+
+		console.log('Status check completed!')
+		console.log(_status)
 	}
 	//chrome.browserAction.setBadgeText({text: (_earnedPoints/_maxPoints*100).toString().substr(0,4)});
 }
@@ -138,7 +142,9 @@ function morePromotions(str) {
 				title: jsonObj.morePromotions[i].title,
 				max: jsonObj.morePromotions[i].pointProgressMax,
 				complete: jsonObj.morePromotions[i].complete,
-				url: jsonObj.morePromotions[i].destinationUrl
+				url: jsonObj.morePromotions[i].destinationUrl,
+				type: jsonObj.morePromotions[i].promotionType,
+				cors: CORS_PROMOTION_TITLE.includes(jsonObj.morePromotions[i].title.toLowerCase())
 			})
 		}
 		// finally re-evaluate daily point progress
