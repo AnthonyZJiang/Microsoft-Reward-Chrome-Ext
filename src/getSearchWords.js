@@ -10,7 +10,7 @@ function googleTrendRequest()   {
             type: 'list',
             title: 'Out of search words',
             message: 'All google trend pages have been used. Cannot carry on with both or one of the searches.',
-            iconUrl: 'img/bingRwLogo@3xWarning.png',
+            iconUrl: 'img/err@8x.png',
             items: [
                 {
                     title: 'Total number of search words:',

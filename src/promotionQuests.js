@@ -78,7 +78,7 @@ function checkPromotion(urlPromotion, userInterventionPromotion) {
             type: 'list',
             title: '',
             message: 'You still have some points left to get!',
-            iconUrl: 'img/bingRwLogo@3xWarning.png',
+            iconUrl: 'img/err@8x.png',
             items: [],
             buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Later' }]
         };
@@ -99,7 +99,7 @@ function checkPromotion(urlPromotion, userInterventionPromotion) {
         setCompletion();
     } else {
         // set completion
-        _questingStatus.promoQuesting = STATUS_COMPLETE;
+        _questingStatus.promoQuesting = STATUS_DONE;
         setCompletion();  
     }      
 }

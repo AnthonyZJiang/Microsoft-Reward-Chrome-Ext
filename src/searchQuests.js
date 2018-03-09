@@ -109,7 +109,7 @@ function checkSearchQuests(){
         doSearchQuests();
     } else {
         // when both quests are completed.
-        _questingStatus.searchQuesting = STATUS_COMPLETE;
+        _questingStatus.searchQuesting = STATUS_DONE;
         setCompletion();
     }
 }

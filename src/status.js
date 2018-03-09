@@ -59,7 +59,7 @@ function checkStatusInnerLoop(){
 				type: 'basic',
 				title: 'Fail to check complete status',
 				message: 'You need to open the Microsoft reward page and log into your account first.',
-				iconUrl: 'img/bingRwLogo@3x.png',
+				iconUrl: 'img/err@8x.png',
 				buttons: [	{ title: 'Go to MS reward'},
 							{ title: 'Later'}],
 				requireInteraction: true
@@ -209,7 +209,7 @@ function createFailStatusCheckNotification(msg) {
 		type: 'basic',
 		title: msg,
 		message: 'The extension fails to check your reward status. This is possibly due to a change in Microsoft Rewards page. The author will fix it soon.',
-		iconUrl: 'img/bingRwLogo@3x.png',
+		iconUrl: 'img/err@8x.png',
 		requireInteraction: true
 	});
 	setBadge(STATUS_ERROR)
