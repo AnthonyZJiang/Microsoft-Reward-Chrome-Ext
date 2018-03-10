@@ -55,16 +55,7 @@ function checkStatusInnerLoop(){
 			document.body.appendChild(_frame);
 			checkStatusInnerLoop();
 		} else {
-			chrome.notifications.create('notLoggedInNotification', {
-				type: 'basic',
-				title: 'Fail to check complete status',
-				message: 'You need to open the Microsoft reward page and log into your account first.',
-				iconUrl: 'img/err@8x.png',
-				buttons: [	{ title: 'Go to MS reward'},
-							{ title: 'Later'}],
-				requireInteraction: true
-			});
-			setBadge(STATUS_ERROR)
+			createNotLoggedInNotification();
 		}
 	}
 
@@ -72,7 +63,7 @@ function checkStatusInnerLoop(){
 	if (xhr.readyState == 4 && xhr.status == 200) {
 		let p = new DOMParser(); 
 		let doc = p.parseFromString(xhr.responseText, 'text/html');	
-		if (doc.getElementsByTagName('script').length >= 20) {
+		if (doc.getElementsByTagName('script').length >= 22) {
 			var str = doc.getElementsByTagName('script')[21].text;
 		} else {
 			createFailStatusCheckNotification('Fail to check reward point status');
@@ -80,7 +71,12 @@ function checkStatusInnerLoop(){
 		}
 		
 		// update status
-		let js = getUserStatusJSON(doc.getElementsByTagName('script')[21].text);
+		let js = getUserStatusJSON(str);
+
+		if (js === null) {
+			createFailStatusCheckNotification('Fail to check reward point status');
+			throw 'fail to check reward status due to a change in page structure.'
+		}
 
 		_status.pcSearch = pcSearch(js);
 		_status.mbSearch = mbSearch(js);
@@ -208,8 +204,21 @@ function createFailStatusCheckNotification(msg) {
 	chrome.notifications.create('failStatusCheckNotification', {
 		type: 'basic',
 		title: msg,
-		message: 'The extension fails to check your reward status. This is possibly due to a change in Microsoft Rewards page. The author will fix it soon.',
+		message: 'Have you logged into your MS account?\n\nThis is could also due to a change in MS Rewards page, in which case the author will try fixing it soon.',
 		iconUrl: 'img/err@8x.png',
+		requireInteraction: true
+	});
+	setBadge(STATUS_ERROR)
+}
+
+function createNotLoggedInNotification() {
+	chrome.notifications.create('notLoggedInNotification', {
+		type: 'basic',
+		title: 'Fail to check complete status',
+		message: 'You need to open the Microsoft reward page and log into your account first.',
+		iconUrl: 'img/err@8x.png',
+		buttons: [	{ title: 'Go to MS reward'},
+					{ title: 'Later'}],
 		requireInteraction: true
 	});
 	setBadge(STATUS_ERROR)

@@ -57,6 +57,10 @@ The colour of the action button icon changes depending on your completion status
 
 *These are unlikely fixable because Microsoft enables some kind of checks on their server to prevent clicking or xhr bots.*
 
+# Known issue
+
+The first time the user clicks on the action button, the icon gets stuck in blue (busy icon) for some reason. This can be fixed by clicking the action button again.
+
 ---
 
 This is my first try on making an extension for Chrome. 
