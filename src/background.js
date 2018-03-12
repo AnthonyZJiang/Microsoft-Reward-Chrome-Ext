@@ -9,8 +9,8 @@ const STATUS_ERROR = 3;
 var _questingStatus = {
 	searchQuesting : STATUS_NONE,
 	promoQuesting : STATUS_NONE,
-	sendPromoCompletionNotification : true,
-	sendSearchCompletionNotification : true
+	sendPromoCompletionNotification : false,
+	sendSearchCompletionNotification : false
 }
 
 
@@ -118,16 +118,28 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 	checkQuests();
 });
 
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+		_questingStatus.sendPromoCompletionNotification = true;
+		_questingStatus.sendSearchCompletionNotification = true;
+        checkQuests();
+    }
+});
+
 chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
 	if (notificationId == 'usedAllGoogleTrendPageNotification')	{ 
 		// this notification has no button
 		// failStatusCheckNotification
-	} else if (buttonIndex == 0) {
+	} else if (notificationId == 'unfinishedPromotionNotification' && buttonIndex == 0) {
 		// for notificationIds:
 		// unfinishedPromotionNotification
+		chrome.tabs.create({
+			url: 'https://www.bing.com/',
+			active: true});
+	} else if (buttonIndex == 0) {		
+		// notLoggedInNotification	
+		// searchQuestCompletionNotification	
 		// completeNotification
-		// notLoggedInNotification
-		// searchQuestCompletionNotification
 		chrome.tabs.create({
 			url: 'https://account.microsoft.com/rewards',
 			active: true});
@@ -136,6 +148,7 @@ chrome.notifications.onButtonClicked.addListener(function (notificationId, butto
 	}
 });
 
+checkQuests();
 // and then check every 30 minutes for possible new promotion
 var _mainTimer = setInterval(
 	function() {

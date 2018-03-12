@@ -80,7 +80,7 @@ function checkPromotion(urlPromotion, userInterventionPromotion) {
             message: 'You still have some points left to get!',
             iconUrl: 'img/err@8x.png',
             items: [],
-            buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Later' }]
+            buttons: [{ title: 'Go To Bing' }, { title: 'Later' }]
         };
         // add promotions to notification list
         var p = 0;
