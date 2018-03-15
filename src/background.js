@@ -111,10 +111,26 @@ function setBadge(status) {
 	}
 }
 
+var _clickCheck = 0;
 chrome.browserAction.onClicked.addListener(function (tab) {
+	if (_questingStatus.searchQuesting === STATUS_BUSY || _questingStatus.promoQuesting === STATUS_BUSY) {
+		_clickCheck ++;
+		if (_clickCheck > 5) {
+			_questingStatus.sendPromoCompletionNotification = _questingStatus.promoQuesting === STATUS_BUSY;
+			_questingStatus.sendSearchCompletionNotification = _questingStatus.searchQuesting === STATUS_BUSY;
+			chrome.notifications.create('busyAlreadyNotification', {
+				type: 'basic',
+				title: msg,
+				message: 'Working hard on completing the quests already :D. I will let you know once my job is finished.',
+				iconUrl: 'img/busy@8x.png',
+			});
+		}
+		return;
+	}
 	// send notification if it is initiated from browser action.
 	_questingStatus.sendPromoCompletionNotification = true;
 	_questingStatus.sendSearchCompletionNotification = true;
+	_clickCheck = 0;
 	checkQuests();
 });
 
@@ -129,7 +145,6 @@ chrome.runtime.onInstalled.addListener(function(details){
 chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
 	if (notificationId == 'usedAllGoogleTrendPageNotification')	{ 
 		// this notification has no button
-		// failStatusCheckNotification
 	} else if (notificationId == 'unfinishedPromotionNotification' && buttonIndex == 0) {
 		// for notificationIds:
 		// unfinishedPromotionNotification
@@ -137,6 +152,7 @@ chrome.notifications.onButtonClicked.addListener(function (notificationId, butto
 			url: 'https://www.bing.com/',
 			active: true});
 	} else if (buttonIndex == 0) {		
+		// failStatusCheckNotification
 		// notLoggedInNotification	
 		// searchQuestCompletionNotification	
 		// completeNotification

@@ -1,7 +1,7 @@
 const POINT_PER_SEARCH = 3;
 const ADDITIONAL_SEARCH = 5;
 const AVOID_PROMOTION_TITLE = [''];
-const CORS_PROMOTION_TITLE = ['shop to earn']
+const CORS_PROMOTION_TITLE = ['shop to earn', 'keep earning']
 
 var _frame = null;
 var _prevWeekDay = -1;
@@ -82,8 +82,8 @@ function checkStatusInnerLoop(){
 		_status.mbSearch = mbSearch(js);
 		_status.dailyPoint = dailyPoint(js);
 		_status.morePromotions = morePromotions(js);
-		_status.pcSearch.numSearch = _status.pcSearch.max ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
-		_status.mbSearch.numSearch = _status.mbSearch.max ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
+		_status.pcSearch.numSearch = (_status.pcSearch.max && !_status.pcSearch.complete) ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
+		_status.mbSearch.numSearch = (_status.mbSearch.max && !_status.mbSearch.complete) ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
 
 		console.log('Status check completed!')
 		console.log(_status)
@@ -206,7 +206,9 @@ function createFailStatusCheckNotification(msg) {
 		title: msg,
 		message: 'Have you logged into your MS account?\n\nThis is could also due to a change in MS Rewards page, in which case the author will try fixing it soon.',
 		iconUrl: 'img/err@8x.png',
-		requireInteraction: true
+		requireInteraction: true,
+		buttons: [	{ title: 'Go to MS reward'},
+					{ title: 'Later'}],
 	});
 	setBadge(STATUS_ERROR)
 }
