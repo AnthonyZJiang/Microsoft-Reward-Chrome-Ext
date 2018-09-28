@@ -9,20 +9,20 @@ var _mbSearchWordIdx = 0;
 var _currentSearchNum = 0;
 var _currentSearchType = NaN
 
-function doSearchQuests() {
+async function doSearchQuests() {
     _numSearchWordsRequired = Math.max(_pcSearchWordIdx + _status.pcSearch.numSearch, _mbSearchWordIdx + _status.mbSearch.numSearch);
 
     // check if we have enough words to carry on searching
     if (_numSearchWordsRequired < _searchWordArray.length) {
         // if yes, lets do pc search
-        bingSearch();
+        await bingSearch();
     } else {
         // if not, add more words to the array
         googleTrendRequest();
     }
 }
 
-function bingSearch() {
+async function bingSearch() {
     _currentSearchNum = 0;
     // change badge
     chrome.browserAction.setBadgeText({text: '...'});
@@ -41,7 +41,7 @@ function bingSearch() {
     }
 
     // do search!
-    bingSearchXHR();
+    await bingSearchXHR();
 }
 
 function preparePCSearch() {
@@ -59,9 +59,9 @@ function prepareMbSearch() {
     chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {urls: ['https://www.bing.com/search?q=*']}, ['blocking', 'requestHeaders']);
 }
 
-function bingSearchXHR() {
+async function bingSearchXHR() {
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = async function() {
 		if (this.readyState == 4 && this.status == 200) {
             _currentSearchNum++;
             let numSearchRequired;
@@ -75,18 +75,18 @@ function bingSearchXHR() {
 
 			// if haven't reached max, do another search
 			if (_currentSearchNum < numSearchRequired){
-				bingSearchXHR();
+				await bingSearchXHR();
 			} else {
 				// if reached max
                 console.log('Search completed. Number of searches: ', _currentSearchNum);
                 if (_currentSearchType == SEARCH_TYPE_PC_SEARCH){
                     // do mobile search now.
-                    bingSearch();
+                    await bingSearch();
                 } else {
                     // when mobile search completes, restore user-agent setting
                     chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
                     // check if we have completed the quests after 10 seconds
-                    setTimeout(function() {checkSearchQuests();}, 10000);
+                    setTimeout(async function() {await checkSearchQuests();}, 10000);
                 }
 			}
 		}
@@ -101,12 +101,12 @@ function bingSearchXHR() {
 	xhr.send();
 }
 
-function checkSearchQuests(){
+async function checkSearchQuests(){
     // refresh status
-    checkCompletionStatus();
+    await checkCompletionStatus();
     // are quests completed?
     if (!_status.pcSearch.complete || !_status.mbSearch.complete){
-        doSearchQuests();
+        await doSearchQuests();
     } else {
         // when both quests are completed.
         _questingStatus.searchQuesting = STATUS_DONE;

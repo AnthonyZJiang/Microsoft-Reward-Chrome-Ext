@@ -1,8 +1,31 @@
-function doPromotionQuests(){
+function checkPromotion() { 
+    if (_status.promotions.complete) {
+        // set completion
+        _questingStatus.promoQuesting = STATUS_DONE;
+        setCompletion();  
+        return;
+    }
+
+    // notify user by notification if there are more points to grab
+    var opt = {
+        type: 'basic',
+        title: (_status.promotion.max - _status.promotion.progress).toString() + ' points left!',
+        message: 'You are just a few clicks away to grab them!',
+        iconUrl: 'img/err@8x.png',
+        buttons: [{ title: 'Go To Bing' }, { title: 'Later' }]
+    };
+    chrome.notifications.create('unfinishedPromotionNotification', opt);
+
+    // set completion
+    _questingStatus.promoQuesting = STATUS_WARNING;
+    setCompletion();  
+}
+
+/* async function doPromotionQuests(){
     var urlPromotion = new Array();
     var userInterventionPromotion = new Array();
 
-    _status.morePromotions.forEach(promo => {
+    _status.promotions.forEach(promo => {
         // if completed
         if (promo.complete) {
             return;
@@ -23,7 +46,7 @@ function doPromotionQuests(){
    
     // check if we have got all the url promotions after 10 seconds
     if (urlPromotion.length) {
-        setTimeout(function() {checkPromotion(urlPromotion, userInterventionPromotion);}, 10000);
+        setTimeout(async function() {await checkPromotion(urlPromotion, userInterventionPromotion);}, 10000);
     }
 }
 
@@ -61,13 +84,13 @@ function promotionXHR(url){
     xhr.send();
 }
 
-function checkPromotion(urlPromotion, userInterventionPromotion) { 
+async function checkPromotion(urlPromotion, userInterventionPromotion) { 
     // refresh status
-    checkCompletionStatus();
+    await checkCompletionStatus();
     // find the url promotion
     for (let i in urlPromotion) {
         let promo;
-        if (!(promo = findPromotion(urlPromotion[i], _status.morePromotions)).complete) {
+        if (!(promo = findPromotion(urlPromotion[i], _status.promotions)).complete) {
             // if the promotion is still incomplete, treat it as user interaction required promotion
             userInterventionPromotion.push(promo);
         }
@@ -110,4 +133,4 @@ function findPromotion(promotion, promotionList){
             return promotionList[i];
         }
     }
-}
+} */

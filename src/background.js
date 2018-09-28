@@ -1,5 +1,3 @@
-const _maxPCSearch = 35;
-const _maxMbSearch = 25;
 const STATUS_NONE = 0;
 const STATUS_BUSY = 1;
 const STATUS_DONE = 20;
@@ -14,7 +12,7 @@ var _questingStatus = {
 }
 
 
-function checkQuests() {
+async function checkQuests() {
 	setBadge(STATUS_BUSY);
 	if (!checkDate()) {
 		// if a new day, reset variables
@@ -26,7 +24,7 @@ function checkQuests() {
 		_searchWordArray = new Array();
 	}
 
-	checkCompletionStatus();
+	await checkCompletionStatus();
 
 	if (_status.dailyPoint.complete)
 	{
@@ -40,12 +38,12 @@ function checkQuests() {
 		_questingStatus.searchQuesting = STATUS_BUSY;
 		// check search quests
 		if (!_status.pcSearch.complete || !_status.mbSearch.complete){
-			doSearchQuests();
+			await doSearchQuests();
 		} else {			
 			_questingStatus.searchQuesting = STATUS_DONE;
 		}
 		// check promotion quests		
-		doPromotionQuests();
+		checkPromotion();
 	}
 }
 
@@ -61,9 +59,9 @@ function setCompletion() {
 	if (_questingStatus.promoQuesting == STATUS_DONE && _questingStatus.sendPromoCompletionNotification) {
 		_questingStatus.sendPromoCompletionNotification = false;
 		let p = 0, pm = 0;
-		for (var i in _status.morePromotions) {
-			p += _status.morePromotions[i].progress;
-			pm += _status.morePromotions[i].max;
+		for (var i in _status.promotions) {
+			p += _status.promotions[i].progress;
+			pm += _status.promotions[i].max;
 		}
 		chrome.notifications.create('completeNotification', {
 			type: 'basic',
@@ -112,7 +110,7 @@ function setBadge(status) {
 }
 
 var _clickCheck = 0;
-chrome.browserAction.onClicked.addListener(function (tab) {
+chrome.browserAction.onClicked.addListener(async function () {
 	if (_questingStatus.searchQuesting === STATUS_BUSY || _questingStatus.promoQuesting === STATUS_BUSY) {
 		_clickCheck ++;
 		if (_clickCheck > 5) {
@@ -131,14 +129,14 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 	_questingStatus.sendPromoCompletionNotification = true;
 	_questingStatus.sendSearchCompletionNotification = true;
 	_clickCheck = 0;
-	checkQuests();
+	await checkQuests();
 });
 
-chrome.runtime.onInstalled.addListener(function(details){
+chrome.runtime.onInstalled.addListener(async function(details){
     if(details.reason == "install"){
 		_questingStatus.sendPromoCompletionNotification = true;
 		_questingStatus.sendSearchCompletionNotification = true;
-        checkQuests();
+        await checkQuests();
     }
 });
 
@@ -165,10 +163,10 @@ chrome.notifications.onButtonClicked.addListener(function (notificationId, butto
 });
 
 checkQuests();
-// and then check every 30 minutes for possible new promotion
-var _mainTimer = setInterval(
-	function() {
-		checkQuests();
+// and then check every 60 minutes for possible new promotion
+setInterval(
+	async function() {
+		await checkQuests();
 	},
 	3600000
 );

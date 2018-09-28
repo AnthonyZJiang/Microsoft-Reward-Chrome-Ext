@@ -5,7 +5,7 @@ const CORS_PROMOTION_TITLE = ['shop to earn', 'keep earning']
 
 var _frame = null;
 var _prevWeekDay = -1;
-
+var _status;
 var _freshStatus = {
 	pcSearch: {
 		progress: 0,
@@ -24,45 +24,21 @@ var _freshStatus = {
 		max: 160,
 		complete: false
 	},
-	morePromotions: [
+	promotions: [
 		{
 			progress: 0,
-			pointProgressMax: 0,
+			max: 0,
 			complete: true}
 	]
 	};
 
-var _status;
-
-function checkCompletionStatus(){
+async function checkCompletionStatus(){
 	_frame = null;
 	_status = _freshStatus;
-	checkStatusInnerLoop();
-}
-
-function checkStatusInnerLoop(){
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://account.microsoft.com/rewards/pointsbreakdown', false);
-	try{
-		xhr.send();
-	} catch (ex) {
-		// if fail, most likely the user has been logged out of Microsoft account.
-		if (_frame==null){
-			// open an iframe and goto ms page.
-			_frame = document.createElement('iframe');
-			_frame.src = 'https://account.microsoft.com/rewards/pointsbreakdown';
-			_frame.sandbox="allow-same-origin allow-scripts allow-popups allow-forms";
-			document.body.appendChild(_frame);
-			checkStatusInnerLoop();
-		} else {
-			createNotLoggedInNotification();
-		}
-	}
-
-	console.log('Status check request sent!')
-	if (xhr.readyState == 4 && xhr.status == 200) {
+	await checkStatusInnerLoop()
+	.then(function(val){
 		let p = new DOMParser(); 
-		let doc = p.parseFromString(xhr.responseText, 'text/html');	
+		let doc = p.parseFromString(val, 'text/html');	
 		if (doc.getElementsByTagName('script').length >= 22) {
 			var str = doc.getElementsByTagName('script')[21].text;
 		} else {
@@ -81,13 +57,58 @@ function checkStatusInnerLoop(){
 		_status.pcSearch = pcSearch(js);
 		_status.mbSearch = mbSearch(js);
 		_status.dailyPoint = dailyPoint(js);
-		_status.morePromotions = morePromotions(js);
+		_status.dailyPoint.complete = _status.dailyPoint.max == _status.dailyPoint.progress;
+		_status.promotions.max = _status.dailyPoint.max - _status.mbSearch.max - _status.pcSearch.max;
+		_status.promotions.progress = _status.dailyPoint.progress - _status.mbSearch.progress - _status.pcSearch.progress;
+		_status.promotions.complete = _status.promotions.max == _status.promotions.progress;
 		_status.pcSearch.numSearch = (_status.pcSearch.max && !_status.pcSearch.complete) ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
 		_status.mbSearch.numSearch = (_status.mbSearch.max && !_status.mbSearch.complete) ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
 
 		console.log('Status check completed!')
 		console.log(_status)
-	}
+	})
+	.catch(function(val){
+		console.log('Status check failed.')
+		console.log(val)
+		// if fail, most likely the user has been logged out of Microsoft account.
+		if (_frame==null){
+			// open an iframe and goto ms page.
+			_frame = document.createElement('iframe');
+			_frame.src = 'https://account.microsoft.com/rewards/pointsbreakdown';
+			_frame.sandbox="allow-same-origin allow-scripts allow-popups allow-forms";
+			document.body.appendChild(_frame);
+			checkStatusInnerLoop();
+		} else {
+			createNotLoggedInNotification();
+		}
+	});
+}
+
+async function checkStatusInnerLoop(){
+	return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+		xhr.open('GET', 'https://account.microsoft.com/rewards/pointsbreakdown', true);
+        xhr.onload = function () {
+			console.log('Status check request responded! - xhr.readyState:', xhr.readyState, ' - status', xhr.status)
+            if (xhr.readyState == 4 && xhr.status == 200) {
+				resolve(xhr.responseText)
+			} else {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+			console.log('Status check request responded with error! - xhr.readyState:', xhr.readyState, ' - status', xhr.status)
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+		console.log('Status check request sent!')
+    });
 	//chrome.browserAction.setBadgeText({text: (_earnedPoints/_maxPoints*100).toString().substr(0,4)});
 }
 
@@ -158,24 +179,24 @@ function dailyPoint(js) {
 	}
 }
 
-function morePromotions(js) {
+/* function promotions(js) {
 	try {
 		var promos = new Array();
-		for (let i in js.morePromotions) {
+		for (let i in js.promotions) {
 			// if the promotion is in avoid list, deduct its point from daily point
-			if (AVOID_PROMOTION_TITLE.includes(js.morePromotions[i].title.toLowerCase()) && _status.dailyPoint.max >= 0) {
-				_status.dailyPoint.max -= js.morePromotions[i].pointProgressMax;
+			if (AVOID_PROMOTION_TITLE.includes(js.promotions[i].title.toLowerCase()) && _status.dailyPoint.max >= 0) {
+				_status.dailyPoint.max -= js.promotions[i].max;
 				continue;
 			}
 			// push to promos
 			promos.push({
-				title: js.morePromotions[i].title,
-				progress: js.morePromotions[i].pointProgress,
-				max: js.morePromotions[i].pointProgressMax,
-				complete: js.morePromotions[i].complete,
-				url: js.morePromotions[i].destinationUrl,
-				type: js.morePromotions[i].promotionType,
-				cors: CORS_PROMOTION_TITLE.includes(js.morePromotions[i].title.toLowerCase())
+				title: js.promotions[i].title,
+				progress: js.promotions[i].pointProgress,
+				max: js.promotions[i].max,
+				complete: js.promotions[i].complete,
+				url: js.promotions[i].destinationUrl,
+				type: js.promotions[i].promotionType,
+				cors: CORS_PROMOTION_TITLE.includes(js.promotions[i].title.toLowerCase())
 			})
 		}
 		// finally re-evaluate daily point progress
@@ -188,17 +209,7 @@ function morePromotions(js) {
 	} finally {
 		return promos;
 	}
-	
-}
-
-function checkDate(){
-	let d;
-	if ((d = new Date().getDay()) != _prevWeekDay){
-		_prevWeekDay = d;
-		return false;
-	}
-	return true;
-}
+} */
 
 function createFailStatusCheckNotification(msg) {
 	chrome.notifications.create('failStatusCheckNotification', {
