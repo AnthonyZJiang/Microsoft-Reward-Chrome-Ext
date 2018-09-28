@@ -41,7 +41,7 @@ async function bingSearch() {
     }
 
     // do search!
-    await bingSearchXHR();
+    await requestBingSearch();
 }
 
 function preparePCSearch() {
@@ -59,46 +59,47 @@ function prepareMbSearch() {
     chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {urls: ['https://www.bing.com/search?q=*']}, ['blocking', 'requestHeaders']);
 }
 
-async function bingSearchXHR() {
+async function requestBingSearch() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = async function() {
 		if (this.readyState == 4 && this.status == 200) {
-            _currentSearchNum++;
-            let numSearchRequired;
-            if (_currentSearchType == SEARCH_TYPE_PC_SEARCH) {
-                _pcSearchWordIdx++;
-                numSearchRequired = _status.pcSearch.numSearch
-            }else {
-                _mbSearchWordIdx++;
-                numSearchRequired = _status.mbSearch.numSearch
-            }
-
-			// if haven't reached max, do another search
-			if (_currentSearchNum < numSearchRequired){
-				await bingSearchXHR();
-			} else {
-				// if reached max
-                console.log('Search completed. Number of searches: ', _currentSearchNum);
-                if (_currentSearchType == SEARCH_TYPE_PC_SEARCH){
-                    // do mobile search now.
-                    await bingSearch();
-                } else {
-                    // when mobile search completes, restore user-agent setting
-                    chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
-                    // check if we have completed the quests after 10 seconds
-                    setTimeout(async function() {await checkSearchQuests();}, 10000);
-                }
-			}
+            await countBingSearch();
 		}
     };
-    var i;
-    if (_currentSearchType == SEARCH_TYPE_PC_SEARCH){
-        i = _pcSearchWordIdx;
-    } else {
-        i = _mbSearchWordIdx;
-    }
-    xhr.open('GET', 'https://www.bing.com/search?q=' + _searchWordArray[i], true);
+
+    xhr.open('GET', 'https://www.bing.com/search?q=' + 
+                _searchWordArray[_currentSearchType == SEARCH_TYPE_PC_SEARCH ? _pcSearchWordIdx : _mbSearchWordIdx], 
+                true);
 	xhr.send();
+}
+
+async function countBingSearch(){
+    _currentSearchNum++;
+    let numSearchRequired;
+    if (_currentSearchType == SEARCH_TYPE_PC_SEARCH) {
+        _pcSearchWordIdx++;
+        numSearchRequired = _status.pcSearch.numSearch
+    }else {
+        _mbSearchWordIdx++;
+        numSearchRequired = _status.mbSearch.numSearch
+    }
+
+    // if haven't reached max, do another search
+    if (_currentSearchNum < numSearchRequired){
+        await bingSearchXHR();
+    } else {
+        // if reached max
+        console.log('Search completed. Number of searches: ', _currentSearchNum);
+        if (_currentSearchType == SEARCH_TYPE_PC_SEARCH){
+            // do mobile search now.
+            await bingSearch();
+        } else {
+            // when mobile search completes, restore user-agent setting
+            chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
+            // check if we have completed the quests after 10 seconds
+            setTimeout(async function() {await checkSearchQuests();}, 10000);
+        }
+    }
 }
 
 async function checkSearchQuests(){

@@ -4,7 +4,6 @@ const AVOID_PROMOTION_TITLE = [''];
 const CORS_PROMOTION_TITLE = ['shop to earn', 'keep earning']
 
 var _frame = null;
-var _prevWeekDay = -1;
 var _status;
 var _freshStatus = {
 	pcSearch: {
@@ -24,45 +23,33 @@ var _freshStatus = {
 		max: 160,
 		complete: false
 	},
-	promotions: [
-		{
-			progress: 0,
-			max: 0,
-			complete: true}
-	]
-	};
+	promotions: {
+		progress: 0,
+		max: 0,
+		complete: true
+	}};
 
 async function checkCompletionStatus(){
 	_frame = null;
 	_status = _freshStatus;
 	await checkStatusInnerLoop()
 	.then(function(val){
-		let p = new DOMParser(); 
-		let doc = p.parseFromString(val, 'text/html');	
+		let doc = new DOMParser().parseFromString(val, 'text/html');		
+		let js;
+		// update status
 		if (doc.getElementsByTagName('script').length >= 22) {
-			var str = doc.getElementsByTagName('script')[21].text;
+			js = getUserStatusJSON(doc.getElementsByTagName('script')[21].text);
 		} else {
 			createFailStatusCheckNotification('Fail to check reward point status');
 			throw 'fail to check reward status due to a change in page structure.'
 		}
 		
-		// update status
-		let js = getUserStatusJSON(str);
-
 		if (js === null) {
 			createFailStatusCheckNotification('Fail to check reward point status');
 			throw 'fail to check reward status due to a change in page structure.'
 		}
 
-		_status.pcSearch = pcSearch(js);
-		_status.mbSearch = mbSearch(js);
-		_status.dailyPoint = dailyPoint(js);
-		_status.dailyPoint.complete = _status.dailyPoint.max == _status.dailyPoint.progress;
-		_status.promotions.max = _status.dailyPoint.max - _status.mbSearch.max - _status.pcSearch.max;
-		_status.promotions.progress = _status.dailyPoint.progress - _status.mbSearch.progress - _status.pcSearch.progress;
-		_status.promotions.complete = _status.promotions.max == _status.promotions.progress;
-		_status.pcSearch.numSearch = (_status.pcSearch.max && !_status.pcSearch.complete) ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
-		_status.mbSearch.numSearch = (_status.mbSearch.max && !_status.mbSearch.complete) ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
+		getStatus(js);
 
 		console.log('Status check completed!')
 		console.log(_status)
@@ -82,6 +69,18 @@ async function checkCompletionStatus(){
 			createNotLoggedInNotification();
 		}
 	});
+}
+
+function getStatus(js) {
+	_status.pcSearch = pcSearch(js);
+	_status.mbSearch = mbSearch(js);
+	_status.dailyPoint = dailyPoint(js);
+	_status.dailyPoint.complete = _status.dailyPoint.max == _status.dailyPoint.progress;
+	_status.promotions.max = _status.dailyPoint.max - _status.mbSearch.max - _status.pcSearch.max;
+	_status.promotions.progress = _status.dailyPoint.progress - _status.mbSearch.progress - _status.pcSearch.progress;
+	_status.promotions.complete = _status.promotions.max == _status.promotions.progress;
+	_status.pcSearch.numSearch = (_status.pcSearch.max && !_status.pcSearch.complete) ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
+	_status.mbSearch.numSearch = (_status.mbSearch.max && !_status.mbSearch.complete) ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
 }
 
 async function checkStatusInnerLoop(){
@@ -109,7 +108,6 @@ async function checkStatusInnerLoop(){
         xhr.send();
 		console.log('Status check request sent!')
     });
-	//chrome.browserAction.setBadgeText({text: (_earnedPoints/_maxPoints*100).toString().substr(0,4)});
 }
 
 function getUserStatusJSON(str) {
@@ -178,38 +176,6 @@ function dailyPoint(js) {
         };
 	}
 }
-
-/* function promotions(js) {
-	try {
-		var promos = new Array();
-		for (let i in js.promotions) {
-			// if the promotion is in avoid list, deduct its point from daily point
-			if (AVOID_PROMOTION_TITLE.includes(js.promotions[i].title.toLowerCase()) && _status.dailyPoint.max >= 0) {
-				_status.dailyPoint.max -= js.promotions[i].max;
-				continue;
-			}
-			// push to promos
-			promos.push({
-				title: js.promotions[i].title,
-				progress: js.promotions[i].pointProgress,
-				max: js.promotions[i].max,
-				complete: js.promotions[i].complete,
-				url: js.promotions[i].destinationUrl,
-				type: js.promotions[i].promotionType,
-				cors: CORS_PROMOTION_TITLE.includes(js.promotions[i].title.toLowerCase())
-			})
-		}
-		// finally re-evaluate daily point progress
-		if (_status.dailyPoint.max <= _status.dailyPoint.progress) {
-			_status.dailyPoint.complete = true;
-		}
-		
-	} catch (ex) {
-		createFailStatusCheckNotification('Fail to check promotion quests');
-	} finally {
-		return promos;
-	}
-} */
 
 function createFailStatusCheckNotification(msg) {
 	chrome.notifications.create('failStatusCheckNotification', {
