@@ -3,84 +3,80 @@ const ADDITIONAL_SEARCH = 5;
 const AVOID_PROMOTION_TITLE = [''];
 const CORS_PROMOTION_TITLE = ['shop to earn', 'keep earning']
 
-var _frame = null;
-var _status;
-var _freshStatus = {
+const _freshStatus = {
 	pcSearch: {
 		progress: 0,
-		max: 90,
+		max: 0,
 		numSearch: 0,
 		complete: false
 	},
 	mbSearch: {		
 		progress: 0,
-		max: 60,
+		max: 0,
 		numSearch: 0,
 		complete: false
 	},
-	dailyPoint: {
-		progress: 0,
-		max: 160,
-		complete: false
-	},
-	promotions: {
+	quizAndDaily: {
 		progress: 0,
 		max: 0,
-		complete: true
-	}};
+		complete: false
+	},
+	summary: {		
+		progress: 0,
+		max: 0,
+		complete: false
+	}
+};
+
+var _frame = null;
+var _status;
 
 async function checkCompletionStatus(){
 	_frame = null;
-	_status = _freshStatus;
-	await checkStatusInnerLoop()
-	.then(function(val){
-		let doc = new DOMParser().parseFromString(val, 'text/html');		
-		let js;
-		// update status
-		if (doc.getElementsByTagName('script').length >= 22) {
-			js = getUserStatusJSON(doc.getElementsByTagName('script')[21].text);
-		} else {
-			createFailStatusCheckNotification('Fail to check reward point status');
-			throw 'fail to check reward status due to a change in page structure.'
-		}
-		
-		if (js === null) {
-			createFailStatusCheckNotification('Fail to check reward point status');
-			throw 'fail to check reward status due to a change in page structure.'
-		}
-
-		getStatus(js);
-
-		console.log('Status check completed!')
-		console.log(_status)
-	})
+	_status = clone(_freshStatus);
+	
+	return await checkStatusInnerLoop()
+	.then(function (xmlResponse) { return updateStatus(xmlResponse); })
 	.catch(function(val){
 		console.log('Status check failed.')
 		console.log(val)
-		// if fail, most likely the user has been logged out of Microsoft account.
-		if (_frame==null){
-			// open an iframe and goto ms page.
-			_frame = document.createElement('iframe');
-			_frame.src = 'https://account.microsoft.com/rewards/pointsbreakdown';
-			_frame.sandbox="allow-same-origin allow-scripts allow-popups allow-forms";
-			document.body.appendChild(_frame);
-			checkStatusInnerLoop();
-		} else {
-			createNotLoggedInNotification();
-		}
-	});
+		// if fail, most likely the user has been logged out of his Microsoft account.
+		createNotLoggedInNotification();
+		return false;
+	});	
+}
+
+function updateStatus(xmlResponse){
+	let doc = new DOMParser().parseFromString(xmlResponse, 'text/html');		
+	if (doc.getElementsByTagName('script').length < 22) {
+		createWrongPageStructureNotification('Fail to check reward point status');
+		return false;
+	}
+	
+	let js = getUserStatusJSON(doc.getElementsByTagName('script')[21].text);
+	
+	if (js === null) {
+		createWrongPageStructureNotification('Fail to check reward point status');
+		return false;
+	}
+
+	getStatus(js);
+	console.log('Status check completed!')
+	console.log(_status)
+
+	return _status.summary.max != 0
 }
 
 function getStatus(js) {
-	_status.pcSearch = pcSearch(js);
-	_status.mbSearch = mbSearch(js);
-	_status.dailyPoint = dailyPoint(js);
-	_status.dailyPoint.complete = _status.dailyPoint.max == _status.dailyPoint.progress;
-	_status.promotions.max = _status.dailyPoint.max - _status.mbSearch.max - _status.pcSearch.max;
-	_status.promotions.progress = _status.dailyPoint.progress - _status.mbSearch.progress - _status.pcSearch.progress;
-	_status.promotions.complete = _status.promotions.max == _status.promotions.progress;
+	_status.pcSearch = getPcSearchPoints(js);
+	_status.mbSearch = getMbSearchPoints(js);
 	_status.pcSearch.numSearch = (_status.pcSearch.max && !_status.pcSearch.complete) ? (_status.pcSearch.max - _status.pcSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
 	_status.mbSearch.numSearch = (_status.mbSearch.max && !_status.mbSearch.complete) ? (_status.mbSearch.max - _status.mbSearch.progress) / POINT_PER_SEARCH + ADDITIONAL_SEARCH : 0;
+	_status.quizAndDaily = getQuizAndDaily(js);
+	_status.summary = { 
+		progress: _status.pcSearch.progress + _status.mbSearch.progress + _status.quizAndDaily.progress,
+		max: _status.pcSearch.max + _status.mbSearch.max + _status.quizAndDaily.max,
+		complete: _status.pcSearch.complete & _status.mbSearch.complete & _status.quizAndDaily.complete	};
 }
 
 async function checkStatusInnerLoop(){
@@ -115,12 +111,11 @@ function getUserStatusJSON(str) {
 		var m = /(?=\{"userStatus":).*(=?\}\};)/.exec(str);
 		return JSON.parse(m[0].substr(0, m[0].length - 1));
 	} catch (ex) {
-		createFailStatusCheckNotification('Fail to check reward point status');
-		throw 'fail to check reward status due to a change in page structure.'
+		return null;
 	}
 }
 
-function pcSearch(js) {
+function getPcSearchPoints(js) {
 	try {
 		return {
             progress: js.userStatus.counters.pcSearch[0].pointProgress,
@@ -129,17 +124,12 @@ function pcSearch(js) {
 			numSearch: 0
         };
 	} catch (ex) {
-		createFailStatusCheckNotification('Fail to check PC search quest')
-		return {
-            progress: 0,
-            max: 0,
-			complete: true,
-			numSearch: 0
-        };
+		createWrongPageStructureNotification('Fail to check PC search quest.')
+		return _freshStatus.pcSearch;
 	}
 }
 
-function mbSearch(js) {
+function getMbSearchPoints(js) {
     try {
 		return {
             progress: js.userStatus.counters.mobileSearch[0].pointProgress,
@@ -148,36 +138,49 @@ function mbSearch(js) {
 			numSearch: 0
         };
 	} catch (ex) {
-		createFailStatusCheckNotification('Fail to check mobile search quest');
-		return {
-            progress: 0,
-            max: 0,
-			complete: true,
-			numSearch: 0
-        };
+		createWrongPageStructureNotification('Fail to check mobile search quest.');
+		return _freshStatus.mbSearch;
 	}
 }
 
-function dailyPoint(js) {
+function getQuizAndDaily(js) {	
+	let quiz = getQuiz(js);
+	let daily = getDaily(js);
+	let quizDaily = {
+		progress: quiz.progress + daily.progress,
+		max: quiz.max + daily.max
+	}
+	quizDaily.complete = quizDaily.progress === quizDaily.max;
+	return quizDaily;
+}
+
+function getQuiz(js) {
 	try {
 		return {
-            progress: js.userStatus.counters.dailyPoint[0].pointProgress,
-            max: js.userStatus.counters.dailyPoint[0].pointProgressMax,
-			originalMax: js.userStatus.counters.dailyPoint[0].pointProgressMax,
-			complete: js.userStatus.counters.dailyPoint[0].complete,
+            progress: js.userStatus.counters.activityAndQuiz[0].pointProgress,
+            max: js.userStatus.counters.activityAndQuiz[0].pointProgressMax
         };
 	} catch (ex) {
-		createFailStatusCheckNotification('Fail to check daily point status');
-		return {
-            progress: 0,
-            max: 0,
-			originalMax: 0,
-			complete: true
-        };
+		createWrongPageStructureNotification('Fail to check quiz point status.');
+		return _freshStatus.quizAndDaily;
 	}
 }
 
-function createFailStatusCheckNotification(msg) {
+function getDaily(js) {
+	try {
+		let daily = clone(_freshStatus.quizAndDaily);
+		js.dailySetPromotions[Object.keys(js.dailySetPromotions)[0]].forEach(function(val) {
+			daily.progress += val.pointProgress;
+			daily.max += val.pointProgressMax;
+		});
+		return daily;
+	} catch (ex) {
+		createWrongPageStructureNotification('Fail to check daily promotion point status.');
+		return _freshStatus.quizAndDaily;
+	}	
+}
+
+function createWrongPageStructureNotification(msg) {
 	chrome.notifications.create('failStatusCheckNotification', {
 		type: 'basic',
 		title: msg,
@@ -201,4 +204,10 @@ function createNotLoggedInNotification() {
 		requireInteraction: true
 	});
 	setBadge(STATUS_ERROR)
+}
+
+function clone(obj) {
+	if (obj === null || typeof (obj) !== 'object')
+        return obj;
+	return JSON.parse(JSON.stringify(obj));
 }

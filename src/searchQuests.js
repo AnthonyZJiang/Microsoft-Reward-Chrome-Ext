@@ -10,6 +10,10 @@ var _currentSearchNum = 0;
 var _currentSearchType = NaN
 
 async function doSearchQuests() {
+    console.assert(_status != null);
+    console.assert(_status.pcSearch.numSearch != 0);
+    console.assert(_status.mbSearch.numSearch != 0);
+    
     _numSearchWordsRequired = Math.max(_pcSearchWordIdx + _status.pcSearch.numSearch, _mbSearchWordIdx + _status.mbSearch.numSearch);
 
     // check if we have enough words to carry on searching
@@ -86,7 +90,7 @@ async function countBingSearch(){
 
     // if haven't reached max, do another search
     if (_currentSearchNum < numSearchRequired){
-        await bingSearchXHR();
+        await requestBingSearch();
     } else {
         // if reached max
         console.log('Search completed. Number of searches: ', _currentSearchNum);
@@ -108,10 +112,6 @@ async function checkSearchQuests(){
     // are quests completed?
     if (!_status.pcSearch.complete || !_status.mbSearch.complete){
         await doSearchQuests();
-    } else {
-        // when both quests are completed.
-        _questingStatus.searchQuesting = STATUS_DONE;
-        setCompletion();
     }
 }
 

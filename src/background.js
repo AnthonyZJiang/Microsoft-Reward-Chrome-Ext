@@ -5,10 +5,8 @@ const STATUS_WARNING = 30;
 const STATUS_ERROR = 3;
 
 var _questingStatus = {
-	searchQuesting : STATUS_NONE,
-	promoQuesting : STATUS_NONE,
-	sendPromoCompletionNotification : false,
-	sendSearchCompletionNotification : false
+	status : STATUS_NONE,
+	sendCompletionNotification : false
 }
 var _clickCheck = 0;
 var _prevWeekDay = -1;
@@ -19,8 +17,7 @@ chrome.notifications.onButtonClicked.addListener(notificationButtonCallback);
 
 chrome.runtime.onInstalled.addListener(async function(details){
     if(details.reason == "install"){
-		_questingStatus.sendPromoCompletionNotification = true;
-		_questingStatus.sendSearchCompletionNotification = true;
+		_questingStatus.sendCompletionNotification = true;
         await checkQuests();
     }
 });
@@ -40,38 +37,37 @@ async function checkQuests() {
 	setBadge(STATUS_BUSY);
 	if (!checkDate()) {
 		// if a new day, reset variables
-		_pcSearchWordIdx = 0;
-		_mbSearchWordIdx = 0;
-		_currentGoogleTrendPageIdx = 0;
-		_usedAllGoogleTrendPageNotificationFired = false;
-		_currentSearchType = NaN;
-		_searchWordArray = new Array();
+		resetSearchParams();
 	}
 
-	await checkCompletionStatus();
+	let result = await checkCompletionStatus();
+	if (!result) {
+		setBadge(STATUS_ERROR);
+		return;
+	}
 
-	if (_status.dailyPoint.complete)
-	{
+	console.assert(_status.summary.max != 0);
+
+	if (_status.summary.complete) {
 		// if completed
-		_questingStatus.promoQuesting = STATUS_DONE;
-		_questingStatus.searchQuesting = STATUS_DONE;
+		_questingStatus.status = STATUS_DONE;
 		setCompletion();
 		return;
-	} else {
-		_questingStatus.promoQuesting = STATUS_BUSY;
-		_questingStatus.searchQuesting = STATUS_BUSY;
-		// check search quests
-		if (!_status.pcSearch.complete || !_status.mbSearch.complete){
-			await doSearchQuests();
-		} else {			
-			_questingStatus.searchQuesting = STATUS_DONE;
-		}
-		// check promotion quests		
-		checkPromotion();
-	}
+	} 
+
+	// check search quests
+	if (!_status.pcSearch.complete || !_status.mbSearch.complete) {
+		_questingStatus.status = STATUS_BUSY;
+		await doSearchQuests();
+	} 	
+	_questingStatus.status = STATUS_DONE;
+
+	// check promotion quests	
+	checkQuizAndDaily();
+	setCompletion();	
 }
 
-function checkDate(){
+function checkDate() {
 	let d;
 	if ((d = new Date().getDay()) != _prevWeekDay){
 		_prevWeekDay = d;
@@ -80,24 +76,33 @@ function checkDate(){
 	return true;
 }
 
+function resetSearchParams() {
+	_pcSearchWordIdx = 0;
+	_mbSearchWordIdx = 0;
+	_currentGoogleTrendPageIdx = 0;
+	_usedAllGoogleTrendPageNotificationFired = false;
+	_currentSearchType = NaN;
+	_searchWordArray = new Array();
+}
+
 function setCompletion() {
-	if ((_questingStatus.promoQuesting + _questingStatus.searchQuesting) >= (STATUS_DONE * 2)) {
-		// both are complete or one of them is completed and the other is warning or both are warning
-		if (_status.dailyPoint.complete) {
-			setBadge(STATUS_DONE);
-		} else {
-			setBadge(STATUS_WARNING);
-		}
+	if (_questingStatus.status != STATUS_DONE) {
+		return
 	}
-	if (_questingStatus.searchQuesting == STATUS_DONE && _questingStatus.sendSearchCompletionNotification) {
-		_questingStatus.sendSearchCompletionNotification = false;
+	if (_status.summary.complete) {
+		setBadge(STATUS_DONE);
+	} else {
+		setBadge(STATUS_WARNING);
+	}
+	if (_questingStatus.sendCompletionNotification){
+		_questingStatus.sendCompletionNotification = false;
 		chrome.notifications.create('searchQuestCompletionNotification',{
-            type: 'basic',
-            title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
-            message: 'Search quests have been completed!',
-            iconUrl: 'img/done@8x.png',
-            buttons: [{ title: 'Go To Microsoft Reward' }, { title: 'Dismiss' }]
-        })
+			type: 'basic',
+			title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
+			message: 'Search quests have been completed!',
+			iconUrl: 'img/done@8x.png',
+			buttons: [{ title: 'Go To MS Reward' }, { title: 'Dismiss' }]
+		})
 	}
 }
 
@@ -115,7 +120,7 @@ function setBadge(status) {
 			break;
 		case STATUS_WARNING:
 			chrome.browserAction.setIcon({path:"img/err@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: (_status.dailyPoint.max - _status.dailyPoint.progress).toString()});
+			chrome.browserAction.setBadgeText({text: (_status.summary.max - _status.summary.progress).toString()});
 			chrome.browserAction.setBadgeBackgroundColor({"color": [225, 185, 0, 100]}); 
 			console.log('warning badge')
 			break;
@@ -133,11 +138,10 @@ function setBadge(status) {
 }
 
 async function browserActionButtonCallback() {
-	if (_questingStatus.searchQuesting === STATUS_BUSY || _questingStatus.promoQuesting === STATUS_BUSY) {
+	if (_questingStatus.status === STATUS_BUSY) {
 		_clickCheck ++;
-		if (_clickCheck > 5) {
-			_questingStatus.sendPromoCompletionNotification = _questingStatus.promoQuesting === STATUS_BUSY;
-			_questingStatus.sendSearchCompletionNotification = _questingStatus.searchQuesting === STATUS_BUSY;
+		if (_clickCheck > 3) {
+			_questingStatus.sendCompletionNotification = true;
 			chrome.notifications.create('busyAlreadyNotification', {
 				type: 'basic',
 				title: msg,
@@ -147,9 +151,9 @@ async function browserActionButtonCallback() {
 		}
 		return;
 	}
+
 	// send notification if it is initiated from browser action.
-	_questingStatus.sendPromoCompletionNotification = true;
-	_questingStatus.sendSearchCompletionNotification = true;
+	_questingStatus.sendCompletionNotification = true;
 	_clickCheck = 0;
 	await checkQuests();
 }

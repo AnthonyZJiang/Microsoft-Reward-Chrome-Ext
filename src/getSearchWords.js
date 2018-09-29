@@ -6,31 +6,7 @@ const _googleTrendPageId = ['1', '9', '10', '23', '24', '28', '29'];
 
 function googleTrendRequest()   {
     if (_currentGoogleTrendPageIdx >= _googleTrendPageId.length && !_usedAllGoogleTrendPageNotificationFired) {
-        chrome.notifications.create('usedAllGoogleTrendPageNotification', {
-            type: 'list',
-            title: 'Out of search words',
-            message: 'All google trend pages have been used. Cannot carry on with both or one of the searches.',
-            iconUrl: 'img/err@8x.png',
-            items: [
-                {
-                    title: 'Total number of search words:',
-                    message: _searchWordArray.length.toString()
-                },
-                {
-                    title: 'PC search status:',
-                    message: 'used ' + _pcSearchWordIdx.toString() + ' search words; progress: ' + _status.pcSearch.progress.toString() + '/' + _status.pcSearch.max.toString()
-                },
-                {
-                    title: 'Mobile search status:',
-                    message: 'used ' + _mbSearchWordIdx.toString() + ' search words; progress: ' + _status.mbSearch.progress.toString() + '/' + _status.mbSearch.max.toString()
-                }
-            ],
-            requireInteraction: true
-        });
-        _usedAllGoogleTrendPageNotificationFired = true;
-        // set completion
-        _questingStatus.searchQuesting = STATUS_WARNING;
-        setCompletion();
+        notifyOutOfSearchWords();
         return;
     }
 
@@ -44,6 +20,34 @@ function googleTrendRequest()   {
     xhr.open('GET', 'https://trends.google.com/trends/hottrends/atom/feed?pn=p' + _googleTrendPageId[_currentGoogleTrendPageIdx], true);
     xhr.send();	
     console.log('Google trend request sent!')
+}
+
+function notifyOutOfSearchWords(){
+    chrome.notifications.create('usedAllGoogleTrendPageNotification', {
+        type: 'list',
+        title: 'Out of search words',
+        message: 'All google trend pages have been used. Cannot carry on with both or one of the searches.',
+        iconUrl: 'img/err@8x.png',
+        items: [
+            {
+                title: 'Total number of search words:',
+                message: _searchWordArray.length.toString()
+            },
+            {
+                title: 'PC search status:',
+                message: 'used ' + _pcSearchWordIdx.toString() + ' search words; progress: ' + _status.pcSearch.progress.toString() + '/' + _status.pcSearch.max.toString()
+            },
+            {
+                title: 'Mobile search status:',
+                message: 'used ' + _mbSearchWordIdx.toString() + ' search words; progress: ' + _status.mbSearch.progress.toString() + '/' + _status.mbSearch.max.toString()
+            }
+        ],
+        requireInteraction: true
+    });
+    _usedAllGoogleTrendPageNotificationFired = true;
+    // set completion
+    _questingStatus.status = STATUS_WARNING;
+    setCompletion();
 }
 
 function appendWords(doc){
