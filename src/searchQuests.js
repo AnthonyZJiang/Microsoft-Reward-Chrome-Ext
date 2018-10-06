@@ -1,4 +1,5 @@
 const MB_USER_AGENT = 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19';
+const EDGE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134';
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
 
@@ -11,8 +12,7 @@ var _currentSearchType = NaN
 
 async function doSearchQuests() {
     console.assert(_status != null);
-    console.assert(_status.pcSearch.numSearch != 0);
-    console.assert(_status.mbSearch.numSearch != 0);
+    console.assert(_status.pcSearch.numSearch > 0 || _status.mbSearch.numSearch > 0);
     
     _numSearchWordsRequired = Math.max(_pcSearchWordIdx + _status.pcSearch.numSearch, _mbSearchWordIdx + _status.mbSearch.numSearch);
 
@@ -50,17 +50,28 @@ async function bingSearch() {
 
 function preparePCSearch() {
     _currentSearchType = SEARCH_TYPE_PC_SEARCH;
-    // restore user-agent
-    try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
-    }
-    catch (ex) {}
+    // change user-agent to edge browser and blocking header request.
+    removeUA();
+    chrome.webRequest.onBeforeSendHeaders.addListener(toMsEdgeUA, {urls: ['https://www.bing.com/search?q=*']}, ['blocking', 'requestHeaders']);
 }
 
 function prepareMbSearch() {
     _currentSearchType = SEARCH_TYPE_MB_SEARCH;
-    // change user-agent to mobile browser and blocking request.
+    // change user-agent to mobile browser and blocking header request.
+    removeUA();
     chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {urls: ['https://www.bing.com/search?q=*']}, ['blocking', 'requestHeaders']);
+}
+
+function removeUA() {
+    // remove user-agent
+    try {
+        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
+    }
+    catch (ex) {}
+    try {
+        chrome.webRequest.onBeforeSendHeaders.removeListener(toMsEdgeUA);
+    }
+    catch (ex) {}
 }
 
 async function requestBingSearch() {
@@ -113,6 +124,12 @@ async function checkSearchQuests(){
     if (!_status.pcSearch.complete || !_status.mbSearch.complete){
         await doSearchQuests();
     }
+
+    if (_status.pcSearch.complete && _status.mbSearch.complete) {
+        _questingStatus.status = STATUS_DONE;
+        setCompletion();
+        removeUA();
+    }
 }
 
 function toMobileUA(details){
@@ -123,4 +140,14 @@ function toMobileUA(details){
 		}
 	}
 	return {requestHeaders: details.requestHeaders};
+}
+
+function toMsEdgeUA(details){
+	for (let i in details.requestHeaders) {
+		if (details.requestHeaders[i].name === 'User-Agent') {
+			details.requestHeaders[i].value = EDGE_USER_AGENT;
+			break;
+		}
+	}
+	return {requestHeaders: details.requestHeaders};	
 }

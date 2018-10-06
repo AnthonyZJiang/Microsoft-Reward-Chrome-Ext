@@ -9,7 +9,10 @@ function checkQuizAndDaily() {
         title: (_status.quizAndDaily.max - _status.quizAndDaily.progress).toString() + ' points left!',
         message: 'You are just a few clicks away to grab them!',
         iconUrl: 'img/err@8x.png',
-        buttons: [{ title: 'Go To Bing' }, { title: 'Later' }]};
+        buttons: [{ title: 'Go To Bing' }, { title: 'Be Quiet!' }]};
 
+    if (_doNotNotify){
+        return;
+    }
     chrome.notifications.create('unfinishedPromotionNotification', opt);
 }

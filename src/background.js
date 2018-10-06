@@ -10,6 +10,7 @@ var _questingStatus = {
 }
 var _clickCheck = 0;
 var _prevWeekDay = -1;
+var _doNotNotify = false;
 
 chrome.browserAction.onClicked.addListener(browserActionButtonCallback);
 
@@ -35,7 +36,7 @@ setInterval(
 
 async function checkQuests() {
 	setBadge(STATUS_BUSY);
-	if (!checkDate()) {
+	if (!isNewDay()) {
 		// if a new day, reset variables
 		resetSearchParams();
 	}
@@ -58,16 +59,17 @@ async function checkQuests() {
 	// check search quests
 	if (!_status.pcSearch.complete || !_status.mbSearch.complete) {
 		_questingStatus.status = STATUS_BUSY;
-		await doSearchQuests();
+		
+		// note that this is not awaited and do not await it!
+		doSearchQuests();
 	} 	
-	_questingStatus.status = STATUS_DONE;
 
 	// check promotion quests	
 	checkQuizAndDaily();
 	setCompletion();	
 }
 
-function checkDate() {
+function isNewDay() {
 	let d;
 	if ((d = new Date().getDay()) != _prevWeekDay){
 		_prevWeekDay = d;
@@ -83,17 +85,27 @@ function resetSearchParams() {
 	_usedAllGoogleTrendPageNotificationFired = false;
 	_currentSearchType = NaN;
 	_searchWordArray = new Array();
+	_doNotNotify = true;
 }
 
 function setCompletion() {
 	if (_questingStatus.status != STATUS_DONE) {
 		return
 	}
+
 	if (_status.summary.complete) {
 		setBadge(STATUS_DONE);
 	} else {
 		setBadge(STATUS_WARNING);
+		return
 	}
+	
+	assertSearchCompletion();
+
+	if (_doNotNotify){
+		return;
+	}
+
 	if (_questingStatus.sendCompletionNotification){
 		_questingStatus.sendCompletionNotification = false;
 		chrome.notifications.create('searchQuestCompletionNotification',{
@@ -101,7 +113,7 @@ function setCompletion() {
 			title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
 			message: 'Search quests have been completed!',
 			iconUrl: 'img/done@8x.png',
-			buttons: [{ title: 'Go To MS Reward' }, { title: 'Dismiss' }]
+			buttons: [{ title: 'Go To MS Reward' }, { title: 'Be Quiet!' }]
 		})
 	}
 }
@@ -138,6 +150,8 @@ function setBadge(status) {
 }
 
 async function browserActionButtonCallback() {
+	_doNotNotify = true;
+
 	if (_questingStatus.status === STATUS_BUSY) {
 		_clickCheck ++;
 		if (_clickCheck > 3) {
@@ -177,5 +191,13 @@ function notificationButtonCallback(notificationId, buttonIndex) {
 			active: true});
 	} else {
 		chrome.notifications.clear(notificationId);
+		_doNotNotify = true;
 	}
+}
+
+function assertSearchCompletion() {
+	console.assert(_status.pcSearch.complete)
+	console.assert(_status.pcSearch.max == _status.pcSearch.progress)
+	console.assert(_status.mbSearch.complete)
+	console.assert(_status.mbSearch.max == _status.mbSearch.progress)
 }

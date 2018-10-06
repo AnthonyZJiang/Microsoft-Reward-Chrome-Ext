@@ -116,16 +116,20 @@ function getUserStatusJSON(str) {
 }
 
 function getPcSearchPoints(js) {
+	var pcSearchStatus = clone(_freshStatus.pcSearch);
 	try {
-		return {
-            progress: js.userStatus.counters.pcSearch[0].pointProgress,
-            max: js.userStatus.counters.pcSearch[0].pointProgressMax,
-			complete: js.userStatus.counters.pcSearch[0].complete,
-			numSearch: 0
-        };
+		let l = js.userStatus.counters.pcSearch.length
+		console.assert( l <= 2);
+		js.userStatus.counters.pcSearch.forEach(function(s) {
+			pcSearchStatus.progress += s.pointProgress;
+			pcSearchStatus.max += s.pointProgressMax;
+			pcSearchStatus.complete += s.complete;
+		})
+		pcSearchStatus.complete = pcSearchStatus.complete == l;
+		return pcSearchStatus;
 	} catch (ex) {
 		createWrongPageStructureNotification('Fail to check PC search quest.')
-		return _freshStatus.pcSearch;
+		return pcSearchStatus;
 	}
 }
 
@@ -139,7 +143,7 @@ function getMbSearchPoints(js) {
         };
 	} catch (ex) {
 		createWrongPageStructureNotification('Fail to check mobile search quest.');
-		return _freshStatus.mbSearch;
+		return clone(_freshStatus.mbSearch);
 	}
 }
 
@@ -151,7 +155,7 @@ function getQuizAndDaily(js) {
 		max: quiz.max + daily.max
 	}
 	quizDaily.complete = quizDaily.progress === quizDaily.max;
-	return quizDaily;
+	return clone(quizDaily);
 }
 
 function getQuiz(js) {
@@ -162,7 +166,7 @@ function getQuiz(js) {
         };
 	} catch (ex) {
 		createWrongPageStructureNotification('Fail to check quiz point status.');
-		return _freshStatus.quizAndDaily;
+		return clone(_freshStatus.quizAndDaily);
 	}
 }
 
@@ -176,11 +180,14 @@ function getDaily(js) {
 		return daily;
 	} catch (ex) {
 		createWrongPageStructureNotification('Fail to check daily promotion point status.');
-		return _freshStatus.quizAndDaily;
+		return clone(_freshStatus.quizAndDaily);
 	}	
 }
 
 function createWrongPageStructureNotification(msg) {
+	if (_doNotNotify){
+		return;
+	}
 	chrome.notifications.create('failStatusCheckNotification', {
 		type: 'basic',
 		title: msg,
@@ -188,19 +195,22 @@ function createWrongPageStructureNotification(msg) {
 		iconUrl: 'img/err@8x.png',
 		requireInteraction: true,
 		buttons: [	{ title: 'Go to MS reward'},
-					{ title: 'Later'}],
+					{ title: 'Be Quiet!'}],
 	});
 	setBadge(STATUS_ERROR)
 }
 
 function createNotLoggedInNotification() {
+	if (_doNotNotify){
+		return;
+	}
 	chrome.notifications.create('notLoggedInNotification', {
 		type: 'basic',
 		title: 'Fail to check complete status',
 		message: 'You need to open the Microsoft reward page and log into your account first.',
 		iconUrl: 'img/err@8x.png',
 		buttons: [	{ title: 'Go to MS reward'},
-					{ title: 'Later'}],
+					{ title: 'Be Quiet!'}],
 		requireInteraction: true
 	});
 	setBadge(STATUS_ERROR)

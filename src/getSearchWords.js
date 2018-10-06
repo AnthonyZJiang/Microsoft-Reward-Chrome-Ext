@@ -23,6 +23,10 @@ function googleTrendRequest()   {
 }
 
 function notifyOutOfSearchWords(){
+    if (_doNotNotify){
+		return;
+    }
+    
     chrome.notifications.create('usedAllGoogleTrendPageNotification', {
         type: 'list',
         title: 'Out of search words',
