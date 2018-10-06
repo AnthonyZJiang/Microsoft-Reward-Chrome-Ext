@@ -191,10 +191,10 @@ function createWrongPageStructureNotification(msg) {
 	chrome.notifications.create('failStatusCheckNotification', {
 		type: 'basic',
 		title: msg,
-		message: 'Have you logged into your MS account?\n\nThis is could also due to a change in MS Rewards page, in which case the author will try fixing it soon.',
+		message: 'Have you logged into your MS account? If this is due to a change in MS Rewards page, a fix will be on the way soon.',
 		iconUrl: 'img/err@8x.png',
 		requireInteraction: true,
-		buttons: [	{ title: 'Go to MS reward'},
+		buttons: [	{ title: 'Go to MS Rewards'},
 					{ title: 'Be Quiet!'}],
 	});
 	setBadge(STATUS_ERROR)
@@ -207,9 +207,9 @@ function createNotLoggedInNotification() {
 	chrome.notifications.create('notLoggedInNotification', {
 		type: 'basic',
 		title: 'Fail to check complete status',
-		message: 'You need to open the Microsoft reward page and log into your account first.',
+		message: 'You need to open the Microsoft  page and log into your account first.',
 		iconUrl: 'img/err@8x.png',
-		buttons: [	{ title: 'Go to MS reward'},
+		buttons: [	{ title: 'Go to MS Rewards'},
 					{ title: 'Be Quiet!'}],
 		requireInteraction: true
 	});

@@ -85,7 +85,7 @@ function resetSearchParams() {
 	_usedAllGoogleTrendPageNotificationFired = false;
 	_currentSearchType = NaN;
 	_searchWordArray = new Array();
-	_doNotNotify = true;
+	_doNotNotify = false;
 }
 
 function setCompletion() {
@@ -113,7 +113,7 @@ function setCompletion() {
 			title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
 			message: 'Search quests have been completed!',
 			iconUrl: 'img/done@8x.png',
-			buttons: [{ title: 'Go To MS Reward' }, { title: 'Be Quiet!' }]
+			buttons: [{ title: 'Go To MS Rewards' }, { title: 'Be Quiet!' }]
 		})
 	}
 }
@@ -150,7 +150,7 @@ function setBadge(status) {
 }
 
 async function browserActionButtonCallback() {
-	_doNotNotify = true;
+	_doNotNotify = false;
 
 	if (_questingStatus.status === STATUS_BUSY) {
 		_clickCheck ++;

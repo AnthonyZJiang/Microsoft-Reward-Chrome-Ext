@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Microsoft Reward Bot",
+  "name": "Microsoft Rewards Bot",
   "version": "1.20",
   "icons": { 
     "16": "img/bingRwLogo@1x.png",
@@ -20,7 +20,7 @@
   },
 
   "browser_action": {
-    "default_title": "Microsoft Reward Bot"
+    "default_title": "Microsoft Rewards Bot"
   },
 
   "permissions": ["activeTab",
