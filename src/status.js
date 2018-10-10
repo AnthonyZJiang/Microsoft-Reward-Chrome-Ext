@@ -173,7 +173,7 @@ function getQuiz(js) {
 function getDaily(js) {
 	try {
 		let daily = clone(_freshStatus.quizAndDaily);
-		js.dailySetPromotions[Object.keys(js.dailySetPromotions)[0]].forEach(function(val) {
+		js.dailySetPromotions[getTodayDate()].forEach(function(val) {
 			daily.progress += val.pointProgress;
 			daily.max += val.pointProgressMax;
 		});
@@ -182,6 +182,11 @@ function getDaily(js) {
 		createWrongPageStructureNotification('Fail to check daily promotion point status.');
 		return clone(_freshStatus.quizAndDaily);
 	}	
+}
+
+function getTodayDate() {
+	var date = new Date();
+	return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 }
 
 function createWrongPageStructureNotification(msg) {
