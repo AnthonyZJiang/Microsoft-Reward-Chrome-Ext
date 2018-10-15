@@ -25,7 +25,7 @@ function googleTrendRequest() {
 }
 
 function notifyOutOfSearchWords() {
-    if (_doNotNotify) {
+    if (!_notificationEnabled) {
         return;
     }
 

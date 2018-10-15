@@ -197,7 +197,7 @@ function getTodayDate() {
 }
 
 function createWrongPageStructureNotification(msg) {
-	if (_doNotNotify) {
+	if (!_notificationEnabled) {
 		return;
 	}
 	chrome.notifications.create('failStatusCheckNotification', {
@@ -218,7 +218,7 @@ function createWrongPageStructureNotification(msg) {
 }
 
 function createNotLoggedInNotification() {
-	if (_doNotNotify) {
+	if (!_notificationEnabled) {
 		return;
 	}
 	chrome.notifications.create('notLoggedInNotification', {

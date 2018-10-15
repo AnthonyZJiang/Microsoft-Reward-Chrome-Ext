@@ -22,15 +22,9 @@
     ]
   },
 
-  "options_page": "options.html",
-
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": false
-  },
-
   "browser_action": {
-    "default_title": "Microsoft Rewards Bot"
+    "default_title": "Microsoft Rewards Bot",
+    "default_popup": "popup.html"
   },
 
   "permissions": ["activeTab",

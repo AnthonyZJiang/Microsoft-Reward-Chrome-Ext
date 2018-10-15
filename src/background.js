@@ -12,9 +12,9 @@ var _questingStatus = {
 }
 var _clickCheck = 0;
 var _prevWeekDay = -1;
-var _doNotNotify = false;
+var _notificationEnabled;
 
-chrome.browserAction.onClicked.addListener(browserActionButtonCallback);
+//chrome.browserAction.onClicked.addListener(browserActionButtonCallback);
 
 chrome.notifications.onButtonClicked.addListener(notificationButtonCallback);
 
@@ -22,8 +22,26 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 	if (details.reason == "install") {
 		saveOptionsOnInstall();
 		_questingStatus.sendCompletionNotification = true;
-		await checkQuests();
 	}
+});
+
+chrome.runtime.onMessage.addListener(
+	function (request, sender) {
+		if (request.action == 'updateOptions') {
+			_notificationEnabled = request.content.enableNotification;
+			return;
+		}
+		if (request.action == 'checkQuests') {
+			_questingStatus.sendCompletionNotification = true;
+			checkQuests();
+		}
+})
+
+// load settings
+chrome.storage.sync.get({
+	enableNotification: true
+}, (val) => {
+	_notificationEnabled = val;
 });
 
 // check on load
@@ -31,21 +49,41 @@ checkQuests();
 
 // check every 60 minutes for possible new promotion
 setInterval(
-	async function () {
-			await checkQuests();
+	function () {
+			checkQuests();
 		},
 		3600000
 );
+
+// -----------------------------
+// FUNCTIONS
+// -----------------------------
+
+// --------
+// Options
+// --------
 
 function saveOptionsOnInstall() {
 	getAuthCookieStatus()
 		.then((val) => {
 			chrome.storage.sync.set({
-				userPersistentAuthCookie: val
+				userPersistentAuthCookie: val,
+				enableNotification: true
 			});
 		});
 }
 
+function setNotificationEnabled(val) {
+	console.assert(typeof(val) == "boolean");
+	_notificationEnabled = val;
+	chrome.storage.sync.set({
+		enableNotification: val
+	}, () => {
+		chrome.runtime.sendMessage({
+			action: 'popup-update'
+		})
+	})
+}
 
 async function checkQuests() {
 	setBadge(STATUS_BUSY);
@@ -98,7 +136,6 @@ function resetSearchParams() {
 	_usedAllGoogleTrendPageNotificationFired = false;
 	_currentSearchType = NaN;
 	_searchWordArray = new Array();
-	_doNotNotify = false;
 }
 
 function setCompletion() {
@@ -115,7 +152,7 @@ function setCompletion() {
 
 	assertSearchCompletion();
 
-	if (_doNotNotify) {
+	if (!_notificationEnabled) {
 		return;
 	}
 
@@ -190,29 +227,6 @@ function setBadge(status) {
 	}
 }
 
-async function browserActionButtonCallback() {
-	_doNotNotify = false;
-
-	if (_questingStatus.status === STATUS_BUSY) {
-		_clickCheck++;
-		if (_clickCheck > 3) {
-			_questingStatus.sendCompletionNotification = true;
-			chrome.notifications.create('busyAlreadyNotification', {
-				type: 'basic',
-				title: msg,
-				message: 'Working hard on completing the quests already :D. I will let you know once my job is finished.',
-				iconUrl: 'img/busy@8x.png',
-			});
-		}
-		return;
-	}
-
-	// send notification if it is initiated from browser action.
-	_questingStatus.sendCompletionNotification = true;
-	_clickCheck = 0;
-	await checkQuests();
-}
-
 function notificationButtonCallback(notificationId, buttonIndex) {
 	if (notificationId == 'usedAllGoogleTrendPageNotification') {
 		// this notification has no button
@@ -234,7 +248,7 @@ function notificationButtonCallback(notificationId, buttonIndex) {
 		});
 	} else {
 		chrome.notifications.clear(notificationId);
-		_doNotNotify = true;
+		setNotificationEnabled(false)
 	}
 }
 

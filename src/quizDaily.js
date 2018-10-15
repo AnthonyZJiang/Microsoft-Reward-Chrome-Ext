@@ -20,7 +20,7 @@ function checkQuizAndDaily() {
         ]
     };
 
-    if (_doNotNotify) {
+    if (!_notificationEnabled) {
         return;
     }
     chrome.notifications.create('unfinishedPromotionNotification', opt);
