@@ -1,3 +1,5 @@
+'use strict';
+
 const STATUS_NONE = 0;
 const STATUS_BUSY = 1;
 const STATUS_DONE = 20;
@@ -5,8 +7,8 @@ const STATUS_WARNING = 30;
 const STATUS_ERROR = 3;
 
 var _questingStatus = {
-	status : STATUS_NONE,
-	sendCompletionNotification : false
+	status: STATUS_NONE,
+	sendCompletionNotification: false
 }
 var _clickCheck = 0;
 var _prevWeekDay = -1;
@@ -16,11 +18,12 @@ chrome.browserAction.onClicked.addListener(browserActionButtonCallback);
 
 chrome.notifications.onButtonClicked.addListener(notificationButtonCallback);
 
-chrome.runtime.onInstalled.addListener(async function(details){
-    if(details.reason == "install"){
+chrome.runtime.onInstalled.addListener(async function (details) {
+	if (details.reason == "install") {
+		saveOptionsOnInstall();
 		_questingStatus.sendCompletionNotification = true;
-        await checkQuests();
-    }
+		await checkQuests();
+	}
 });
 
 // check on load
@@ -28,11 +31,21 @@ checkQuests();
 
 // check every 60 minutes for possible new promotion
 setInterval(
-	async function() {
-		await checkQuests();
-	},
-	3600000
+	async function () {
+			await checkQuests();
+		},
+		3600000
 );
+
+function saveOptionsOnInstall() {
+	getAuthCookieStatus()
+		.then((val) => {
+			chrome.storage.sync.set({
+				userPersistentAuthCookie: val
+			});
+		});
+}
+
 
 async function checkQuests() {
 	setBadge(STATUS_BUSY);
@@ -54,24 +67,24 @@ async function checkQuests() {
 		_questingStatus.status = STATUS_DONE;
 		setCompletion();
 		return;
-	} 
+	}
 
 	// check search quests
 	if (!_status.pcSearch.complete || !_status.mbSearch.complete) {
 		_questingStatus.status = STATUS_BUSY;
-		
+
 		// note that this is not awaited and do not await it!
 		doSearchQuests();
-	} 	
+	}
 
 	// check promotion quests	
 	checkQuizAndDaily();
-	setCompletion();	
+	setCompletion();
 }
 
 function isNewDay() {
 	let d;
-	if ((d = new Date().getDay()) != _prevWeekDay){
+	if ((d = new Date().getDay()) != _prevWeekDay) {
 		_prevWeekDay = d;
 		return false;
 	}
@@ -99,21 +112,25 @@ function setCompletion() {
 		setBadge(STATUS_WARNING);
 		return
 	}
-	
+
 	assertSearchCompletion();
 
-	if (_doNotNotify){
+	if (_doNotNotify) {
 		return;
 	}
 
-	if (_questingStatus.sendCompletionNotification){
+	if (_questingStatus.sendCompletionNotification) {
 		_questingStatus.sendCompletionNotification = false;
-		chrome.notifications.create('searchQuestCompletionNotification',{
+		chrome.notifications.create('searchQuestCompletionNotification', {
 			type: 'basic',
 			title: (_status.pcSearch.progress + _status.mbSearch.progress).toString() + '/' + (_status.pcSearch.max + _status.mbSearch.max).toString(),
 			message: 'Search quests have been completed!',
 			iconUrl: 'img/done@8x.png',
-			buttons: [{ title: 'Go To MS Rewards' }, { title: 'Be Quiet!' }]
+			buttons: [{
+				title: 'Go To MS Rewards'
+			}, {
+				title: 'Be Quiet!'
+			}]
 		})
 	}
 }
@@ -121,30 +138,54 @@ function setCompletion() {
 function setBadge(status) {
 	switch (status) {
 		case STATUS_BUSY:
-			chrome.browserAction.setIcon({path:"img/busy@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: ''});
+			chrome.browserAction.setIcon({
+				path: "img/busy@1.5x.png"
+			});
+			chrome.browserAction.setBadgeText({
+				text: ''
+			});
 			console.log('busy badge')
 			break;
 		case STATUS_DONE:
-			chrome.browserAction.setIcon({path:"img/done@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: ''});
+			chrome.browserAction.setIcon({
+				path: "img/done@1.5x.png"
+			});
+			chrome.browserAction.setBadgeText({
+				text: ''
+			});
 			console.log('done badge')
 			break;
 		case STATUS_WARNING:
-			chrome.browserAction.setIcon({path:"img/err@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: (_status.summary.max - _status.summary.progress).toString()});
-			chrome.browserAction.setBadgeBackgroundColor({"color": [225, 185, 0, 100]}); 
+			chrome.browserAction.setIcon({
+				path: "img/err@1.5x.png"
+			});
+			chrome.browserAction.setBadgeText({
+				text: (_status.summary.max - _status.summary.progress).toString()
+			});
+			chrome.browserAction.setBadgeBackgroundColor({
+				"color": [225, 185, 0, 100]
+			});
 			console.log('warning badge')
 			break;
 		case STATUS_ERROR:
-			chrome.browserAction.setIcon({path:"img/err@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: 'err'});
-			chrome.browserAction.setBadgeBackgroundColor({"color": [225, 185, 0, 100]}); 
+			chrome.browserAction.setIcon({
+				path: "img/err@1.5x.png"
+			});
+			chrome.browserAction.setBadgeText({
+				text: 'err'
+			});
+			chrome.browserAction.setBadgeBackgroundColor({
+				"color": [225, 185, 0, 100]
+			});
 			console.log('error badge')
 			break;
 		default:
-			chrome.browserAction.setIcon({path:"img/bingRwLogo@1.5x.png"});
-			chrome.browserAction.setBadgeText({text: ''});
+			chrome.browserAction.setIcon({
+				path: "img/bingRwLogo@1.5x.png"
+			});
+			chrome.browserAction.setBadgeText({
+				text: ''
+			});
 			console.log('none badge')
 	}
 }
@@ -153,7 +194,7 @@ async function browserActionButtonCallback() {
 	_doNotNotify = false;
 
 	if (_questingStatus.status === STATUS_BUSY) {
-		_clickCheck ++;
+		_clickCheck++;
 		if (_clickCheck > 3) {
 			_questingStatus.sendCompletionNotification = true;
 			chrome.notifications.create('busyAlreadyNotification', {
@@ -173,22 +214,24 @@ async function browserActionButtonCallback() {
 }
 
 function notificationButtonCallback(notificationId, buttonIndex) {
-	if (notificationId == 'usedAllGoogleTrendPageNotification')	{ 
+	if (notificationId == 'usedAllGoogleTrendPageNotification') {
 		// this notification has no button
 	} else if (notificationId == 'unfinishedPromotionNotification' && buttonIndex == 0) {
 		// for notificationIds:
 		// unfinishedPromotionNotification
 		chrome.tabs.create({
 			url: 'https://www.bing.com/',
-			active: true});
-	} else if (buttonIndex == 0) {		
+			active: true
+		});
+	} else if (buttonIndex == 0) {
 		// failStatusCheckNotification
 		// notLoggedInNotification	
 		// searchQuestCompletionNotification	
 		// completeNotification
 		chrome.tabs.create({
 			url: 'https://account.microsoft.com/rewards',
-			active: true});
+			active: true
+		});
 	} else {
 		chrome.notifications.clear(notificationId);
 		_doNotNotify = true;

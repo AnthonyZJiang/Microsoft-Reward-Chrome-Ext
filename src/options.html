@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Options</title>
+    <style>
+        .form-box {
+                width: 300px;
+                margin: 16px auto;
+                padding: 0px 20px 0px 20px;
+                color: #434b53;
+                background-color: #f1f1f1;
+                border: 1px solid #b1b1b1
+            }
+            .option-row {
+                margin: 20px 20px 0px 20px;
+            }
+            .status-row {
+                margin: 5px 20px 20px 45px;
+            }
+            .tooltip {
+                margin: 5px;
+                text-decoration: dotted underline #2885d8;
+                cursor: pointer;
+                color:#2885d8;
+            }
+            .button {                
+                color:  #f1f1f1;
+                padding: 5px 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                border: solid 2px #f1f1f1;
+            }
+            .button:hover {
+                background: #434b53;
+            }
+            .button:focus {
+                outline: 0;
+            }
+            #save {
+                margin-right: 0px;
+                background: #ee3838;
+            }
+            #save:hover {
+                background: #b62a2a;
+            }
+            #ms-rewards-link {
+                background: #868686;
+                margin-left: 6px;
+            }
+            #ms-rewards-link:hover {
+                background: #434b53;
+            }
+            hr {
+                margin: 40px 20px 20px 20px;
+            }
+            #saved-notice {
+                margin: 5px 0px 5px 36px;
+                height: 1ex;
+                display: inline
+            }
+        </style>
+</head>
+
+<body>
+    <div class="form-box">
+        <div class="option-row">
+            <input type="checkbox" class="checkbox" id="cookie-persistent" />
+            <label for="set-cookie">Set persistent authentication cookie</label>
+            <a id="show-set-cookie-tooltip" class="tooltip" title="Set Microsoft authentication cookie never expires. This removes the need of re-logging into your account every time your browser restarts.">?</a>
+        </div>
+        <div class="status-row">
+            <span>Current cookie:</span>
+            <span id="cookie-current-status" class="status-text"></span>
+        </div>
+        <hr />
+        <div class="option-row">
+            <button type="button" class="button" id="save">Save</button>
+            <button type="button" class="button" id="ms-rewards-link">Go to Microsoft Rewards</button>
+        </div>
+
+        <div id="saved-notice"></div>
+    </div>
+
+    <script src="cookies.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>

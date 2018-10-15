@@ -1,22 +1,32 @@
 {
   "manifest_version": 2,
   "name": "Microsoft Rewards Bot",
-  "version": "1.20",
-  "icons": { 
+  "version": "1.30",
+  "icons": {
     "16": "img/bingRwLogo@1x.png",
     "24": "img/bingRwLogo@1.5x.png",
     "32": "img/bingRwLogo@2x.png",
     "48": "img/bingRwLogo@3x.png",
-    "128": "img/bingRwLogo@8x.png"},
+    "128": "img/bingRwLogo@8x.png"
+  },
 
   "background": {
     "persistent": true,
-    "scripts": [ 
-      "status.js", 
-      "getSearchWords.js", 
+    "scripts": [
+      "status.js",
+      "getSearchWords.js",
       "searchQuests.js",
-      "quizDaily.js",    
-      "background.js"]
+      "quizDaily.js",
+      "background.js",
+      "cookies.js"
+    ]
+  },
+
+  "options_page": "options.html",
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   },
 
   "browser_action": {
@@ -29,5 +39,9 @@
     "https://account.microsoft.com/rewards/pointsbreakdown*",
     "webRequest",
     "webRequestBlocking",
-    "notifications"]
+    "notifications",
+    "cookies",
+    "https://.account.microsoft.com/",
+    "storage"
+  ]
 }
