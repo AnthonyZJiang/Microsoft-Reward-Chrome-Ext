@@ -13,6 +13,8 @@
   "background": {
     "persistent": true,
     "scripts": [
+      "DailyQuest.js",
+      "DailyRewardStatus.js",
       "status.js",
       "getSearchWords.js",
       "searchQuests.js",

@@ -4,6 +4,11 @@ const POINT_PER_SEARCH = 3;
 const ADDITIONAL_SEARCH = 5;
 const AVOID_PROMOTION_TITLE = [''];
 const CORS_PROMOTION_TITLE = ['shop to earn', 'keep earning']
+const POINT_BREAKDOWN_URL = 'https://account.microsoft.com/rewards/pointsbreakdown';
+const POINT_BREAKDOWN_FETCH_OPTION = {
+	method: 'GET',
+	redirect: 'error'
+}
 
 const _freshStatus = {
 	pcSearch: {
@@ -120,6 +125,30 @@ async function checkStatusInnerLoop() {
 		xhr.send();
 		console.log('Status check request sent!')
 	});
+}
+
+function getPointBreakdownDocument() {
+	return new Promise((resolve, reject) => {
+		fetch(POINT_BREAKDOWN_URL, POINT_BREAKDOWN_FETCH_OPTION)
+		.then((response) => {
+			if (response.status == 200) {
+				return response.text();
+			} else {
+				reject({
+					status: response.readyState,
+					statusText: response.statusText
+				})
+			}
+		})
+		.then((htmlText) => {
+			resolve(getDomFromText(htmlText));
+		})
+		.catch(reject);
+	})
+}
+
+function getDomFromText(text) {
+  	return new DOMParser().parseFromString(text, "text/html");
 }
 
 function getPcSearchPoints(js) {
