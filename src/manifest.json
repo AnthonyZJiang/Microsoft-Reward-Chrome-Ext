@@ -17,8 +17,8 @@
       "getSearchWords.js",
       "searchQuests.js",
       "quizDaily.js",
-      "background.js",
-      "cookies.js"
+      "cookies.js",
+      "background.js"
     ]
   },
 

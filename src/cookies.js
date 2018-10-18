@@ -14,7 +14,7 @@ var CookieStateType = Object.freeze({
     "persistent": "expires in >100 years."
 });
 
-function setPersistentAuthCookie() {
+function setAuthCookiePersistent() {
     return new Promise((resolve, reject) => {
         chrome.cookies.get(AUTH_COOKIE_OPTION,
             function (cookie) {
@@ -31,7 +31,7 @@ function setPersistentAuthCookie() {
     });
 }
 
-function setSessionalAuthCookie() {
+function setAuthCookieSessional() {
     return new Promise((resolve, reject) => {
         chrome.cookies.get(AUTH_COOKIE_OPTION,
             function (cookie) {
@@ -48,7 +48,19 @@ function setSessionalAuthCookie() {
     });
 }
 
-function getAuthCookieStatus() {
+function setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry) {
+    if (currentCookieExpiry == userCookieExpiry) {
+        return new Promise((resolve) => resolve(currentCookieExpiry));
+    }
+    
+    if (userCookieExpiry == CookieStateType.sessional) {
+        return setAuthCookieSessional();
+    }
+
+    return setAuthCookiePersistent();
+}
+
+function getAuthCookieExpiry() {
     return new Promise((resolve, reject) => {
         chrome.cookies.get(AUTH_COOKIE_OPTION,
             function (cookie) {

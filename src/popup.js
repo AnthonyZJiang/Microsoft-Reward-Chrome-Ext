@@ -2,12 +2,12 @@
 
 // Saves options to chrome.storage
 function saveOptions() {
-    var userPersistentAuthCookie = document.getElementById('set-cookie-persistent').checked;
+    var userCookieExpiry = document.getElementById('set-cookie-persistent').checked ? CookieStateType.persistent : CookieStateType.sessional;
     var enableNotification = document.getElementById('enable-notification').checked;
-    checkThenSetCookie(userPersistentAuthCookie);
+    checkThenSetCookie(userCookieExpiry);
     uploadOption({
         enableNotification:enableNotification,
-        userPersistentAuthCookie:userPersistentAuthCookie
+        userCookieExpiry:userCookieExpiry
     });
 }
 
@@ -28,41 +28,29 @@ function uploadOption(options) {
 function restoreOptions() {
     chrome.storage.sync.get({
         enableNotification:true,
-        userPersistentAuthCookie: false
+        userCookieExpiry: CookieStateType.sessional
     }, function (items) {
-        document.getElementById('set-cookie-persistent').checked = items.userPersistentAuthCookie;
+        document.getElementById('set-cookie-persistent').checked = items.userCookieExpiry == CookieStateType.persistent;
         document.getElementById('enable-notification').checked = items.enableNotification;
 
-        checkThenSetCookie(items.userPersistentAuthCookie);
+        checkThenSetCookie(items.userCookieExpiry);
     });
 }
 
-function checkThenSetCookie(userPersistentAuthCookie) {
-    getAuthCookieStatus()
-        .then((val) => {
-            setCookie(val, userPersistentAuthCookie)
-                .then((val) => {
-                    document.getElementById("cookie-current-status").textContent = val;
+function checkThenSetCookie(userCookieExpiry) {
+    getAuthCookieExpiry()
+        .then((currentCookieExpiry) => {
+            setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry)
+                .then((newCookieExpiry) => {
+                    document.getElementById("cookie-current-status").textContent = newCookieExpiry;
                 })
-                .catch((val) => {
-                    document.getElementById("cookie-current-status").textContent = val;
+                .catch((message) => {
+                    document.getElementById("cookie-current-status").textContent = message;
                 })
         })
-        .catch((val) => {
-            document.getElementById("cookie-current-status").textContent = val;
+        .catch((message) => {
+            document.getElementById("cookie-current-status").textContent = message;
         })
-}
-
-function setCookie(currentStatus, userPersistentAuthCookie) {
-    if (currentStatus != CookieStateType.persistent && userPersistentAuthCookie) {
-        return setPersistentAuthCookie();
-    }
-
-    if (currentStatus != CookieStateType.sessional && !userPersistentAuthCookie) {
-        return setSessionalAuthCookie();
-    }
-
-    return new Promise((resolve) => resolve(currentStatus));
 }
 
 function sendOptions(options) {

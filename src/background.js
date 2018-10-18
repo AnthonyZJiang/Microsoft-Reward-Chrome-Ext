@@ -39,35 +39,44 @@ chrome.runtime.onMessage.addListener(
 
 // load settings
 chrome.storage.sync.get({
-	enableNotification: true
-}, (val) => {
-	_notificationEnabled = val;
+	enableNotification: true,
+	userCookieExpiry: CookieStateType.sessional
+}, (enableNotification, userCookieExpiry) => {
+	_notificationEnabled = enableNotification;
+	getAuthCookieExpiry()
+	.then((currentCookieExpiry) => {
+		setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry)
+	})
+	.finally(() => {
+		initialize();
+	})
 });
-
-// check on load
-checkQuests();
-
-// check every 60 minutes for possible new promotion
-setInterval(
-	function () {
-			checkQuests();
-		},
-		3600000
-);
 
 // -----------------------------
 // FUNCTIONS
 // -----------------------------
+function initialize() {
+	// check on load
+	checkQuests();
+
+	// check every 60 minutes for possible new promotion
+	setInterval(
+		function () {
+				checkQuests();
+			},
+			3600000
+	);
+}
 
 // --------
 // Options
 // --------
 
 function saveOptionsOnInstall() {
-	getAuthCookieStatus()
+	getAuthCookieExpiry()
 		.then((val) => {
 			chrome.storage.sync.set({
-				userPersistentAuthCookie: val,
+				userCookieExpiry: val,
 				enableNotification: true
 			});
 		});
