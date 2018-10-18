@@ -1,4 +1,4 @@
-# Microsoft Rewards Warder
+# Microsoft Rewards Bot
 
 A Chrome extension that checks your Microsoft Rewards progress every six hour to make sure you don't miss any points. It also helps the user complete daily search quests (both PC and mobile).
 
@@ -40,7 +40,7 @@ The colour of the action button icon changes depending on your daily reward prog
 
 ![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - No more points left to earn.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warning@1x.png?raw=true)
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true)
     - with 'err' text: there is some problem with checking your reward progress; this normally comes with a notification to inform about what went wrong.
     - with some digits: there are more points, value of which is indicated by the digits, for you to grab.
 
