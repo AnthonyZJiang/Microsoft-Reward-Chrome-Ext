@@ -6,8 +6,8 @@ function saveOptions() {
     var enableNotification = document.getElementById('enable-notification').checked;
     checkThenSetCookie(userCookieExpiry);
     uploadOption({
-        enableNotification:enableNotification,
-        userCookieExpiry:userCookieExpiry
+        enableNotification: enableNotification,
+        userCookieExpiry: userCookieExpiry
     });
 }
 
@@ -27,7 +27,7 @@ function uploadOption(options) {
 // stored in chrome.storage.
 function restoreOptions() {
     chrome.storage.sync.get({
-        enableNotification:true,
+        enableNotification: true,
         userCookieExpiry: CookieStateType.sessional
     }, function (items) {
         document.getElementById('set-cookie-persistent').checked = items.userCookieExpiry == CookieStateType.persistent;
@@ -63,10 +63,14 @@ function sendOptions(options) {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
 document.getElementById('check-now').addEventListener('click', () => {
-    chrome.runtime.sendMessage({action: 'checkQuests'})
+    chrome.runtime.sendMessage({
+        action: 'checkStatus'
+    })
 });
 document.getElementById('ms-rewards-link').addEventListener('click', () => {
-    chrome.tabs.create({url:"https://account.microsoft.com/rewards/"})
+    chrome.tabs.create({
+        url: "https://account.microsoft.com/rewards/"
+    })
 });
 
 chrome.runtime.onMessage.addListener((message) => {

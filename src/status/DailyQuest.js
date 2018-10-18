@@ -4,7 +4,7 @@ class DailyQuest {
         this.max = max;
     }
 
-    get complete() {
+    get isCompleted() {
         return this.progress == this.max;
     }
 
@@ -12,8 +12,8 @@ class DailyQuest {
         return this.max > 0;
     }
 
-    get isValidAndComplete() {
-        return this.valid && this.complete;
+    get isValidAndCompleted() {
+        return this.valid && this.isCompleted;
     }
 }
 

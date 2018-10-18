@@ -13,20 +13,23 @@
   "background": {
     "persistent": true,
     "scripts": [
-      "DailyQuest.js",
-      "DailyRewardStatus.js",
-      "status.js",
-      "getSearchWords.js",
-      "searchQuests.js",
-      "quizDaily.js",
+      "status/DailyQuest.js",
+      "status/DailyRewardStatus.js",
+      "quest/searchQuest.js",
+      "quest/googleTrend.js",
+      "quest/quizDailyQuest.js",
       "cookies.js",
-      "background.js"
+      "badge.js",
+      "exception.js",
+      "notification.js",
+      "background.js",
+      "test.js"
     ]
   },
 
   "browser_action": {
     "default_title": "Microsoft Rewards Bot",
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
 
   "permissions": ["activeTab",
