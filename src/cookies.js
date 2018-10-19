@@ -16,8 +16,7 @@ var CookieStateType = Object.freeze({
 
 function setAuthCookiePersistent() {
     return new Promise((resolve, reject) => {
-        chrome.cookies.get(AUTH_COOKIE_OPTION,
-            function (cookie) {
+        chrome.cookies.get(AUTH_COOKIE_OPTION, (cookie) => {
                 if (!cookie) {
                     reject(CookieStateType.notFound)
                 } else {
@@ -33,8 +32,7 @@ function setAuthCookiePersistent() {
 
 function setAuthCookieSessional() {
     return new Promise((resolve, reject) => {
-        chrome.cookies.get(AUTH_COOKIE_OPTION,
-            function (cookie) {
+        chrome.cookies.get(AUTH_COOKIE_OPTION, (cookie) => {
                 if (!cookie) {
                     reject(CookieStateType.notFound)
                 } else {
@@ -62,8 +60,7 @@ function setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry) {
 
 function getAuthCookieExpiry() {
     return new Promise((resolve, reject) => {
-        chrome.cookies.get(AUTH_COOKIE_OPTION,
-            function (cookie) {
+        chrome.cookies.get(AUTH_COOKIE_OPTION, (cookie) => {
                 if (!cookie) {
                     reject(CookieStateType.notFound);
                 }

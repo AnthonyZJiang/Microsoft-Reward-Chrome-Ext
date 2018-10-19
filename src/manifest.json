@@ -1,30 +1,38 @@
 {
   "manifest_version": 2,
   "name": "Microsoft Rewards Bot",
-  "version": "1.30",
+  "version": "2.0",
   "icons": {
     "16": "img/bingRwLogo@1x.png",
     "24": "img/bingRwLogo@1.5x.png",
     "32": "img/bingRwLogo@2x.png",
     "48": "img/bingRwLogo@3x.png",
     "128": "img/bingRwLogo@8x.png"
-  },
+  },  
+    
+  "key": "nkehjiackpilondifkdglecdblnhpnfe",
 
   "background": {
     "persistent": true,
     "scripts": [
-      "status.js",
-      "getSearchWords.js",
-      "searchQuests.js",
-      "quizDaily.js",
+      "status/DailyQuest.js",
+      "status/DailyRewardStatus.js",
+      "quest/searchQuest.js",
+      "quest/googleTrend.js",
+      "quest/quizDailyQuest.js",
+      "utility.js",
       "cookies.js",
-      "background.js"
+      "badge.js",
+      "exception.js",
+      "notification.js",
+      "background.js",
+      "test.js"
     ]
   },
 
   "browser_action": {
     "default_title": "Microsoft Rewards Bot",
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
 
   "permissions": ["activeTab",
