@@ -34,19 +34,19 @@ User can click on the action button to force it to do the background work once.
 
 The colour of the action button icon changes depending on your daily reward progress:
 
-![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/bingRwLogo@1x.png?raw=true) - Progress unknown.
+![greyLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/grey@1x.png?raw=true) - Progress unknown.
 
 ![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy@1x.png?raw=true) - Doing some background work (e.g. automatic search).
 
-![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - No more points left to earn.
+![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - You have earned all available reward points for now.
 
-![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with some digits: there are more points, value of which is indicated by the digits, for you to grab.
+![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with some digits: you can earn more reward points; the digits indicates the value of the points.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: there is some problem with checking your reward progress; this normally comes with a notification to inform about what went wrong.
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: an error occurred; this normally comes with a notification to brief you what went wrong.
 
 # Known issue
 
-None and I assume no one will report any because no one should use this.
+None.
 
 ---
 
