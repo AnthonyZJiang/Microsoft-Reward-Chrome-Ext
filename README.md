@@ -39,7 +39,7 @@ The colour of the action button icon changes depending on your daily reward prog
 
 ![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - You have earned all available reward points for now.
 
-![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with some digits: you can earn more reward points; the digits indicates the value of the points.
+![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - with some digits: you can earn more reward points; the digits indicates the value of the points.
 
 ![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: an error occurred; this normally comes with a notification to brief you what went wrong.
 
