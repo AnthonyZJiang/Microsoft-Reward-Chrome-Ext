@@ -3,20 +3,16 @@
 function handleException(ex) {
     if (ex.name == 'GoogleTrendOverflow') {
         notifyOutOfSearchWords();
-    }
-
-    if (ex.name == 'ParseJSONFailed') {
+    } else if (ex.name == 'ParseJSONFailed') {
         notifyJSONFailed();
-    }
-
-    if (ex.name == 'FetchRedirected') {
+    } else if (ex.name == 'FetchRedirected') {
         notifyRedirected();
+    } else if (ex.name == 'AbortError') {
+        notifyDebugError(ex.msg)
+    } else {
+        notifyDebugError(ex.msg);
     }
-
-    if (ex.name == 'AbortError') {
-        //
-    }
-
+    
     setBadge(new ErrorBadge());	
 
     logException(ex);
@@ -28,18 +24,16 @@ function logException(ex) {
 }
 
 var _usedAllGoogleTrendPageNotificationFired = false;
-
 function notifyOutOfSearchWords() {
     if (!_notificationEnabled || _usedAllGoogleTrendPageNotificationFired) {
         return;
     }
 
     chrome.notifications.create('usedAllGoogleTrendPageNotification', {
-        type: 'list',
+        type: 'basic',
         title: 'Out of search words',
         message: 'All google trend pages have been used. Cannot carry on with both or one of the searches.',
-        iconUrl: 'img/err@8x.png',
-        requireInteraction: true
+        iconUrl: 'img/err@8x.png'
     });
     _usedAllGoogleTrendPageNotificationFired = true;
 }
@@ -102,4 +96,42 @@ function notifyRedirected() {
         ]
     };
     chrome.notifications.create('jsonFailedNotification', opt);
+}
+
+function notificationButtonCallback(notificationId, buttonIndex) {
+	if (notificationId == 'usedAllGoogleTrendPageNotification') {
+		// this notification has no button
+	} else if (notificationId == 'unfinishedPromotionNotification' && buttonIndex == 0) {
+		// for notificationIds:
+		// unfinishedPromotionNotification
+		chrome.tabs.create({
+			url: 'https://www.bing.com/',
+			active: true
+		});
+	} else if (buttonIndex == 0) {
+		// failStatusCheckNotification
+		// notLoggedInNotification	
+		// searchQuestCompletionNotification	
+		// completeNotification
+		chrome.tabs.create({
+			url: 'https://account.microsoft.com/rewards',
+			active: true
+		});
+	} else {
+		chrome.notifications.clear(notificationId);
+		setNotificationEnabled(false)
+	}
+}
+
+function notifyDebugError(msg) {
+    if (!_debugNotificationEnabled) {
+        return;
+    }
+
+    chrome.notifications.create('debugNotification', {
+        type: 'basic',
+        title: 'Debug Error',
+        message: msg,
+        iconUrl: 'img/grey@8x.png'
+    });
 }

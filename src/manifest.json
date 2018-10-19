@@ -18,6 +18,7 @@
       "quest/searchQuest.js",
       "quest/googleTrend.js",
       "quest/quizDailyQuest.js",
+      "utility.js",
       "cookies.js",
       "badge.js",
       "exception.js",

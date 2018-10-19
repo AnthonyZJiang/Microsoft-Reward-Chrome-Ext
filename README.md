@@ -20,11 +20,11 @@ This extension is clearly a bot as it tries to perform automatic search which wo
 *Tip: The extension does not log you into MS Rewards. You need to manually log into your account.*
 
 
-# How it works
+# What can it do
 
 ### Background Work
 
-Every 6 hour or on browser startup, the extension checks your daily reward progress. If there are any points left to be earned, a notification will pop up to notify the user. If it is a search quest, the extension will try completing it automatically using words from Google Trend.
+Every 2 hour or on browser startup, the extension checks your daily reward progress. If there are any points left to be earned, a notification will pop up to notify the user. If it is a search quest, the extension will try completing it automatically using words from Google Trend.
 
 ### Action Button Click
 
@@ -47,7 +47,3 @@ The colour of the action button icon changes depending on your daily reward prog
 # Known issue
 
 None.
-
----
-
-To me, this small project serves a pretty good practice on learning to code javascript and make a Chrome extension.

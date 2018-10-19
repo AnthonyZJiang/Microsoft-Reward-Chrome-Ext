@@ -1,86 +1,67 @@
 'use strict';
 
-
-
-var _questingStatus = {
-	status: STATUS_NONE,
-	sendCompletionNotification: false
-}
-
 var _prevWeekDay = -1;
-var _notificationEnabled;
+var _notificationEnabled = true;
+var _debugNotificationEnabled = false; // to enable debug notification, open the extension's background page from chrome://extensions/, enter `enableDebugNotification()`; to disable, enter `disableDebugNotification()`
+var _backgroundWorkInterval = 7200000; // interval at which automatic background works are carried out, in ms.
 
 var StatusInst = new DailyRewardStatus();
 var SearchInst = new SearchQuest();
 
 chrome.notifications.onButtonClicked.addListener(notificationButtonCallback);
 
-chrome.runtime.onInstalled.addListener(async function (details) {
+chrome.runtime.onInstalled.addListener(function (details) {
 	if (details.reason == "install") {
-		saveOptionsOnInstall();
-		_questingStatus.sendCompletionNotification = true;
+		setOptionsOnInstall();
+	}
+	if (details.reason == "update") {
+
 	}
 });
 
-chrome.runtime.onMessage.addListener(
-	function (request) {
-		if (request.action == 'updateOptions') {
-			_notificationEnabled = request.content.enableNotification;
-			return;
-		}
-		if (request.action == 'checkStatus') {
-			_questingStatus.sendCompletionNotification = true;
-			doBackgroundWork();
-		}
-})
+chrome.runtime.onMessage.addListener(function (request) {
+	if (request.action == 'updateOptions') {
+		_notificationEnabled = request.content.enableNotification;
+		return;
+	}
+	if (request.action == 'checkStatus') {
+		doBackgroundWork();
+	}
+});
 
 // load settings
 chrome.storage.sync.get({
 	enableNotification: true,
+	enableDebugNotification: false,
 	userCookieExpiry: CookieStateType.sessional
-}, (enableNotification, userCookieExpiry) => {
-	_notificationEnabled = enableNotification;
+}, (options) => {
+	_notificationEnabled = options.enableNotification;
+	_debugNotificationEnabled = options.enableDebugNotification;
 	getAuthCookieExpiry()
-	.then((currentCookieExpiry) => {
-		setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry)
-	})
-	.finally(() => {
-		initialize();
-	})
+		.then((currentCookieExpiry) => {
+			setAuthCookieExpiry(currentCookieExpiry, options.userCookieExpiry)
+		})
+		.finally(() => {
+			initialize();
+		})
 });
 
 // -----------------------------
-// FUNCTIONS
-// -----------------------------
-function initialize() {
-	// check on load
-	doBackgroundWork();
-
-	// check every 60 minutes for possible new promotion
-	setInterval(
-		function () {
-			doBackgroundWork();
-			},
-			3600000
-	);
-}
-
-// --------
 // Options
-// --------
-
-function saveOptionsOnInstall() {
+// -----------------------------
+function setOptionsOnInstall() {
 	getAuthCookieExpiry()
 		.then((val) => {
 			chrome.storage.sync.set({
 				userCookieExpiry: val,
-				enableNotification: true
+				enableNotification: true,
+				enableDebugNotification: false
 			});
 		});
 }
 
 function setNotificationEnabled(val) {
-	console.assert(typeof(val) == "boolean");
+	console.assert(typeof (val) == "boolean");
 	_notificationEnabled = val;
 	chrome.storage.sync.set({
 		enableNotification: val
@@ -91,15 +72,31 @@ function setNotificationEnabled(val) {
 	})
 }
 
+// -----------------------------
+// Work
+// -----------------------------
+function initialize() {
+	// check on load
+	doBackgroundWork();
+
+	// check every 120 minutes for possible new promotion
+	setInterval(
+		function () {
+			doBackgroundWork();
+		},
+		_backgroundWorkInterval
+	);
+}
+
 async function doBackgroundWork() {
 	if (SearchInst.jobStatus == STATUS_BUSY || StatusInst.jobStatus == STATUS_BUSY) {
 		return;
 	}
-	
+
 	setBadge(new BusyBadge());
 
 	checkNewDay();
-	await checkDailyRewardStatus();	
+	await checkDailyRewardStatus();
 
 	if (isCurrentBadge("busy")) {
 		setBadge(new DoneBadge());
@@ -112,7 +109,7 @@ async function checkDailyRewardStatus() {
 	try {
 		result = await StatusInst.update();
 	} catch (ex) {
-		handleException(ex);	
+		handleException(ex);
 	}
 	if (!result || !StatusInst.summary.isValid) {
 		setBadge(new ErrorBadge());
@@ -134,64 +131,8 @@ async function doSearchQuests() {
 	if (!StatusInst.pcSearchStatus.isCompleted || !StatusInst.mbSearchStatus.isCompleted) {
 		try {
 			await SearchInst.doWork(StatusInst);
-		}
-		catch (ex) {
+		} catch (ex) {
 			handleException(ex);
 		}
-	}
-}
-
-function checkNewDay() {
-	if (!isNewDay()) {
-		// if a new day, reset variables
-		resetSearchParams();
-	}
-}
-
-function isNewDay() {
-	let d;
-	if ((d = new Date().getDay()) != _prevWeekDay) {
-		_prevWeekDay = d;
-		return false;
-	}
-	return true;
-}
-
-function getDomFromText(text) {
-    return new DOMParser().parseFromString(text, "text/html");
-}
-
-function getTodayDate() {
-	var date = new Date();
-	return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-}
-
-function resetSearchParams() {
-	SearchInst = new SearchQuest();
-	_usedAllGoogleTrendPageNotificationFired = false;
-}
-
-function notificationButtonCallback(notificationId, buttonIndex) {
-	if (notificationId == 'usedAllGoogleTrendPageNotification') {
-		// this notification has no button
-	} else if (notificationId == 'unfinishedPromotionNotification' && buttonIndex == 0) {
-		// for notificationIds:
-		// unfinishedPromotionNotification
-		chrome.tabs.create({
-			url: 'https://www.bing.com/',
-			active: true
-		});
-	} else if (buttonIndex == 0) {
-		// failStatusCheckNotification
-		// notLoggedInNotification	
-		// searchQuestCompletionNotification	
-		// completeNotification
-		chrome.tabs.create({
-			url: 'https://account.microsoft.com/rewards',
-			active: true
-		});
-	} else {
-		chrome.notifications.clear(notificationId);
-		setNotificationEnabled(false)
 	}
 }
