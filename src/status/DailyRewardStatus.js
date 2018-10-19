@@ -66,12 +66,19 @@ class DailyRewardStatus {
 
     // returns a promise that resolves to the document of the point breakdown webpage.
     async _getPointBreakdownDocument() {
+        var controller = new AbortController();
+        var signal = controller.signal;
+        var fetchPromise = fetch(POINT_BREAKDOWN_URL, this._getFetchOptions(signal));
+        setTimeout(() => controller.abort(), 3000);  
         try {
-            var response = await fetch(POINT_BREAKDOWN_URL, POINT_BREAKDOWN_FETCH_OPTION);
+            var response = await fetchPromise;
         }
         catch (ex) {
-            if (ex.redirect) {
+            if (response.redirect) {
                 throw new FetchRedirectedException('Status');
+            }
+            if (ex.name == 'AbortError') {
+                throw ex;
             }
             throw new FetchFailedException('Status', ex);
         }
@@ -80,6 +87,14 @@ class DailyRewardStatus {
             return response.text();
         }
         throw new FetchResponseAnomalyException('Status');
+    }
+
+    _getFetchOptions(signal) {
+        return {
+            method: 'GET',
+            redirect: 'error',
+            signal: signal
+        }
     }
 
     //**************
@@ -151,7 +166,3 @@ class DailyRewardStatus {
 }
 
 const POINT_BREAKDOWN_URL = 'https://account.microsoft.com/rewards/pointsbreakdown';
-const POINT_BREAKDOWN_FETCH_OPTION = {
-    method: 'GET',
-    redirect: 'error'
-}

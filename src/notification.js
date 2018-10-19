@@ -13,8 +13,12 @@ function handleException(ex) {
         notifyRedirected();
     }
 
+    if (ex.name == 'AbortError') {
+        //
+    }
+
     setBadge(new ErrorBadge());	
-    
+
     logException(ex);
     throw ex;
 }
