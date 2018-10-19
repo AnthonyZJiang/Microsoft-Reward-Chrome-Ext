@@ -14,7 +14,13 @@ function handleException(ex) {
     }
 
     setBadge(new ErrorBadge());	
+    
+    logException(ex);
     throw ex;
+}
+
+function logException(ex) {
+    console.log('InnerException:', ex.innerException);
 }
 
 var _usedAllGoogleTrendPageNotificationFired = false;

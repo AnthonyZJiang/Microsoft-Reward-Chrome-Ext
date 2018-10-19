@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(
 		}
 		if (request.action == 'checkStatus') {
 			_questingStatus.sendCompletionNotification = true;
-			checkStatus();
+			doBackgroundWork();
 		}
 })
 
