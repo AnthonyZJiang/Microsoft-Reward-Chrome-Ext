@@ -65,4 +65,4 @@ To overcome this, you will need to setup a [Cross Origin Request Sharing (CORS)]
 
 ### TL;DR
 
-To save you from login to your MS account manually, check **Set persistent authentication cookie** in the extension popup page, and read [How to set up your own CORS server - A quick guide](https://github.com/tmxkn1/cors/blob/master/README.md#how-to-set-up-your-own-cors-server---a-quick-guide) to obtain a **CORS server api**, which you should use to fill the **CORS API** input box.
+To save you from loging into your MS account manually, check **Set persistent authentication cookie** in the extension popup page, and read [How to set up your own CORS server - A quick guide](https://github.com/tmxkn1/cors/blob/master/README.md#how-to-set-up-your-own-cors-server---a-quick-guide) to obtain a **CORS server api**, which you should use to fill the **CORS API** input box.
