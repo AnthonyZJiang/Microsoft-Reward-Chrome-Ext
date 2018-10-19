@@ -68,7 +68,7 @@ class DailyRewardStatus {
     async _getPointBreakdownDocument() {
         var controller = new AbortController();
         var signal = controller.signal;
-        var fetchPromise = fetch(POINT_BREAKDOWN_URL, this._getFetchOptions(signal));
+        var fetchPromise = fetch(_corsAPI + POINT_BREAKDOWN_URL, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);  
         try {
             var response = await fetchPromise;

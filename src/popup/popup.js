@@ -2,12 +2,14 @@
 
 // Saves options to chrome.storage
 function saveOptions() {
-    var userCookieExpiry = document.getElementById('set-cookie-persistent').checked ? CookieStateType.persistent : CookieStateType.sessional;
-    var enableNotification = document.getElementById('enable-notification').checked;
+    var userCookieExpiry = getSetCookieCheckboxNode().checked ? CookieStateType.persistent : CookieStateType.sessional;
+    var enableNotification = getNotificationCheckboxNode().checked;
+    var corsApi = getVerifiedCorsAPI(getCorsAPIInputNode().value);
     checkThenSetCookie(userCookieExpiry);
     uploadOption({
         enableNotification: enableNotification,
-        userCookieExpiry: userCookieExpiry
+        userCookieExpiry: userCookieExpiry,
+        corsApi: corsApi
     });
 }
 
@@ -28,12 +30,13 @@ function uploadOption(options) {
 function restoreOptions() {
     chrome.storage.sync.get({
         enableNotification: true,
-        userCookieExpiry: CookieStateType.sessional
-    }, function (items) {
-        document.getElementById('set-cookie-persistent').checked = items.userCookieExpiry == CookieStateType.persistent;
-        document.getElementById('enable-notification').checked = items.enableNotification;
-
-        checkThenSetCookie(items.userCookieExpiry);
+        userCookieExpiry: CookieStateType.sessional,
+        corsApi: ''
+    }, function (options) {
+        getSetCookieCheckboxNode().checked = options.userCookieExpiry == CookieStateType.persistent;
+        getNotificationCheckboxNode().checked = options.enableNotification;
+        getCorsAPIInputNode().value = options.corsApi;
+        checkThenSetCookie(options.userCookieExpiry);
     });
 }
 
@@ -42,14 +45,14 @@ function checkThenSetCookie(userCookieExpiry) {
         .then((currentCookieExpiry) => {
             setAuthCookieExpiry(currentCookieExpiry, userCookieExpiry)
                 .then((newCookieExpiry) => {
-                    document.getElementById("cookie-current-status").textContent = newCookieExpiry;
+                    getCookieCurrentStatusNode().textContent = newCookieExpiry;
                 })
                 .catch((message) => {
-                    document.getElementById("cookie-current-status").textContent = message;
+                    getCookieCurrentStatusNode().textContent = message;
                 })
         })
         .catch((message) => {
-            document.getElementById("cookie-current-status").textContent = message;
+            getCookieCurrentStatusNode().textContent = message;
         })
 }
 
@@ -60,18 +63,56 @@ function sendOptions(options) {
     });
 }
 
+function getVerifiedCorsAPI(corsAPI) {
+    if (corsAPI.endsWith('/')) {
+        return corsAPI;
+    }
+    return getCorrectedCorsAPI(corsAPI);
+}
+
+function getCorrectedCorsAPI(corsAPI){
+    return corsAPI+'/';
+}
+
+function getSetCookieCheckboxNode(){
+    return document.getElementById('set-cookie-persistent');
+}
+
+function getNotificationCheckboxNode(){
+    return document.getElementById('enable-notification');
+}
+
+function getCorsAPIInputNode() {
+    return document.getElementById('cors-api');
+}
+
+function getCookieCurrentStatusNode() {
+    return document.getElementById("cookie-current-status");
+}
+
 document.addEventListener('DOMContentLoaded', restoreOptions);
+
 document.getElementById('save').addEventListener('click', saveOptions);
+
 document.getElementById('check-now').addEventListener('click', () => {
     chrome.runtime.sendMessage({
         action: 'checkStatus'
     })
 });
+
 document.getElementById('ms-rewards-link').addEventListener('click', () => {
     chrome.tabs.create({
         url: "https://account.microsoft.com/rewards/"
     })
 });
+
+document.querySelectorAll('.tooltip-github-help').forEach((ele) => {
+    ele.addEventListener('click', () => {
+        chrome.tabs.create({
+            url:"https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext#optional-setup"
+        })
+    })
+})
 
 chrome.runtime.onMessage.addListener((message) => {
     if (message.action == 'popup-update') {

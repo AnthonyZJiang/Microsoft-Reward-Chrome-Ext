@@ -2,8 +2,9 @@
 
 var _prevWeekDay = -1;
 var _notificationEnabled = true;
-var _debugNotificationEnabled = false; // to enable debug notification, open the extension's background page from chrome://extensions/, enter `enableDebugNotification()`; to disable, enter `disableDebugNotification()`
-var _backgroundWorkInterval = 7200000; // interval at which automatic background works are carried out, in ms.
+var _debugNotificationEnabled = false; // To enable debug notification, open the extension's background page from chrome://extensions/, enter `enableDebugNotification()`; to disable, enter `disableDebugNotification()`
+var _backgroundWorkInterval = 7200000; // Interval at which automatic background works are carried out, in ms.
+var _corsAPI = ''; // CORS domain is optional.
 
 var StatusInst = new DailyRewardStatus();
 var SearchInst = new SearchQuest();
@@ -22,6 +23,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
 chrome.runtime.onMessage.addListener(function (request) {
 	if (request.action == 'updateOptions') {
 		_notificationEnabled = request.content.enableNotification;
+		_debugNotificationEnabled = request.content.enableDebugNotification;
+		_corsAPI = request.content.corsAPI;
 		return;
 	}
 	if (request.action == 'checkStatus') {
@@ -33,10 +36,12 @@ chrome.runtime.onMessage.addListener(function (request) {
 chrome.storage.sync.get({
 	enableNotification: true,
 	enableDebugNotification: false,
-	userCookieExpiry: CookieStateType.sessional
+	userCookieExpiry: CookieStateType.sessional,
+	corsAPI: ''
 }, (options) => {
 	_notificationEnabled = options.enableNotification;
 	_debugNotificationEnabled = options.enableDebugNotification;
+	_corsAPI = options.corsAPI;
 	getAuthCookieExpiry()
 		.then((currentCookieExpiry) => {
 			setAuthCookieExpiry(currentCookieExpiry, options.userCookieExpiry)

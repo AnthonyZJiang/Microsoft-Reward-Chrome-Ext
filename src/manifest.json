@@ -8,7 +8,9 @@
     "32": "img/bingRwLogo@2x.png",
     "48": "img/bingRwLogo@3x.png",
     "128": "img/bingRwLogo@8x.png"
-  },
+  },  
+    
+  "key": "nkehjiackpilondifkdglecdblnhpnfe",
 
   "background": {
     "persistent": true,

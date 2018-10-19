@@ -41,6 +41,9 @@
         .button:focus {
             outline: 0;
         }
+        #cors-api {
+            padding: 0px 4px;
+        }
         #save {
             margin-right: 0px;
             background: #ee3838;
@@ -69,7 +72,7 @@
         <div class="option-row">
             <input type="checkbox" class="checkbox" id="set-cookie-persistent" />
             <label for="set-cookie-persistent">Set persistent authentication cookie</label>
-            <a id="show-set-cookie-tooltip" class="tooltip" title="Set Microsoft authentication cookie never expires. This removes the need of re-logging into your account every time your browser restarts.">?</a>
+            <a id="show-set-cookie-tooltip" class="tooltip tooltip-github-help" title="Set Microsoft authentication cookie never expires. This removes the need of re-logging into your account every time your browser restarts, unless your PC is rebooted or recovered from sleep. See the github page of this project for details">?</a>
         </div>
         <div class="status-row">
             <span>Current cookie:</span>
@@ -78,6 +81,11 @@
         <div class="option-row">
             <input type="checkbox" class="checkbox" id="enable-notification" />
             <label for="enable-notification">Enable notification</label>
+        </div>
+        <div class="option-row">
+            <label for="cors-api">CORS API:</label>
+            <input class="input" id="cors-api"/>
+            <a id="show-set-cors-tooltip" class="tooltip tooltip-github-help" title="Together with persistent authentication cookie, this removes the need of re-logging into your account every time your browser restarts even if your PC is rebooted or recovered.">?</a>
         </div>
         <div class="option-row button-row">
             <span id="saved-notice"></span>
