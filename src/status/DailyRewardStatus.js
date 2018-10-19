@@ -74,7 +74,7 @@ class DailyRewardStatus {
             var response = await fetchPromise;
         }
         catch (ex) {
-            if (response.redirect) {
+            if (response && response.redirect) {
                 throw new FetchRedirectedException('Status');
             }
             if (ex.name == 'AbortError') {
