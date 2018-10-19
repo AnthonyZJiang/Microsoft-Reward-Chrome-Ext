@@ -2,7 +2,7 @@
 
 var _prevWeekDay = -1;
 var _notificationEnabled = true;
-var _debugNotificationEnabled = false; // To enable debug notification, open the extension's background page from chrome://extensions/, enter `enableDebugNotification()`; to disable, enter `disableDebugNotification()`
+var _debugNotificationEnabled = false; // To enable debug notification, type `enableDebugNotification()` in console; to disable, type `disableDebugNotification()`; to check is enabled or not, type `isDebugNotificationEnabled()`.
 var _backgroundWorkInterval = 7200000; // Interval at which automatic background works are carried out, in ms.
 var _corsAPI = ''; // CORS domain is optional.
 

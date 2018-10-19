@@ -1,10 +1,18 @@
 'use strict'
 
+var SavedNotificationText;
+
 // Saves options to chrome.storage
 function saveOptions() {
     var userCookieExpiry = getSetCookieCheckboxNode().checked ? CookieStateType.persistent : CookieStateType.sessional;
     var enableNotification = getNotificationCheckboxNode().checked;
     var corsApi = getVerifiedCorsAPI(getCorsAPIInputNode().value);
+    if (!corsApi) {
+        SavedNotificationText = 'CORS API invalid!';
+        corsApi = '';
+    } else {
+        SavedNotificationText = 'Saved!';
+    }
     checkThenSetCookie(userCookieExpiry);
     uploadOption({
         enableNotification: enableNotification,
@@ -17,7 +25,7 @@ function uploadOption(options) {
     chrome.storage.sync.set(options, () => {
         // Update status to let user know options were saved.
         var status = document.getElementById('saved-notice');
-        status.textContent = 'Saved!';
+        status.textContent = SavedNotificationText;
         setTimeout(function () {
             status.textContent = '';
         }, 750);
@@ -31,7 +39,7 @@ function restoreOptions() {
     chrome.storage.sync.get({
         enableNotification: true,
         userCookieExpiry: CookieStateType.sessional,
-        corsApi: ''
+        corsApi: ""
     }, function (options) {
         getSetCookieCheckboxNode().checked = options.userCookieExpiry == CookieStateType.persistent;
         getNotificationCheckboxNode().checked = options.enableNotification;
@@ -64,14 +72,16 @@ function sendOptions(options) {
 }
 
 function getVerifiedCorsAPI(corsAPI) {
-    if (corsAPI.endsWith('/')) {
-        return corsAPI;
+    if (!isHttpUrlValid(corsAPI)) {
+        return null;
     }
-    return getCorrectedCorsAPI(corsAPI);
+    return getForwardSlashEndedCorsAPI(corsAPI);
 }
 
-function getCorrectedCorsAPI(corsAPI){
-    return corsAPI+'/';
+function getForwardSlashEndedCorsAPI(corsAPI){
+    return corsAPI.endsWith('/')
+        ? corsAPI
+        : corsAPI+'/';
 }
 
 function getSetCookieCheckboxNode(){
@@ -87,7 +97,7 @@ function getCorsAPIInputNode() {
 }
 
 function getCookieCurrentStatusNode() {
-    return document.getElementById("cookie-current-status");
+    return document.getElementById('cookie-current-status');
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);

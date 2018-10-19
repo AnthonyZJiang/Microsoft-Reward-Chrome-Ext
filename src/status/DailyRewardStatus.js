@@ -63,18 +63,21 @@ class DailyRewardStatus {
 
         return this._jobStatus_;
     }
-
-    // returns a promise that resolves to the document of the point breakdown webpage.
+    
     async _getPointBreakdownDocument() {
         var controller = new AbortController();
         var signal = controller.signal;
         var fetchPromise = fetch(_corsAPI + POINT_BREAKDOWN_URL, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);  
+        return await this._awaitFetchPromise(fetchPromise);
+    }
+
+    async _awaitFetchPromise(fetchPromise) {
         try {
             var response = await fetchPromise;
         }
         catch (ex) {
-            if (ex.name == 'TypeError') {
+            if (!response && ex.name == 'TypeError') {
                 throw new FetchRedirectedException('Status', ex);
             }
             if (ex.name == 'AbortError') {
@@ -89,7 +92,20 @@ class DailyRewardStatus {
         throw new FetchResponseAnomalyException('Status');
     }
 
-    _getFetchOptions(signal) {
+    _getFetchOptions(signal){
+        return _corsAPI == ''
+            ? this._getFetchOptionsNoneCors(signal)
+            : this._getFetchOptionsCors(signal);
+    }
+
+    _getFetchOptionsCors(signal) {
+        return {
+            method: 'GET',
+            signal: signal
+        }
+    }
+
+    _getFetchOptionsNoneCors(signal) {
         return {
             method: 'GET',
             redirect: 'error',
