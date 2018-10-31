@@ -19,7 +19,7 @@ class SearchQuest {
 
     async doWork(status) {
         console.assert(status != null);
-        
+
         this._status_ = status;
         this._jobStatus_ = STATUS_BUSY;
         try {
@@ -31,7 +31,7 @@ class SearchQuest {
         }
     }
 
-    async _doWorkClosedLoop(status){
+    async _doWorkClosedLoop(status) {
         await status.update();
         if (status.isSearchCompleted) {
             return;
@@ -43,16 +43,16 @@ class SearchQuest {
         }
 
         await this._startSearchQuests();
-        await this._doWorkRecursion(status);
+        await this._doWorkClosedLoop(status);
     }
 
     async _startSearchQuests() {
         // Check if we have enough words to carry on searching
-        var numSearchWordsRequired = this._getNumberOfSearchWordsRequired();
+        let numSearchWordsRequired = this._getNumberOfSearchWordsRequired();
         if (numSearchWordsRequired > this._googleTrend_.googleTrendWords.length) {
             // If not, add more words to the array
-            await this._googleTrend_.getGoogleTrendWords(numSearchWordsRequired)
-        } 
+            await this._googleTrend_.getGoogleTrendWords(numSearchWordsRequired);
+        }
         // We can roll.
         await this._performPcSearch();
         await this._performMbSearch();
@@ -111,15 +111,15 @@ class SearchQuest {
         if (this._isCurrentSearchCompleted()) {
             return;
         }
-        
+        let response;
         try {
-            var response = await fetch(this._getBingSearchUrl());
+            response = await fetch(this._getBingSearchUrl());
         } catch (ex) {
             throw new FetchFailedException('Search', ex);
-        }        
-        
+        }
+
         if (response.status != 200) {
-            throw new FetchResponseAnomalyException('Search')
+            throw new FetchResponseAnomalyException('Search');
         }
 
         this._currentSearchCount_++;
@@ -128,8 +128,9 @@ class SearchQuest {
     }
 
     _getBingSearchUrl() {
+        let word;
         if (this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH) {
-            var word = this._googleTrend_.googleTrendWords[this._pcSearchWordIdx_];
+            word = this._googleTrend_.googleTrendWords[this._pcSearchWordIdx_];
             this._pcSearchWordIdx_++;
         } else {
             word = this._googleTrend_.googleTrendWords[this._mbSearchWordIdx_];
@@ -162,37 +163,37 @@ function removeUA() {
 
 function setMsEdgeUA() {
     chrome.webRequest.onBeforeSendHeaders.addListener(toMsEdgeUA, {
-        urls: ['https://www.bing.com/search?q=*']
+        urls: ['https://www.bing.com/search?q=*'],
     }, ['blocking', 'requestHeaders']);
 }
 
 function toMsEdgeUA(details) {
-    for (let i in details.requestHeaders) {
+    for (const i in details.requestHeaders) {
         if (details.requestHeaders[i].name === 'User-Agent') {
             details.requestHeaders[i].value = EDGE_USER_AGENT;
             break;
         }
     }
     return {
-        requestHeaders: details.requestHeaders
+        requestHeaders: details.requestHeaders,
     };
 }
 
 function setMobileUA() {
     chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {
-        urls: ['https://www.bing.com/search?q=*']
+        urls: ['https://www.bing.com/search?q=*'],
     }, ['blocking', 'requestHeaders']);
 }
 
 function toMobileUA(details) {
-    for (let i in details.requestHeaders) {
+    for (const i in details.requestHeaders) {
         if (details.requestHeaders[i].name === 'User-Agent') {
             details.requestHeaders[i].value = MB_USER_AGENT;
             break;
         }
     }
     return {
-        requestHeaders: details.requestHeaders
+        requestHeaders: details.requestHeaders,
     };
 }
 

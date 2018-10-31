@@ -1,0 +1,24 @@
+{
+  "name": "microsoft-reward-chrome-ext",
+  "version": "2.0.0",
+  "description": "A Chrome extension that checks your Microsoft Rewards progress every six hour to make sure you don't miss any points. It also helps the user complete daily search quests (both PC and mobile).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext.git"
+  },
+  "author": "",
+  "license": "See license in LICENSE",
+  "bugs": {
+    "url": "https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/issues"
+  },
+  "homepage": "https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-config-google": "^0.11.0"
+  }
+}

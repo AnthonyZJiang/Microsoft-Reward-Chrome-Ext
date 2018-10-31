@@ -1,12 +1,12 @@
 class GoogleTrend {
-    constructor () {
+    constructor() {
         this.reset();
     }
 
     reset() {
         this._currentGoogleTrendPageIdx_ = 0;
         this._numSearchWordsRequested_ = 0;
-        this._googleTrendWords_ =  new Array();        
+        this._googleTrendWords_ = [];
         this._newlyAddedWordsCount_ = 0;
     }
 
@@ -26,16 +26,17 @@ class GoogleTrend {
             throw new GoogleTrendPageNumberOverflowException('GoogleTrend');
         }
 
+        let response;
         try {
-            var response = await fetch(this._getGoogleTrendUrl());
+            response = await fetch(this._getGoogleTrendUrl());
         } catch (ex) {
             throw new FetchFailedException('GoogleTrend', ex);
         }
 
         if (response.status != 200) {
             throw new FetchResponseAnomalyException('GoogleTrend');
-        }        
-        
+        }
+
         this._currentGoogleTrendPageIdx_++;
         this._newlyAddedWordsCount_ += this._parseWordsFromDocument(getDomFromText(await response.text()));
         if (this._newlyAddedWordsCount_ >= this._numSearchWordsRequested_) {
@@ -57,25 +58,26 @@ class GoogleTrend {
         this._currentGoogleTrendPageIdx_++;
 
         // get titles
-        var titles = doc.getElementsByTagName('title');
+        const titles = doc.getElementsByTagName('title');
         console.log('Number of titles: ', titles.length);
 
         if (titles.length < 0) {
-            console.log('No keywords found, requesting another Google trend page.')
+            console.log('No keywords found, requesting another Google trend page.');
             return 0;
         }
 
-        return this._appendWords(titles)
+        return this._appendWords(titles);
     }
 
     _appendWords(titles) {
-        var addedWordCount = 0;
+        let addedWordCount = 0;
         // iterate through all titles
         // but skip the first one as it is 'Hot Trends'
-        for (var i = 1; i < titles.length; i++) {
+        for (let i = 1; i < titles.length; i++) {
             // if the same search word has been added, skip to the next one.
-            if (this._isCurrentWordIncluded(titles[i].textContent))
+            if (this._isCurrentWordIncluded(titles[i].textContent)) {
                 continue;
+            }
             // add the search word
             this._googleTrendWords_.push(titles[i].textContent);
             addedWordCount++;
@@ -85,7 +87,7 @@ class GoogleTrend {
     }
 
     _isCurrentWordIncluded(word) {
-        return this._googleTrendWords_.includes(word)
+        return this._googleTrendWords_.includes(word);
     }
 }
 

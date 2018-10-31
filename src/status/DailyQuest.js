@@ -15,6 +15,10 @@ class DailyQuest {
     get isValidAndCompleted() {
         return this.valid && this.isCompleted;
     }
+
+    get pointsToGet() {
+        return this.max - this.progress;
+    }
 }
 
 class DailySearchQuest extends DailyQuest {

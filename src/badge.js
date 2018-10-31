@@ -2,8 +2,11 @@ class Badge {
     constructor(type, iconPath, text, color) {
         this._type_ = type;
         this._icon_ = iconPath;
+        if (!text) {
+            text = '';
+        }
         this._text_ = text;
-        this._color_ = color;
+        this._backgroundColor_ = color;
     }
 
     get type() {
@@ -23,72 +26,88 @@ class Badge {
     }
 
     set() {
+        this.setIcon();
+        this.setText();
+        this.setBackgroundColour();
+    }
+
+    setIcon() {
         chrome.browserAction.setIcon({
-            path: this.icon
-        })
-        chrome.browserAction.setBadgeText({
-            text: this.text
-        })
-        if (this.backgroundColor) {
-            chrome.browserAction.setBadgeBackgroundColor({
-                "color": this.backgroundColor
-            });
+            path: this.icon,
+        });
+    }
+
+    setText() {
+        let txt = this.text;
+        if (!txt) {
+            txt = '';
         }
+
+        chrome.browserAction.setBadgeText({
+            text: txt,
+        });
+    }
+
+    setBackgroundColour() {
+        if (!this.backgroundColor) {
+            return;
+        }
+        chrome.browserAction.setBadgeBackgroundColor({
+            'color': this.backgroundColor,
+        });
+    }
+}
+
+class GreyBadge extends Badge {
+    constructor() {
+        super('grey', 'img/grey@1.5x.png');
     }
 }
 
 class BusyBadge extends Badge {
-    constructor () {
-        super("busy", "img/busy@1.5x.png", '')
+    constructor() {
+        super('busy', 'img/busy@1.5x.png');
     }
 }
 
 class DoneBadge extends Badge {
-    constructor () {
-        super("done", "img/done@1.5x.png", '')
+    constructor() {
+        super('done', 'img/done@1.5x.png');
     }
 }
 
 class WarningBadge extends Badge {
-    constructor () {
-        super("warn", "img/warn@1.5x.png", '', [225, 185, 0, 100])
-    }
-
-    get text() {
-        return (StatusInst.summary.max - StatusInst.summary.progress).toString()
+    constructor() {
+        super('warn', 'img/warn@1.5x.png');
     }
 }
 
 class QuizAndDailyBadge extends Badge {
-    constructor () {
-        super("quiz", "img/warn@1.5x.png", '', [225, 185, 0, 100])
-    }
-
-    get text() {
-        return (StatusInst.quizAndDailyStatus.max - StatusInst.quizAndDailyStatus.progress).toString()
+    constructor(text) {
+        super('quiz', 'img/warn@1.5x.png', text, [255, 201, 71, 100]);
     }
 }
 
 class ErrorBadge extends Badge {
-    constructor () {
-        super("error", "img/err@1.5x.png", 'err', [225, 185, 0, 100])
+    constructor() {
+        super('error', 'img/err@1.5x.png', 'err', [255, 51, 51, 100]);
     }
 }
 
 class NoneBadge extends Badge {
-    constructor () {
-        super("none", "img/bingRwLogo@1.5x.png", '')
+    constructor() {
+        super('none', 'img/bingRwLogo@1.5x.png');
     }
 }
 
-var _currentBadge = null;
+let _currentBadge = null;
 function setBadge(badge) {
     badge.set();
     _currentBadge = badge;
 }
 
-function isCurrentBadge(badgeType){
-    if (typeof badgeType == "object") {
+function isCurrentBadge(badgeType) {
+    if (typeof badgeType == 'object') {
         badgeType = badgeType.type;
     }
     return _currentBadge.type == badgeType;

@@ -1,3 +1,4 @@
 *.crx
 *.pem
 *.ai
+node_modules/

@@ -53,7 +53,7 @@ class DailyRewardStatus {
         this.reset();
 
         this._jobStatus_ = STATUS_BUSY;
-        try{
+        try {
             this._parsePointBreakdownDocument(getDomFromText(await this._getPointBreakdownDocument()));
         } catch (ex) {
             this._jobStatus_ = STATUS_ERROR;
@@ -63,61 +63,58 @@ class DailyRewardStatus {
 
         return this._jobStatus_;
     }
-    
+
     async _getPointBreakdownDocument() {
-        var controller = new AbortController();
-        var signal = controller.signal;
-        var fetchPromise = fetch(_corsAPI + POINT_BREAKDOWN_URL, this._getFetchOptions(signal));
-        setTimeout(() => controller.abort(), 3000);  
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL, this._getFetchOptionsNoneCors(signal));
+        setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise);
     }
 
     async _awaitFetchPromise(fetchPromise) {
+        let response;
         try {
-            var response = await fetchPromise;
-        }
-        catch (ex) {
-            if (!response && ex.name == 'TypeError') {
-                throw new FetchRedirectedException('Status', ex);
-            }
+            response = await fetchPromise;
+        } catch (ex) {
             if (ex.name == 'AbortError') {
                 throw ex;
             }
             throw new FetchFailedException('Status', ex);
         }
-        
+
         if (response.status == 200) {
             return response.text();
         }
         throw new FetchResponseAnomalyException('Status');
     }
 
-    _getFetchOptions(signal){
-        return _corsAPI == ''
-            ? this._getFetchOptionsNoneCors(signal)
-            : this._getFetchOptionsCors(signal);
-    }
-
-    _getFetchOptionsCors(signal) {
+    _getFetchOptions(signal) {
         return {
             method: 'GET',
-            signal: signal
-        }
+            signal: signal,
+            headers: this._getAllowControlAllowOriginHeader(),
+        };
+    }
+
+    _getAllowControlAllowOriginHeader() {
+        const headers = new Headers();
+        headers.append('Allow-Control-Allow-Origin', '*');
+        return headers;
     }
 
     _getFetchOptionsNoneCors(signal) {
         return {
             method: 'GET',
-            redirect: 'error',
-            signal: signal
-        }
+            signal: signal,
+        };
     }
 
-    //**************
+    //* *************
     // PARSE METHODS
-    //**************
+    //* *************
     _parsePointBreakdownDocument(doc) {
-        let statusJson = DailyRewardStatus.getUserStatusJSON(doc);
+        const statusJson = DailyRewardStatus.getUserStatusJSON(doc);
 
         if (statusJson == null) {
             throw new ParseJSONFailedException('Status');
@@ -165,14 +162,14 @@ class DailyRewardStatus {
         });
     }
 
-    //***************
+    //* **************
     // STATIC METHODS
-    //***************
+    //* **************
     // parses a document object from text/string.
     static getUserStatusJSON(doc) {
-        var jsList = doc.querySelectorAll("body script[type='text/javascript']:not([id])");
-        for (var i in jsList) {
-            var m = /(?=\{"userStatus":).*(=?\}\};)/.exec(jsList[i].text);
+        const jsList = doc.querySelectorAll('body script[type=\'text/javascript\']:not([id])');
+        for (let i = 0; i < jsList.length; i++) {
+            const m = /(?=\{"userStatus":).*(=?\}\};)/.exec(jsList[i].text);
             if (m) {
                 return JSON.parse(m[0].substr(0, m[0].length - 1));
             }

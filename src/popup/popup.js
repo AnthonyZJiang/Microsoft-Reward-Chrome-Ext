@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
-var SavedNotificationText;
+let SavedNotificationText;
 
 // Saves options to chrome.storage
 function saveOptions() {
-    var userCookieExpiry = getSetCookieCheckboxNode().checked ? CookieStateType.persistent : CookieStateType.sessional;
-    var enableNotification = getNotificationCheckboxNode().checked;
-    var corsApi = getVerifiedCorsAPI(getCorsAPIInputNode().value);
+    const userCookieExpiry = getSetCookieCheckboxNode().checked ? CookieStateType.persistent : CookieStateType.sessional;
+    const enableNotification = getNotificationCheckboxNode().checked;
+    let corsApi = getVerifiedCorsAPI(getCorsAPIInputNode().value);
     if (!corsApi) {
         SavedNotificationText = 'CORS API invalid!';
         corsApi = '';
@@ -17,14 +17,14 @@ function saveOptions() {
     uploadOption({
         enableNotification: enableNotification,
         userCookieExpiry: userCookieExpiry,
-        corsApi: corsApi
+        corsApi: corsApi,
     });
 }
 
 function uploadOption(options) {
     chrome.storage.sync.set(options, () => {
         // Update status to let user know options were saved.
-        var status = document.getElementById('saved-notice');
+        const status = document.getElementById('saved-notice');
         status.textContent = SavedNotificationText;
         setTimeout(function () {
             status.textContent = '';
@@ -39,7 +39,7 @@ function restoreOptions() {
     chrome.storage.sync.get({
         enableNotification: true,
         userCookieExpiry: CookieStateType.sessional,
-        corsApi: ""
+        corsApi: '',
     }, function (options) {
         getSetCookieCheckboxNode().checked = options.userCookieExpiry == CookieStateType.persistent;
         getNotificationCheckboxNode().checked = options.enableNotification;
@@ -57,38 +57,38 @@ function checkThenSetCookie(userCookieExpiry) {
                 })
                 .catch((message) => {
                     getCookieCurrentStatusNode().textContent = message;
-                })
+                });
         })
         .catch((message) => {
             getCookieCurrentStatusNode().textContent = message;
-        })
+        });
 }
 
 function sendOptions(options) {
     chrome.runtime.sendMessage({
         action: 'updateOptions',
-        content: options
+        content: options,
     });
 }
 
-function getVerifiedCorsAPI(corsAPI) {
-    if (!isHttpUrlValid(corsAPI)) {
+function getVerifiedCorsAPI(corsApi) {
+    if (!isHttpUrlValid(corsApi)) {
         return null;
     }
-    return getForwardSlashEndedCorsAPI(corsAPI);
+    return getForwardSlashEndedCorsAPI(corsApi);
 }
 
-function getForwardSlashEndedCorsAPI(corsAPI){
-    return corsAPI.endsWith('/')
-        ? corsAPI
-        : corsAPI+'/';
+function getForwardSlashEndedCorsAPI(corsApi) {
+    return corsApi.endsWith('/')
+        ? corsApi
+        : corsApi+'/';
 }
 
-function getSetCookieCheckboxNode(){
+function getSetCookieCheckboxNode() {
     return document.getElementById('set-cookie-persistent');
 }
 
-function getNotificationCheckboxNode(){
+function getNotificationCheckboxNode() {
     return document.getElementById('enable-notification');
 }
 
@@ -106,26 +106,26 @@ document.getElementById('save').addEventListener('click', saveOptions);
 
 document.getElementById('check-now').addEventListener('click', () => {
     chrome.runtime.sendMessage({
-        action: 'checkStatus'
-    })
+        action: 'checkStatus',
+    });
 });
 
 document.getElementById('ms-rewards-link').addEventListener('click', () => {
     chrome.tabs.create({
-        url: "https://account.microsoft.com/rewards/"
-    })
+        url: 'https://account.microsoft.com/rewards/',
+    });
 });
 
 document.querySelectorAll('.tooltip-github-help').forEach((ele) => {
     ele.addEventListener('click', () => {
         chrome.tabs.create({
-            url:"https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext#optional-setup"
-        })
-    })
-})
+            url: 'https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext#optional-setup',
+        });
+    });
+});
 
 chrome.runtime.onMessage.addListener((message) => {
     if (message.action == 'popup-update') {
         restoreOptions();
     }
-})
+});

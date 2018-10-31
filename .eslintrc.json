@@ -1,0 +1,29 @@
+{
+    "extends": "google",
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module",
+        "ecmaFeatures": {}
+    },
+    "rules": {
+        "require-jsdoc": 0,
+        "indent": ["error", 4],
+        "no-tabs": 0,
+        "space-before-function-paren": ["error", {
+            "anonymous": "always",
+            "named": "never",
+            "asyncArrow": "always"
+        }],
+        "linebreak-style": ["error", "windows"],
+        "max-len": 0,
+        "no-unused-vars": 0,
+        "no-restricted-globals": 0,
+        "prefer-const": 1
+     },
+    "env": {
+        "browser": true,
+        "jquery": true,
+        "webextensions": true,
+        "es6": true
+    }
+}

@@ -52,17 +52,3 @@ None.
 ### Persistent cookie
 
 This extension needs to `fetch` [MS Point Breakdown page](https://account.microsoft.com/rewards/pointsbreakdown) to understand your daily point progress. However, to access this page, you have to be logged in to your MS account. Since this extension does not take your account and password, you will have to login manually. This must be done every time your browser is completely closed, due to its short-lived authentication cookie *(expires on session close)*. To overcome this PITA, you can **set the cookie to literally never expire** in the extension popup page, which extends the cookie's expiry date to 2199. 
-
-Sounds easy? Unfortunately, this only solves a part of the PITA. Yes, a literally-never-expired cookie ensures that your login status does not expire if you close your browser **unless** your PC reboots or recovers from sleep. Therefore, you still need to open the MS Point Breakdown page manually once for every Windows session. On the good side though your login information is still available in the authentication cookie, so you don't have to enter your account and password; the login page will be redirected automatically to the Point Breakdown page. 
-
-### CORS
-
-Redirect automatically... OK, so what prevents you from "logging in" programmatically, no login information required anyway? Well, this is not possible because the login page refuses Cross Origin Requests (COR) which interrupts the `fetch` request with an error:
-
-    Failed to load https://login.live.com/login.srf?_ETC._:No 'Access-Control-Allow-Origin' header is present on the requested resource.Origin 'chrome-extension://nkehjiackpilondifkdglecdblnhpnfe' is therefore not allowed access.
-
-To overcome this, you will need to setup a [Cross Origin Request Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) server. This is not a click away however. You may read [How to set up your own CORS server - A quick guide](https://github.com/tmxkn1/cors/blob/master/README.md#how-to-set-up-your-own-cors-server---a-quick-guide) to setup your own CORS server. Once the server is setup, you can copy the server address and fill the CORS API box in the extension popup page.
-
-### TL;DR
-
-To save you from loging into your MS account manually, check **Set persistent authentication cookie** in the extension popup page, and read [How to set up your own CORS server - A quick guide](https://github.com/tmxkn1/cors/blob/master/README.md#how-to-set-up-your-own-cors-server---a-quick-guide) to obtain a **CORS server api**, which you should use to fill the **CORS API** input box.

@@ -1,59 +1,67 @@
-class FetchResponseAnomalyException extends Error {
+class ErrorWithSourceInnerException extends Error {
+    constructor(source, innerException, message) {
+        super(message);
+        this.source = source;
+        this.innerException = innerException;
+    }
+}
+
+class FetchResponseAnomalyException extends ErrorWithSourceInnerException {
     constructor(source, message) {
         if (!message) {
-            message = 'Fetch response is anomalous.'
+            message = 'Fetch response is anomalous.';
         }
-        super(message)
+        super(source, null, message);
         this.name = 'FetchResponseAnomalous';
-        this.source = source;
     }
 }
 
-class FetchFailedException extends Error {
+class FetchFailedException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
         if (!message) {
-            message = 'Fetch failed because an exception occurred.'
+            message = 'Fetch failed because an exception occurred.';
         }
-        super(message)
+        super(source, innerException, message);
         this.name = 'FetchFailed';
-        this.source = source;
-        this.innerException = innerException;
     }
 }
 
-class FetchRedirectedException extends Error {
+class FetchRedirectedException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
         if (!message) {
-            message = 'Fetch failed because redirection occurred.'
+            message = 'Fetch failed because redirection occurred.';
         }
-        super(message)
+        super(source, innerException, message);
         this.name = 'FetchRedirected';
-        this.source = source;
-        this.innerException = innerException;
     }
 }
 
-class GoogleTrendPageNumberOverflowException extends Error {
+class GoogleTrendPageNumberOverflowException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
         if (!message) {
-            message = 'Failed to get more Google trend words because all pages have been used.'
+            message = 'Failed to get more Google trend words because all pages have been used.';
         }
-        super(message)
+        super(source, innerException, message);
         this.name = 'GoogleTrendOverflow';
-        this.source = source;
-        this.innerException = innerException;
     }
 }
 
-class ParseJSONFailedException extends Error {
+class ParseJSONFailedException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
         if (!message) {
-            message = 'Failed to parse the JSON file.'
+            message = 'Failed to parse the JSON file.';
         }
-        super(message)
+        super(source, innerException, message);
         this.name = 'ParseJSONFailed';
-        this.source = source;
-        this.innerException = innerException;
     }
 }
 
+class FetchTimeoutException extends ErrorWithSourceInnerException {
+    constructor(source, innerException, message) {
+        if (!message) {
+            message = 'Fetch timeout.';
+        }
+        super(source, innerException, message);
+        this.name = 'FetchTimeout';
+    }
+}
