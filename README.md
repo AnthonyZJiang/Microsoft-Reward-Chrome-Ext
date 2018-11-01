@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext/badge)](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext)
+
 # Microsoft Rewards Bot
 
 A Chrome extension that checks your Microsoft Rewards progress every six hour to make sure you don't miss any points. It also helps the user complete daily search quests (both PC and mobile).

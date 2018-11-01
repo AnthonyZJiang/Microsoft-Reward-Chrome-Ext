@@ -21,8 +21,16 @@ function getDomFromText(text) {
 }
 
 function getTodayDate() {
-    const date = new Date();
-    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    const today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1;
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    return `${mm}/${dd}/${today.getFullYear()}`;
 }
 
 function resetDayBoundParams() {
@@ -32,20 +40,24 @@ function resetDayBoundParams() {
 
 function enableDebugNotification() {
     _debugNotificationEnabled = true;
-    chrome.storage.sync.set({enableDebugNotification: true}, () => {
+    chrome.storage.sync.set({
+        enableDebugNotification: true,
+    }, () => {
         console.log('Debug notification enabled!');
     });
 }
 
 function disableDebugNotification() {
     _debugNotificationEnabled = false;
-    chrome.storage.sync.set({enableDebugNotification: false}, () => {
+    chrome.storage.sync.set({
+        enableDebugNotification: false,
+    }, () => {
         console.log('Debug notification disabled!');
     });
 }
 
 function isDebugNotificationEnabled() {
-    console.log('Debug notification', _debugNotificationEnabled ? 'is':'is not', 'enabled.');
+    console.log('Debug notification', _debugNotificationEnabled ? 'is' : 'is not', 'enabled.');
 }
 
 function isHttpUrlValid(url) {
