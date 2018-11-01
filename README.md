@@ -14,7 +14,7 @@ This extension is clearly a bot as it tries to perform automatic search which wo
 
 1. Download the source code.
 2. Open Chrome (build 64+, preferably).
-3. Log into your Microsoft account.
+3. Log into your [Microsoft account](https://www.microsoft.com). (Make sure you also logged into [bing.com](bing.com))
 4. Go to chrome://extensions/ and enable `Developer mode`.
 5. Click `Load unpacked` and select `src` folder.
 6. Enable the extension.
