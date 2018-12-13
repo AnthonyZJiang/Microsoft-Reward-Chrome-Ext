@@ -1,7 +1,7 @@
 let _prevWeekDay = -1;
 
 function checkNewDay() {
-    if (!isNewDay()) {
+    if (isNewDay()) {
         // if a new day, reset variables
         resetDayBoundParams();
     }
