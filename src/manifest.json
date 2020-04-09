@@ -9,7 +9,7 @@
     "48": "img/bingRwLogo@3x.png",
     "128": "img/bingRwLogo@8x.png"
   },  
-  "description": "A helper extension for Microsoft Rewards",
+  "description": "A Chrome extension for Microsoft Rewards. Your daily progress is checked every two hours and PC, mobile, EDGE search quests are completed automatically.",
 
   "background": {
     "persistent": true,
@@ -32,13 +32,11 @@
     "default_popup": "popup/popup.html"
   },
 
-  "permissions": ["activeTab",
-    "https://www.bing.com/search?q=*",
+  "permissions": ["https://www.bing.com/search?q=*",
     "https://trends.google.com/trends/*",
     "https://account.microsoft.com/rewards/pointsbreakdown*",
     "webRequest",
     "webRequestBlocking",
-    "https://.account.microsoft.com/",
     "storage"
   ]
 }

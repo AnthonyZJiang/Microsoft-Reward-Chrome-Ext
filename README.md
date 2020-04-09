@@ -2,34 +2,45 @@
 
 # Microsoft Rewards Bot
 
-A Chrome extension that checks your Microsoft Rewards progress every six hour to make sure you don't miss any points. It also helps the user complete daily search quests (both PC and mobile).
+A Chrome extension for Microsoft Rewards. Your daily progress is checked every two hours and PC, mobile, EDGE search quests are completed automatically.
 
-Note that this extension cannot do any daily sets or quiz.
+This extension do not attempt to do any promotional link or quiz quests.
 
 **This is a bot!**
 
-This extension is clearly a bot as it tries to perform automatic search which would award you reward points. Using a bot is against Microsoft Rewards TOS. Therefore, using this extension to your advantage may result in your account being banned, for which I take no responsibility. 
+Use at your own risk. I do not take responsibility for any consequence caused by this extension.
 
-# Installation
+# Install from git
 
-1. Download the source code.
-2. Open Chrome (build 64+, preferably).
-3. Log into your [Microsoft account](https://www.microsoft.com). (Make sure you also logged into [bing.com](bing.com))
-4. Go to chrome://extensions/ and enable `Developer mode`.
-5. Click `Load unpacked` and select `src` folder.
-6. Enable the extension.
+1. `git clone https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext.git`
+2. Open Chrome.
+3. Go to chrome://extensions/ and enable `Developer mode`.
+4. Click `Load unpacked` and select `src` folder.
+5. Enable the extension.
 
-*Tip: The extension does not log you into MS Rewards. You need to manually log into your account.*
+# Install from Chrome web store
 
-# What can it do
+https://chrome.google.com/webstore/detail/pcejnhpajnnahbhkmempjgeppfbchiog/publish-review?authuser=0&hl=en-GB
+
+It may not be up to date as it needs to be reviewed at Google before it can be made available. The review process may take hours, days, or fail.
+
+# Use
+
+1. Log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](www.bing.com).
+2. Enjoy.
+
+*Note: You may need to repeat step 1 every time you restart Chrome.*
+
+# Functionality
 
 ### Background Work
 
-Every 2 hour or on browser startup, the extension checks your daily reward progress. If there are any points left to be earned, a notification will pop up to notify the user. If it is a search quest, the extension will try completing it automatically using words from Google Trend.
+Every 2 hours the extension checks your daily Microsoft Rewards progress and finishes any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number in place of the action button icon.
 
-### Action Button Click
+### Action Button
 
-User can click on the action button to force it to do the background work once.
+1. A button to force check reward progress.
+2. A link to Microsoft Rewards.
 
 ### Action Button Badge
 
@@ -43,7 +54,7 @@ The colour of the badge changes depending on your daily reward progress or the s
 
 ![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - Yellow badge is shown with a number: There are X points left to be earned through quiz.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: an error occurred - you are probably not logged in or you have reached your daily google trend request allowance.
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Shown with 'err' text: an error occurred - you are probably not logged in or you have reached your daily google trend request allowance. Try log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](www.bing.com) and use the Check Now button to force it do another round of work.
 
 # Known issue
 

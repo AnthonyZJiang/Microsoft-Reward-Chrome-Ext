@@ -13,7 +13,7 @@ function setDelayedInitialisation(ms) {
         function () {
             initialize();
         },
-        ms
+        ms,
     );
 }
 
@@ -25,7 +25,7 @@ function initialize() {
         function () {
             doBackgroundWork();
         },
-        WORKER_ACTIVATION_INTERVAL
+        WORKER_ACTIVATION_INTERVAL,
     );
 }
 
