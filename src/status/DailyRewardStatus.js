@@ -132,6 +132,7 @@ class DailyRewardStatus {
         this._parsePcSearch(statusJson);
         this._parseMbSearch(statusJson);
         this._parseQuiz(statusJson);
+        this._parsePunchCards(statusJson);
         this._parseDaily(statusJson);
     }
 
@@ -144,6 +145,11 @@ class DailyRewardStatus {
     }
 
     _parseMbSearch(statusJson) {
+        if (!statusJson.userStatus.counters.hasOwnProperty('mobileSearch')) {
+            this._mbSearch_.progress = 1;
+            this._mbSearch_.max = 1;
+            return;
+        }
         console.assert(statusJson.userStatus.counters.mobileSearch.length == 1);
         this._mbSearch_.progress = statusJson.userStatus.counters.mobileSearch[0].pointProgress;
         this._mbSearch_.max = statusJson.userStatus.counters.mobileSearch[0].pointProgressMax;
@@ -153,6 +159,14 @@ class DailyRewardStatus {
         console.assert(statusJson.userStatus.counters.activityAndQuiz.length == 1);
         this._quizAndDaily_.progress += statusJson.userStatus.counters.activityAndQuiz[0].pointProgress;
         this._quizAndDaily_.max += statusJson.userStatus.counters.activityAndQuiz[0].pointProgressMax;
+    }
+
+    _parsePunchCards(statusJson) {
+        for (let i = 0; i < statusJson.punchCards.length; i++) {
+            if (statusJson.punchCards[i].parentPromotion.promotionType == 'appstore') {
+                this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
+            }
+        }
     }
 
     _parseDaily(statusJson) {
