@@ -34,30 +34,8 @@ function getTodayDate() {
 }
 
 function resetDayBoundParams() {
-    SearchInst = new SearchQuest();
-    _usedAllGoogleTrendPageNotificationFired = false;
-}
-
-function enableDebugNotification() {
-    _debugNotificationEnabled = true;
-    chrome.storage.sync.set({
-        enableDebugNotification: true,
-    }, () => {
-        console.log('Debug notification enabled!');
-    });
-}
-
-function disableDebugNotification() {
-    _debugNotificationEnabled = false;
-    chrome.storage.sync.set({
-        enableDebugNotification: false,
-    }, () => {
-        console.log('Debug notification disabled!');
-    });
-}
-
-function isDebugNotificationEnabled() {
-    console.log('Debug notification', _debugNotificationEnabled ? 'is' : 'is not', 'enabled.');
+    searchQuest.reset();
+    googleTrend.reset();
 }
 
 function isHttpUrlValid(url) {

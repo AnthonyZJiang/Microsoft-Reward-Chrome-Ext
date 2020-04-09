@@ -31,26 +31,20 @@ Every 2 hour or on browser startup, the extension checks your daily reward progr
 
 User can click on the action button to force it to do the background work once.
 
-### Action Button Icon
+### Action Button Badge
 
-The colour of the action button icon changes depending on your daily reward progress:
+The colour of the badge changes depending on your daily reward progress or the status of the extension:
 
-![greyLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/grey@1x.png?raw=true) - Progress unknown.
+![greyLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/grey@1x.png?raw=true) - Just hang on a second.
 
-![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy@1x.png?raw=true) - Doing some background work (e.g. automatic search).
+![blueLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/busy@1x.png?raw=true) - Working hard on doing those search quests for ya!
 
-![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - You have earned all available reward points for now.
+![greenLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/done@1x.png?raw=true) - You have earned all available points for now.
 
-![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - with some digits: you can earn more reward points; the digits indicates the value of the points.
+![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - Yellow badge is shown with a number: There are X points left to be earned through quiz.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: an error occurred; this normally comes with a notification to brief you what went wrong.
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - with 'err' text: an error occurred - you are probably not logged in or you have reached your daily google trend request allowance.
 
 # Known issue
 
 None.
-
-# Optional setup
-
-### Persistent cookie
-
-This extension needs to `fetch` [MS Point Breakdown page](https://account.microsoft.com/rewards/pointsbreakdown) to understand your daily point progress. However, to access this page, you have to be logged in to your MS account. Since this extension does not take your account and password, you will have to login manually. This must be done every time your browser is completely closed, due to its short-lived authentication cookie *(expires on session close)*. To overcome this PITA, you can **set the cookie to literally never expire** in the extension popup page, which extends the cookie's expiry date to 2199. 

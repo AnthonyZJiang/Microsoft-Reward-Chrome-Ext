@@ -1,87 +1,8 @@
 'use strict';
 
-let _notificationEnabled = true;
-let _debugNotificationEnabled = false; // To enable debug notification, type `enableDebugNotification()` in console; to disable, type `disableDebugNotification()`; to check is enabled or not, type `isDebugNotificationEnabled()`.
-const _backgroundWorkInterval = 7200000; // Interval at which automatic background works are carried out, in ms.
-const _backgroundWorkWaitForOnLineInterval = 60000;
-let _corsApi = ''; // CORS domain is optional.
-
-const StatusInst = new DailyRewardStatus();
-let SearchInst = new SearchQuest();
-
-chrome.notifications.onButtonClicked.addListener(notificationButtonCallback);
-
-chrome.runtime.onInstalled.addListener(function (details) {
-    if (details.reason == 'install') {
-        setOptionsOnInstall();
-    }
-    if (details.reason == 'update') {
-
-    }
-});
-
-chrome.runtime.onMessage.addListener(function (request) {
-    if (request.action == 'updateOptions') {
-        _notificationEnabled = request.content.enableNotification;
-        _debugNotificationEnabled = request.content.enableDebugNotification;
-        _corsApi = request.content.corsApi;
-        return;
-    }
-    if (request.action == 'checkStatus') {
-        doBackgroundWork();
-    }
-});
-
-onExtensionLoad();
-
-// on extension load.
 function onExtensionLoad() {
     setBadge(new GreyBadge());
-
-    chrome.storage.sync.get({
-        enableNotification: true,
-        enableDebugNotification: false,
-        userCookieExpiry: CookieStateType.sessional,
-        corsApi: '',
-    }, (options) => {
-        _notificationEnabled = options.enableNotification;
-        _debugNotificationEnabled = options.enableDebugNotification;
-        _corsApi = options.corsApi;
-        getAuthCookieExpiry()
-            .then((currentCookieExpiry) => {
-                setAuthCookieExpiry(currentCookieExpiry, options.userCookieExpiry);
-            })
-            .finally(() => {
-                // initialise when chrome is fully loaded.
-                setDelayedInitialisation(10000);
-            });
-    });
-}
-
-// -----------------------------
-// Options
-// -----------------------------
-function setOptionsOnInstall() {
-    getAuthCookieExpiry()
-        .then((val) => {
-            chrome.storage.sync.set({
-                userCookieExpiry: val,
-                enableNotification: true,
-                enableDebugNotification: false,
-            });
-        });
-}
-
-function setNotificationEnabled(val) {
-    console.assert(typeof (val) == 'boolean');
-    _notificationEnabled = val;
-    chrome.storage.sync.set({
-        enableNotification: val,
-    }, () => {
-        chrome.runtime.sendMessage({
-            action: 'popup-update',
-        });
-    });
+    setDelayedInitialisation(5000);
 }
 
 // -----------------------------
@@ -104,12 +25,12 @@ function initialize() {
         function () {
             doBackgroundWork();
         },
-        _backgroundWorkInterval
+        WORKER_ACTIVATION_INTERVAL
     );
 }
 
 async function doBackgroundWork() {
-    if (SearchInst.jobStatus == STATUS_BUSY || StatusInst.jobStatus == STATUS_BUSY) {
+    if (searchQuest.jobStatus == STATUS_BUSY || userDailyStatus.jobStatus == STATUS_BUSY) {
         return;
     }
 
@@ -127,7 +48,7 @@ async function doBackgroundWork() {
 
 async function waitTillOnline() {
     while (!navigator.onLine) {
-        await setTimeoutAsync(_backgroundWorkWaitForOnLineInterval);
+        await setTimeoutAsync(WAIT_FOR_ONLINE_TIMEOUT);
     }
 }
 
@@ -139,32 +60,54 @@ async function checkDailyRewardStatus() {
     // update status
     let result;
     try {
-        result = await StatusInst.update();
+        result = await userDailyStatus.update();
     } catch (ex) {
         handleException(ex);
     }
-    if (!result || !StatusInst.summary.isValid) {
+    if (!result || !userDailyStatus.summary.isValid) {
         setBadge(new ErrorBadge());
         return;
     }
 
-    console.assert(StatusInst.pcSearchStatus.isValid);
-    console.assert(StatusInst.mbSearchStatus.isValid);
+    await doSearchQuests();
 
     checkQuizAndDaily();
-    await doSearchQuests();
 }
 
 async function doSearchQuests() {
-    if (StatusInst.summary.isCompleted) {
+    if (userDailyStatus.summary.isCompleted) {
         return;
     }
 
-    if (!StatusInst.pcSearchStatus.isCompleted || !StatusInst.mbSearchStatus.isCompleted) {
+    if (!userDailyStatus.pcSearchStatus.isCompleted || !userDailyStatus.mbSearchStatus.isCompleted) {
         try {
-            await SearchInst.doWork(StatusInst);
+            await searchQuest.doWork(userDailyStatus);
         } catch (ex) {
             handleException(ex);
         }
     }
 }
+
+const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic background works are carried out, in ms.
+const WAIT_FOR_ONLINE_TIMEOUT = 60000;
+
+const googleTrend = new GoogleTrend();
+const userDailyStatus = new DailyRewardStatus();
+const searchQuest = new SearchQuest(googleTrend);
+
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (details.reason == 'install') {
+
+    }
+    if (details.reason == 'update') {
+
+    }
+});
+
+chrome.runtime.onMessage.addListener(function (request) {
+    if (request.action == 'checkStatus') {
+        doBackgroundWork();
+    }
+});
+
+onExtensionLoad();

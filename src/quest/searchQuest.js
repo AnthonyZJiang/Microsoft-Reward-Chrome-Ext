@@ -1,11 +1,12 @@
 class SearchQuest {
-    constructor() {
+    constructor(googleTrend) {
+        this._googleTrend_ = googleTrend;
+        this._searchIntervalMS = 2000;
         this.reset();
     }
 
     reset() {
         this._status_ = null;
-        this._googleTrend_ = new GoogleTrend();
         this._pcSearchWordIdx_ = 0;
         this._mbSearchWordIdx_ = 0;
         this._currentSearchCount_ = 0;
@@ -23,6 +24,7 @@ class SearchQuest {
         this._status_ = status;
         this._jobStatus_ = STATUS_BUSY;
         try {
+            await this._googleTrend_.getGoogleTrendWords();
             await this._startSearchQuests();
             await this._doWorkClosedLoop(status);
         } catch (ex) {
@@ -47,25 +49,12 @@ class SearchQuest {
     }
 
     async _startSearchQuests() {
-        // Check if we have enough words to carry on searching
-        let numSearchWordsRequired = this._getNumberOfSearchWordsRequired();
-        if (numSearchWordsRequired > this._googleTrend_.googleTrendWords.length) {
-            // If not, add more words to the array
-            await this._googleTrend_.getGoogleTrendWords(numSearchWordsRequired);
-        }
-        // We can roll.
-        await this._performPcSearch();
-        await this._performMbSearch();
+        await this._doPcSearch();
+        await this._doMbSearch();
         this._quitSearchCleanUp();
     }
 
-    _getNumberOfSearchWordsRequired() {
-        return Math.max(
-            this._pcSearchWordIdx_ + this._status_.pcSearchStatus.searchNeededCount,
-            this._mbSearchWordIdx_ + this._status_.mbSearchStatus.searchNeededCount);
-    }
-
-    async _performPcSearch() {
+    async _doPcSearch() {
         this._initiateSearch();
         if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
             this._preparePCSearch();
@@ -74,7 +63,7 @@ class SearchQuest {
         await this._requestBingSearch();
     }
 
-    async _performMbSearch() {
+    async _doMbSearch() {
         this._initiateSearch();
         if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
             this._prepareMbSearch();
@@ -123,20 +112,17 @@ class SearchQuest {
         }
 
         this._currentSearchCount_++;
+        await sleep(this._searchIntervalMS);
 
         await this._requestBingSearch();
     }
 
     _getBingSearchUrl() {
-        let word;
-        if (this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH) {
-            word = this._googleTrend_.googleTrendWords[this._pcSearchWordIdx_];
-            this._pcSearchWordIdx_++;
-        } else {
-            word = this._googleTrend_.googleTrendWords[this._mbSearchWordIdx_];
-            this._mbSearchWordIdx_++;
-        }
-        return 'https://www.bing.com/search?q=' + word;
+        const word = this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH ?
+            this._googleTrend_.nextPCWord :
+            this._googleTrend_.nextMBWord;
+
+        return `https://www.bing.com/search?q=${word}`;
     }
 
     _isCurrentSearchCompleted() {
@@ -145,11 +131,6 @@ class SearchQuest {
             this._currentSearchCount_ >= this._status_.mbSearchStatus.searchNeededCount;
     }
 }
-
-const MB_USER_AGENT = 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19';
-const EDGE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134';
-const SEARCH_TYPE_PC_SEARCH = 0;
-const SEARCH_TYPE_MB_SEARCH = 1;
 
 function removeUA() {
     // remove user-agent
@@ -197,6 +178,14 @@ function toMobileUA(details) {
     };
 }
 
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const MB_USER_AGENT = 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19';
+const EDGE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134';
+const SEARCH_TYPE_PC_SEARCH = 0;
+const SEARCH_TYPE_MB_SEARCH = 1;
 const STATUS_NONE = 0;
 const STATUS_BUSY = 1;
 const STATUS_DONE = 20;
