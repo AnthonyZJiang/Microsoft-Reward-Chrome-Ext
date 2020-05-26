@@ -163,7 +163,10 @@ class DailyRewardStatus {
 
     _parsePunchCards(statusJson) {
         for (let i = 0; i < statusJson.punchCards.length; i++) {
-            let promoTypes = statusJson.punchCards[i].parentPromotion.promotionType.split(',');
+            let parentPromo = statusJson.punchCards[i].parentPromotion;
+            if (!parentPromo) continue;
+            
+            let promoTypes = parentPromo.promotionType.split(',');
             if (!promoTypes.every((val) => val == "urlreward")) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
             }
@@ -171,7 +174,9 @@ class DailyRewardStatus {
     }
 
     _parseDaily(statusJson) {
-        statusJson.dailySetPromotions[getTodayDate()].forEach((obj) => {
+        let dailyset = statusJson.dailySetPromotions[getTodayDate()];
+        if (!dailyset) return;
+        dailyset.forEach((obj) => {
             this._quizAndDaily_.progress += obj.pointProgress;
             this._quizAndDaily_.max += obj.pointProgressMax;
         });

@@ -1,6 +1,10 @@
 'use strict';
 
 function onExtensionLoad() {
+    // fetch("test.json")
+    // .then(response => response.json())
+    // .then(jscode => userDailyStatus._parseStatusJson(jscode));
+
     setBadge(new GreyBadge());
     setDelayedInitialisation(5000);
 }
