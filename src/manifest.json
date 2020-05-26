@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Microsoft Rewards Bot",
-  "version": "2.21_hotfix_1",
+  "version": "2.21.1",
   "icons": {
     "16": "img/bingRwLogo@1x.png",
     "24": "img/bingRwLogo@1.5x.png",
