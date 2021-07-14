@@ -20,10 +20,6 @@ Use at your own risk. I do not take responsibility for any consequence caused by
 
 # Install from Chrome web store
 
-~~https://chrome.google.com/webstore/detail/pcejnhpajnnahbhkmempjgeppfbchiog/publish-review?authuser=0&hl=en-GB~~
-
-~~It may not be up to date as it needs to be reviewed at Google before it can be made available. The review process may take hours, days, or fail.~~
-
 Unfortunately, the extension could not make its way to become visible on web store due to ... well ... obvious reasons.
 
 # Use
