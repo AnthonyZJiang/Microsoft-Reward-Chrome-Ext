@@ -35,6 +35,7 @@
   "permissions": ["https://www.bing.com/search?q=*",
     "https://trends.google.com/trends/*",
     "https://account.microsoft.com/rewards/pointsbreakdown*",
+    "https://rewards.microsoft.com/pointsbreakdown*",
     "webRequest",
     "webRequestBlocking",
     "storage"

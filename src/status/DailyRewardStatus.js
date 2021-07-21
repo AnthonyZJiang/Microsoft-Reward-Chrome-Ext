@@ -67,7 +67,19 @@ class DailyRewardStatus {
     async _getPointBreakdownDocument() {
         const controller = new AbortController();
         const signal = controller.signal;
-        const fetchPromise = fetch(POINT_BREAKDOWN_URL, this._getFetchOptionsNoneCors(signal));
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptionsNoneCors(signal));
+        setTimeout(() => controller.abort(), 3000);
+        return await this._awaitFetchPromise(fetchPromise).catch((error) => {
+            if (error.name == 'FetchFailed::TypeError') {
+                return this._getPointBreakdownDocumentOld();
+            }
+        });
+    }
+
+    async _getPointBreakdownDocumentOld() {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptionsNoneCors(signal));
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise);
     }
@@ -77,10 +89,10 @@ class DailyRewardStatus {
         try {
             response = await fetchPromise;
         } catch (ex) {
-            if (ex.name == 'AbortError') {
-                throw ex;
+            if (ex.name == 'TypeError') {
+                throw new FetchFailedException('Status', ex);
             }
-            throw new FetchFailedException('Status', ex);
+            throw ex;
         }
 
         if (response.status == 200) {
@@ -106,7 +118,7 @@ class DailyRewardStatus {
     _getFetchOptionsNoneCors(signal) {
         return {
             method: 'GET',
-            signal: signal,
+            signal: signal
         };
     }
 
@@ -163,10 +175,10 @@ class DailyRewardStatus {
 
     _parsePunchCards(statusJson) {
         for (let i = 0; i < statusJson.punchCards.length; i++) {
-            let parentPromo = statusJson.punchCards[i].parentPromotion;
+            const parentPromo = statusJson.punchCards[i].parentPromotion;
             if (!parentPromo) continue;
-            
-            let promoTypes = parentPromo.promotionType.split(',');
+
+            const promoTypes = parentPromo.promotionType.split(',');
             if (!promoTypes.every((val) => val == "urlreward")) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
             }
@@ -174,7 +186,7 @@ class DailyRewardStatus {
     }
 
     _parseDaily(statusJson) {
-        let dailyset = statusJson.dailySetPromotions[getTodayDate()];
+        const dailyset = statusJson.dailySetPromotions[getTodayDate()];
         if (!dailyset) return;
         dailyset.forEach((obj) => {
             this._quizAndDaily_.progress += obj.pointProgress;
@@ -198,4 +210,5 @@ class DailyRewardStatus {
     }
 }
 
-const POINT_BREAKDOWN_URL = 'https://account.microsoft.com/rewards/pointsbreakdown';
+const POINT_BREAKDOWN_URL_OLD = 'https://account.microsoft.com/rewards/pointsbreakdown';
+const POINT_BREAKDOWN_URL_NEW = 'https://rewards.microsoft.com/pointsbreakdown';
