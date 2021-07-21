@@ -67,7 +67,7 @@ class DailyRewardStatus {
     async _getPointBreakdownDocument() {
         const controller = new AbortController();
         const signal = controller.signal;
-        const fetchPromise = fetch(POINT_BREAKDOWN_URL, this._getFetchOptionsNoneCors(signal));
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptionsNoneCors(signal));
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise);
     }
@@ -106,7 +106,7 @@ class DailyRewardStatus {
     _getFetchOptionsNoneCors(signal) {
         return {
             method: 'GET',
-            signal: signal,
+            signal: signal
         };
     }
 
@@ -199,3 +199,4 @@ class DailyRewardStatus {
 }
 
 const POINT_BREAKDOWN_URL = 'https://account.microsoft.com/rewards/pointsbreakdown';
+const POINT_BREAKDOWN_URL_NEW = 'https://rewards.microsoft.com/pointsbreakdown';
