@@ -29,10 +29,10 @@ class FetchResponseAnomalyException extends ErrorWithSourceInnerException {
 class FetchFailedException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
         if (!message) {
-            message = 'Fetch failed because an exception occurred.';
+            message = `Fetch failed because an exception occurred::${innerException.message}`;
         }
         super(source, innerException, message);
-        this.name = 'FetchFailed';
+        this.name = 'FetchFailed::'+innerException.name;
     }
 }
 

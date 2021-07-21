@@ -69,6 +69,18 @@ class DailyRewardStatus {
         const signal = controller.signal;
         const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptionsNoneCors(signal));
         setTimeout(() => controller.abort(), 3000);
+        return await this._awaitFetchPromise(fetchPromise).catch((error) => {
+            if (error.name == 'FetchFailed::TypeError') {
+                return this._getPointBreakdownDocumentOld();
+            }
+        });
+    }
+
+    async _getPointBreakdownDocumentOld() {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptionsNoneCors(signal));
+        setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise);
     }
 
@@ -77,10 +89,10 @@ class DailyRewardStatus {
         try {
             response = await fetchPromise;
         } catch (ex) {
-            if (ex.name == 'AbortError') {
-                throw ex;
+            if (ex.name == 'TypeError') {
+                throw new FetchFailedException('Status', ex);
             }
-            throw new FetchFailedException('Status', ex);
+            throw ex
         }
 
         if (response.status == 200) {
@@ -198,5 +210,5 @@ class DailyRewardStatus {
     }
 }
 
-const POINT_BREAKDOWN_URL = 'https://account.microsoft.com/rewards/pointsbreakdown';
+const POINT_BREAKDOWN_URL_OLD = 'https://account.microsoft.com/rewards/pointsbreakdown';
 const POINT_BREAKDOWN_URL_NEW = 'https://rewards.microsoft.com/pointsbreakdown';
