@@ -92,7 +92,7 @@ class DailyRewardStatus {
             if (ex.name == 'TypeError') {
                 throw new FetchFailedException('Status', ex);
             }
-            throw ex
+            throw ex;
         }
 
         if (response.status == 200) {
@@ -175,10 +175,10 @@ class DailyRewardStatus {
 
     _parsePunchCards(statusJson) {
         for (let i = 0; i < statusJson.punchCards.length; i++) {
-            let parentPromo = statusJson.punchCards[i].parentPromotion;
+            const parentPromo = statusJson.punchCards[i].parentPromotion;
             if (!parentPromo) continue;
-            
-            let promoTypes = parentPromo.promotionType.split(',');
+
+            const promoTypes = parentPromo.promotionType.split(',');
             if (!promoTypes.every((val) => val == "urlreward")) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
             }
@@ -186,7 +186,7 @@ class DailyRewardStatus {
     }
 
     _parseDaily(statusJson) {
-        let dailyset = statusJson.dailySetPromotions[getTodayDate()];
+        const dailyset = statusJson.dailySetPromotions[getTodayDate()];
         if (!dailyset) return;
         dailyset.forEach((obj) => {
             this._quizAndDaily_.progress += obj.pointProgress;
