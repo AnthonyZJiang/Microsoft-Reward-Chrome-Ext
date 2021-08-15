@@ -67,15 +67,10 @@ class GoogleTrend {
         try {
             response = await fetch(url);
         } catch (ex) {
-            throw new FetchFailedException('GoogleTrend', ex);
+            throw new FetchFailedException('googleTrend::_fetchGoogleTrend', ex);
         }
-
-        if (response.status == 429) {
-            throw new FetchFailedException('GoogleTrend - Too much request');
-        }
-
-        if (response.status != 200) {
-            throw new FetchResponseAnomalyException('GoogleTrend');
+        if (!response.ok) {
+            throw new FetchFailedException('googleTrend::_fetchGoogleTrend', response);
         }
         this._getWordsFromJSON(JSON.parse((await response.text()).slice(5)));
     }

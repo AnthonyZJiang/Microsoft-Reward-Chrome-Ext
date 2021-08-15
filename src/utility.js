@@ -45,3 +45,7 @@ function isHttpUrlValid(url) {
     // must end with a word character, a digit, or close bracket (')') with or without forward slash ('/')
     return /^https?:\/\/\S+.*\..*[\w\d]+\)?\/?$/i.test(url);
 }
+
+function getElementByXpath(path, element) {
+    return document.evaluate(path, element, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  }
