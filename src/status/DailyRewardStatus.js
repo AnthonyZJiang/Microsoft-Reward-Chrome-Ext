@@ -69,6 +69,8 @@ class DailyRewardStatus {
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
+                console.log('An error occurred in the first status update attempt:')
+                logException(ex)
                 return await this._getPointBreakdownDocumentOld();
             }
         });
