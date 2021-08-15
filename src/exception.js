@@ -1,6 +1,6 @@
 function handleException(ex) {
     setBadge(new ErrorBadge());
-    console.log('Error History:')
+    console.log('Error History:');
     logException(ex);
     throw ex;
 }
@@ -26,9 +26,9 @@ class FetchFailedException extends ErrorWithSourceInnerException {
             innerException = {
                 message: undefined,
                 name: undefined,
-            }
+            };
         }
-        
+
         if (!message) {
             message = `Fetch failed because an exception occurred::${innerException.message}`;
         }

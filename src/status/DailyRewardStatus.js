@@ -64,7 +64,7 @@ class DailyRewardStatus {
 
     async _getPointBreakdownDocument() {
         const controller = new AbortController();
-        const signal = controller.signal;        
+        const signal = controller.signal;
         const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
@@ -81,7 +81,7 @@ class DailyRewardStatus {
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise).catch( (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
-                throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Are we redirected by the old URL too? Report to the author now!')
+                throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Are we redirected by the old URL too? Report to the author now!');
             };
         });
     }
@@ -96,7 +96,7 @@ class DailyRewardStatus {
             }
             if (error.name == 'AbortError') {
                 throw new FetchFailedException('DailyRewardStatus::_awaitFetchPromise', ex, 'Fetch timed out. Do you have internet connection? Otherwise, perhaps MSR server is down.');
-            }            
+            }
             throw ex;
         }
 
