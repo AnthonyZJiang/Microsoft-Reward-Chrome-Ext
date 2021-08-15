@@ -1,11 +1,15 @@
 function handleException(ex) {
     setBadge(new ErrorBadge());
+    console.log('Error History:');
     logException(ex);
     throw ex;
 }
 
 function logException(ex) {
-    console.log('InnerException:', ex.innerException);
+    if (ex.innerException) {
+        logException(ex.innerException);
+    }
+    console.log(`Source: ${ex.source}\n`,ex);
 }
 
 class ErrorWithSourceInnerException extends Error {
@@ -16,18 +20,15 @@ class ErrorWithSourceInnerException extends Error {
     }
 }
 
-class FetchResponseAnomalyException extends ErrorWithSourceInnerException {
-    constructor(source, message) {
-        if (!message) {
-            message = 'Fetch response is anomalous.';
-        }
-        super(source, null, message);
-        this.name = 'FetchResponseAnomalous';
-    }
-}
-
 class FetchFailedException extends ErrorWithSourceInnerException {
     constructor(source, innerException, message) {
+        if (innerException == undefined) {
+            innerException = {
+                message: undefined,
+                name: undefined,
+            };
+        }
+
         if (!message) {
             message = `Fetch failed because an exception occurred::${innerException.message}`;
         }
@@ -42,6 +43,16 @@ class FetchRedirectedException extends ErrorWithSourceInnerException {
             message = 'Fetch failed because redirection occurred.';
         }
         super(source, innerException, message);
+        this.name = 'FetchRedirected';
+    }
+}
+
+class FetchResponseUnexpectedStatusException extends ErrorWithSourceInnerException {
+    constructor(source, response, message) {
+        if (!message) {
+            message = `Expected response status is within 200-299. Received response status: ${response.status} (${response.statusText})`;
+        }
+        super(source, null, message);
         this.name = 'FetchRedirected';
     }
 }

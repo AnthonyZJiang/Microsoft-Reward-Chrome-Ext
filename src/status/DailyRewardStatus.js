@@ -46,8 +46,6 @@ class DailyRewardStatus {
         // Exceptions:
         // ParseJSONFailedException         @ _parsePointBreakdownDocument(), caused by changes in point breakdown page.
         //                                  @ parse methods, caused by changes in user status JSON.
-        // FetchRedirectedException         @ _getPointBreakdownDocument(), when point breakdown page is redirected, usually to the login page, meaning user is logged out from his MS account.
-        // FetchResponseAnomalyException    @ _getPointBreakdownDocument(), when the response status is not 200 a.k.a. OK completely for unknown reasons.
         // FetchFailedException             @ _getPointBreakdownDocument(), when point breakdown page is unreachable - because server is down, network is interrupted, etc.
 
         this.reset();
@@ -67,11 +65,11 @@ class DailyRewardStatus {
     async _getPointBreakdownDocument() {
         const controller = new AbortController();
         const signal = controller.signal;
-        const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptionsNoneCors(signal));
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
-        return await this._awaitFetchPromise(fetchPromise).catch((error) => {
-            if (error.name == 'FetchFailed::TypeError') {
-                return this._getPointBreakdownDocumentOld();
+        return await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
+            if (ex.name == 'FetchFailed::TypeError') {
+                return await this._getPointBreakdownDocumentOld();
             }
         });
     }
@@ -79,9 +77,13 @@ class DailyRewardStatus {
     async _getPointBreakdownDocumentOld() {
         const controller = new AbortController();
         const signal = controller.signal;
-        const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptionsNoneCors(signal));
+        const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
-        return await this._awaitFetchPromise(fetchPromise);
+        return await this._awaitFetchPromise(fetchPromise).catch( (ex) => {
+            if (ex.name == 'FetchFailed::TypeError') {
+                throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Are we redirected by the old URL too? Report to the author now!');
+            };
+        });
     }
 
     async _awaitFetchPromise(fetchPromise) {
@@ -90,35 +92,24 @@ class DailyRewardStatus {
             response = await fetchPromise;
         } catch (ex) {
             if (ex.name == 'TypeError') {
-                throw new FetchFailedException('Status', ex);
+                throw new FetchFailedException('DailyRewardStatus::_awaitFetchPromise', ex, 'Are we redirected?');
+            }
+            if (error.name == 'AbortError') {
+                throw new FetchFailedException('DailyRewardStatus::_awaitFetchPromise', ex, 'Fetch timed out. Do you have internet connection? Otherwise, perhaps MSR server is down.');
             }
             throw ex;
         }
 
-        if (response.status == 200) {
+        if (response.ok) {
             return response.text();
         }
-        throw new FetchResponseAnomalyException('Status');
+        throw new FetchResponseUnexpectedStatusException('DailyRewardStatus::_awaitFetchPromise', response);
     }
 
     _getFetchOptions(signal) {
         return {
             method: 'GET',
             signal: signal,
-            headers: this._getAllowControlAllowOriginHeader(),
-        };
-    }
-
-    _getAllowControlAllowOriginHeader() {
-        const headers = new Headers();
-        headers.append('Allow-Control-Allow-Origin', '*');
-        return headers;
-    }
-
-    _getFetchOptionsNoneCors(signal) {
-        return {
-            method: 'GET',
-            signal: signal
         };
     }
 
@@ -129,13 +120,13 @@ class DailyRewardStatus {
         const statusJson = DailyRewardStatus.getUserStatusJSON(doc);
 
         if (statusJson == null) {
-            throw new ParseJSONFailedException('Status');
+            throw new ParseJSONFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', null, 'Empty json received.');
         }
         try {
             this._parseStatusJson(statusJson);
         } catch (ex) {
             if (ex.name == 'TypeError' || ex.name == 'ReferenceError') {
-                throw new ParseJSONFailedException('Status', ex);
+                throw new ParseJSONFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Fail to parse the received json document. Has MSR updated its json structure?');
             }
         }
     }
