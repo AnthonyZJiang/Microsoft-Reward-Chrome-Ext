@@ -164,6 +164,8 @@ class DailyRewardStatus {
         console.assert(statusJson.userStatus.counters.activityAndQuiz.length == 1);
         this._quizAndDaily_.progress += statusJson.userStatus.counters.activityAndQuiz[0].pointProgress;
         this._quizAndDaily_.max += statusJson.userStatus.counters.activityAndQuiz[0].pointProgressMax;
+        this._quizAndDaily_.max += 100;
+
     }
 
     _parsePunchCards(statusJson) {
