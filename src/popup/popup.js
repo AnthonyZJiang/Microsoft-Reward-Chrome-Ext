@@ -11,3 +11,9 @@ document.getElementById('ms-rewards-link').addEventListener('click', () => {
         url: 'https://account.microsoft.com/rewards/',
     });
 });
+
+document.getElementById('copy-debug-info').addEventListener('click', () => {
+    chrome.runtime.sendMessage({
+        action: 'copyDebugInfo',
+    });
+});

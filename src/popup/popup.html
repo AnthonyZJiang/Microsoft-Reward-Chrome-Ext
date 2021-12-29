@@ -38,6 +38,10 @@
             border-radius: 5px;
             border: solid 2px #f1f1f1;
         }
+        .small-button {
+            padding: 2px 8px;
+            font-size: 12px;
+        }
         .button:focus {
             outline: 0;
         }
@@ -55,7 +59,11 @@
             background: #868686;
             margin-left: 0px;
         }
-        #ms-rewards-link:hover, #check-now:hover {
+        #copy-debug-info {
+            background: #c4c4c4;
+            margin-left: 0px;
+        }
+        #ms-rewards-link:hover, #check-now:hover, #copy-debug-info:hover {
             background: #434b53;
         }
         hr {
@@ -95,6 +103,7 @@
         <div class="option-row button-row">
             <button type="button" class="button" id="check-now">Check Now</button>
             <button type="button" class="button" id="ms-rewards-link">Microsoft Rewards</button>
+            <button type="button" class="button small-button" id="copy-debug-info">Debug</button>
         </div>
     </div>
     

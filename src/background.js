@@ -111,6 +111,9 @@ chrome.runtime.onMessage.addListener(function (request) {
     if (request.action == 'checkStatus') {
         doBackgroundWork();
     }
+    if (request.action == 'copyDebugInfo') {
+        getDebugInfo();
+    }
 });
 
 onExtensionLoad();
