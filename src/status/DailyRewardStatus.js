@@ -49,10 +49,10 @@ class DailyRewardStatus {
         // FetchFailedException             @ _getPointBreakdownDocument(), when point breakdown page is unreachable - because server is down, network is interrupted, etc.
 
         this.reset();
-
         this._jobStatus_ = STATUS_BUSY;
         try {
-            this._parsePointBreakdownDocument(getDomFromText(await this._getPointBreakdownDocument()));
+            const statusJson = await this.getUserStatusJson();
+            this._parsePointBreakdownDocument(statusJson);
         } catch (ex) {
             this._jobStatus_ = STATUS_ERROR;
             throw ex;
@@ -62,28 +62,30 @@ class DailyRewardStatus {
         return this._jobStatus_;
     }
 
-    async _getPointBreakdownDocument() {
+    async getUserStatusJson() {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(POINT_BREAKDOWN_URL_NEW, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
-        return await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
+        const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
                 console.log('An error occurred in the first status update attempt:')
                 logException(ex)
-                return await this._getPointBreakdownDocumentOld();
+                return await this._getPointBreakdownTextOld();
             }
         });
+        const doc = getDomFromText(text);
+        return DailyRewardStatus.getUserStatusJSON(doc);
     }
 
-    async _getPointBreakdownDocumentOld() {
+    async _getPointBreakdownTextOld() {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
         return await this._awaitFetchPromise(fetchPromise).catch( (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
-                throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Are we redirected by the old URL too? Report to the author now!');
+                throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownTextOld', ex, 'Are we redirected by the old URL too? Report to the author now!');
             };
         });
     }
@@ -118,9 +120,7 @@ class DailyRewardStatus {
     //* *************
     // PARSE METHODS
     //* *************
-    _parsePointBreakdownDocument(doc) {
-        const statusJson = DailyRewardStatus.getUserStatusJSON(doc);
-
+    _parsePointBreakdownDocument(statusJson) {
         if (statusJson == null) {
             throw new ParseJSONFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', null, 'Empty json received.');
         }
