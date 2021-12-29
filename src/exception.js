@@ -9,7 +9,7 @@ function logException(ex) {
     if (ex.innerException) {
         logException(ex.innerException);
     }
-    console.log(`Source: ${ex.source}\n`,ex);
+    console.log(`Source: ${ex.source}\n`, ex);
 }
 
 class ErrorWithSourceInnerException extends Error {

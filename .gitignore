@@ -3,3 +3,4 @@
 *.ai
 .vscode
 src.zip
+node_modules

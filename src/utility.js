@@ -51,29 +51,29 @@ function getElementByXpath(path, element) {
 }
 
 async function copyTextToClipboard(text) {
-    //Credit: https://stackoverflow.com/a/18455088/1786137
-    //Create a textbox field where we can insert text to. 
-    var copyFrom = document.createElement("textarea");
+    // Credit: https://stackoverflow.com/a/18455088/1786137
+    // Create a textbox field where we can insert text to.
+    const copyFrom = document.createElement('textarea');
 
-    //Set the text content to be the text you wished to copy.
+    // Set the text content to be the text you wished to copy.
     copyFrom.textContent = text;
 
-    //Append the textbox field into the body as a child. 
-    //"execCommand()" only works when there exists selected text, and the text is inside 
-    //document.body (meaning the text is part of a valid rendered HTML element).
+    // Append the textbox field into the body as a child.
+    // "execCommand()" only works when there exists selected text, and the text is inside
+    // document.body (meaning the text is part of a valid rendered HTML element).
     document.body.appendChild(copyFrom);
 
-    //Select all the text!
+    // Select all the text!
     copyFrom.select();
 
-    //Execute command
+    // Execute command
     document.execCommand('copy');
-    
-    //(Optional) De-select the text using blur(). 
+
+    // (Optional) De-select the text using blur().
     copyFrom.blur();
 
-    //Remove the textbox field from the document.body, so no other JavaScript nor 
-    //other elements can get access to this.
+    // Remove the textbox field from the document.body, so no other JavaScript nor
+    // other elements can get access to this.
     document.body.removeChild(copyFrom);
 }
 
@@ -92,8 +92,10 @@ async function getDebugInfo() {
             statusJson.userStatus.dashboardImpression = 'deleted';
             statusJson.userStatus.referrerProgressInfo = 'deleted';
             text += JSON.stringify(statusJson);
-        }
-    ).catch(ex => { text += ex.message + '\n'; });
+        },
+    ).catch((ex) => {
+        text += ex.message + '\n';
+    });
 
     copyTextToClipboard(text);
 }

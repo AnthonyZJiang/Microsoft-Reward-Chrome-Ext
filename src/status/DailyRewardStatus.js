@@ -69,8 +69,8 @@ class DailyRewardStatus {
         setTimeout(() => controller.abort(), 3000);
         const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
-                console.log('An error occurred in the first status update attempt:')
-                logException(ex)
+                console.log('An error occurred in the first status update attempt:');
+                logException(ex);
                 return await this._getPointBreakdownTextOld();
             }
         });
@@ -172,7 +172,7 @@ class DailyRewardStatus {
             if (!parentPromo) continue;
 
             const promoTypes = parentPromo.promotionType.split(',');
-            if (!promoTypes.every((val) => val == "urlreward")) {
+            if (!promoTypes.every((val) => val == 'urlreward')) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
             }
         }
