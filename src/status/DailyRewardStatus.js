@@ -172,7 +172,7 @@ class DailyRewardStatus {
             if (!parentPromo) continue;
 
             const promoTypes = parentPromo.promotionType.split(',');
-            if (!promoTypes.every((val) => val == 'urlreward')) {
+            if (!promoTypes.every((val) => (val == 'urlreward' || val == 'quiz'))) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
             }
         }
