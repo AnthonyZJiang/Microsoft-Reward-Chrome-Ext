@@ -182,8 +182,8 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const MB_USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) EdgiOS/96.0.1054.49 Version/15.0 Mobile/15E148 Safari/604.1';
-const EDGE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.5531.7 Safari/537.36 Edg/99.0.377.7';
+const MB_USER_AGENT = 'Mozilla/5.0 (Linux; Android 10; GM1910) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4583.0 Mobile Safari/537.36';
+const EDGE_USER_AGENT = navigator.userAgent;
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
 const STATUS_NONE = 0;
