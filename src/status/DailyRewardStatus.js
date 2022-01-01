@@ -73,6 +73,7 @@ class DailyRewardStatus {
                 logException(ex);
                 return await this._getPointBreakdownTextOld();
             }
+            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex, errorMessage);
         });
         const doc = getDomFromText(text);
         return DailyRewardStatus.getUserStatusJSON(doc);
@@ -83,10 +84,11 @@ class DailyRewardStatus {
         const signal = controller.signal;
         const fetchPromise = fetch(POINT_BREAKDOWN_URL_OLD, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
-        return await this._awaitFetchPromise(fetchPromise).catch( (ex) => {
+        return await this._awaitFetchPromise(fetchPromise).catch((ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
                 throw new FetchFailedException('DailyRewardStatus::_getPointBreakdownTextOld', ex, 'Are we redirected by the old URL too? Report to the author now!');
             };
+            throw ex;
         });
     }
 
@@ -107,7 +109,8 @@ class DailyRewardStatus {
         if (response.ok) {
             return response.text();
         }
-        throw new FetchResponseUnexpectedStatusException('DailyRewardStatus::_awaitFetchPromise', response);
+
+        throw await response.text();
     }
 
     _getFetchOptions(signal) {
