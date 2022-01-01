@@ -41,6 +41,7 @@ async function doBackgroundWork() {
 
     setBadge(new BusyBadge());
 
+    await updateUA();
     checkNewDay();
     await checkDailyRewardStatus();
 
@@ -97,6 +98,7 @@ const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 const googleTrend = new GoogleTrend();
 const userDailyStatus = new DailyRewardStatus();
 const searchQuest = new SearchQuest(googleTrend);
+let userAgents;
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {

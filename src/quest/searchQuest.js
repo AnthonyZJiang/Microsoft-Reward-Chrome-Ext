@@ -151,7 +151,7 @@ function setMsEdgeUA() {
 function toMsEdgeUA(details) {
     for (const i in details.requestHeaders) {
         if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = EDGE_USER_AGENT;
+            details.requestHeaders[i].value = userAgents.pc;
             break;
         }
     }
@@ -169,7 +169,7 @@ function setMobileUA() {
 function toMobileUA(details) {
     for (const i in details.requestHeaders) {
         if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = MB_USER_AGENT;
+            details.requestHeaders[i].value = userAgents.mb;
             break;
         }
     }
@@ -182,8 +182,6 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const MB_USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) EdgiOS/96.0.1054.49 Version/15.0 Mobile/15E148 Safari/604.1';
-const EDGE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.5531.7 Safari/537.36 Edg/99.0.377.7';
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
 const STATUS_NONE = 0;
