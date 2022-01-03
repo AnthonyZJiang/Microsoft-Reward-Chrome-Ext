@@ -2,7 +2,7 @@
 
 function saveOptions() {
     const options = {
-        compatibilityMode: document.getElementById('compatibility-mode').checked
+        compatibilityMode: document.getElementById('compatibility-mode').checked,
     };
     chrome.storage.sync.set(options, () => {
         sendOptions(options);
