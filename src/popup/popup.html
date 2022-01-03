@@ -7,106 +7,116 @@
         body {
             background-color: #f1f1f1;
         }
+
         .form-box {
             width: 300px;
-            padding: 10px 10px 0 20px;
+            padding: 10px;
             color: #434b53;
             background-color: #f1f1f1;
         }
+
         .option-row {
             margin: 10px 20px 0;
         }
-        .button-row {            
+
+        .button-row {
             text-align: right;
         }
+
         .status-row {
             margin: 5px 20px 10px 45px;
         }
-        .status-text {
-            color: #b62a2a;
-        }
-        .tooltip {
-            margin: 5px;
-            text-decoration: dotted underline #2885d8;
-            cursor: pointer;
-            color:#2885d8;
-        }
-        .button {                
-            color:  #f1f1f1;
+
+        .button {
+            color: #f1f1f1;
             padding: 5px 16px;
             cursor: pointer;
             border-radius: 5px;
             border: solid 2px #f1f1f1;
+            background: #868686;
+            margin-left: 0;
         }
+
         .small-button {
             padding: 2px 8px;
             font-size: 12px;
         }
+
         .button:focus {
             outline: 0;
         }
-        #cors-api {
-            padding: 0 4px;
-        }
-        #save {
-            margin-right: 0;
-            background: #ee3838;
-        }
-        #save:hover {
-            background: #b62a2a;
-        }
-        #ms-rewards-link, #check-now {
-            background: #868686;
-            margin-left: 0;
-        }
-        #copy-debug-info {
+
+        /* #copy-debug-info {
             background: #c4c4c4;
             margin-left: 0;
-        }
-        #ms-rewards-link:hover, #check-now:hover, #copy-debug-info:hover {
+        } */
+
+        .button:hover {
             background: #434b53;
         }
+
         hr {
             margin: 20px 20px 10px;
         }
+
         #saved-notice {
             margin: 0 5px;
+        }
+
+        .collapsible {
+            background-color: #f1f1f1;
+            color: #444;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+        }
+
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active,
+        .collapsible:hover {
+            background-color: #f1f1f1;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: #444;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .active:after {
+            content: "\2212";
+        }
+
+        /* Style the collapsible content. Note: hidden by default */
+        .content {
+            display: none;
+            overflow: hidden;
+        }
+
+        .r-aligned {
+            margin-right: 0;
+            margin-left: auto;
         }
     </style>
 </head>
 
 <body>
     <div class="form-box">
-        <!-- <div class="option-row">
-            <input type="checkbox" class="checkbox" id="set-cookie-persistent" />
-            <label for="set-cookie-persistent">Set persistent authentication cookie</label>
-            <a id="show-set-cookie-tooltip" class="tooltip tooltip-github-help" title="Set Microsoft authentication cookie never expires. This removes the need of re-logging into your account every time your browser restarts, unless your PC is rebooted or recovered from sleep. See the github page of this project for details">?</a>
-        </div>
-        <div class="status-row">
-            <span>Current cookie:</span>
-            <span id="cookie-current-status" class="status-text"></span>
-        </div>
-        <div class="option-row">
-            <input type="checkbox" class="checkbox" id="enable-notification" />
-            <label for="enable-notification">Enable notification</label>
-        </div>
-        <div class="option-row">
-            <label for="cors-api">CORS API:</label>
-            <input class="input" id="cors-api"/>
-            <a id="show-set-cors-tooltip" class="tooltip tooltip-github-help" title="Together with persistent authentication cookie, this removes the need of re-logging into your account every time your browser restarts even if your PC is rebooted or recovered.">?</a>
-        </div>
-        <div class="option-row button-row">
-            <span id="saved-notice"></span>
-            <button type="button" class="button" id="save">Save</button>
-        </div>
-        <hr /> -->
         <div class="option-row button-row">
             <button type="button" class="button" id="check-now">Check Now</button>
-            <button type="button" class="button" id="ms-rewards-link">Microsoft Rewards</button>
-            <button type="button" class="button small-button" id="copy-debug-info">Debug</button>
+            <button type="button" class="button" id="ms-rewards-link">Visit MS Rewards</button>
+        </div>
+        <hr />
+        <div class="option-row button-row">
+            <button class="button collapsible">Debug options</button>
+            <button type="button" class="button small-button content r-aligned" id="copy-debug-info">Copy Debug Info</button>
         </div>
     </div>
-    
+
     <!-- <script src="../cookies.js"></script> -->
     <script src="../utility.js"></script>
     <script src="popup.js"></script>

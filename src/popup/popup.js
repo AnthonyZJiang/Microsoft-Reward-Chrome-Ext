@@ -17,3 +17,22 @@ document.getElementById('copy-debug-info').addEventListener('click', () => {
         action: 'copyDebugInfo',
     });
 });
+
+function addCollapsibleLisenters() {
+    const coll = document.getElementsByClassName('collapsible');
+    let i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener('click', function (event) {
+            event.target.classList.toggle('active');
+            const content = event.target.nextElementSibling;
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        });
+    }
+}
+
+addCollapsibleLisenters();
