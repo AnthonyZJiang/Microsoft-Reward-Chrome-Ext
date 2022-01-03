@@ -2,9 +2,9 @@
 
 # Microsoft Rewards Bot
 
-A Chrome extension for Microsoft Rewards. Your daily progress is checked every two hours and PC, mobile, EDGE search quests are completed automatically.
+A Chrome extension for Microsoft Rewards, which automatically clears PC, mobile and Edge search quests and displays daily point countdown.
 
-This extension do not attempt to do any promotional link or quiz quests.
+This extension will not clear any promotional link or quiz quests and this feature will not be implemented.
 
 **This is a bot!**
 
@@ -33,12 +33,15 @@ Unfortunately, the extension could not make its way to become visible on web sto
 
 ### Background Work
 
-Every 2 hours the extension checks your daily Microsoft Rewards progress and finishes any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number in place of the action button icon.
+Every 2 hours the extension checks your daily Microsoft Rewards progress and clears any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number indicating the amount of points they worth.
 
 ### Action Button
 
 1. A button to force check reward progress.
 2. A link to Microsoft Rewards.
+3. Options:
+   1. Compatibility Mode. Toggle to enable/disable a different way of calculating point countdown. Try this if you have any issues with the current point countdown method.
+   2. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
 
 ### Action Button Badge
 
@@ -53,7 +56,3 @@ The colour of the badge changes depending on your daily reward progress or the s
 ![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - Yellow badge is shown with a number: There are X points left to be earned through quiz.
 
 ![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Shown with 'err' text: an error occurred - you are probably not logged in or you have reached your daily google trend request allowance. Try log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](www.bing.com) and use the Check Now button to force it do another round of work.
-
-# Known issue
-
-None.
