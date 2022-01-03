@@ -4,15 +4,32 @@
 <head>
     <title>Options</title>
     <style>
+        .r-aligned {
+            margin-right: 0;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .l-aligned {
+            margin-right: auto;
+            margin-left: 0;
+            text-align: left;
+        }
+
+        .d-flex {            
+            display: flex
+        }
+
         body {
-            background-color: #f1f1f1;
+            background-color: #ffffff;
+            margin: 0;
         }
 
         .form-box {
             width: 300px;
             padding: 10px;
             color: #434b53;
-            background-color: #f1f1f1;
+            background-color: #ffffff;
         }
 
         .option-row {
@@ -28,12 +45,12 @@
         }
 
         .button {
-            color: #f1f1f1;
+            color: #ffffff;
             padding: 5px 16px;
             cursor: pointer;
             border-radius: 5px;
-            border: solid 2px #f1f1f1;
-            background: #868686;
+            border: solid 2px #ffffff;
+            background: #4d90fe;
             margin-left: 0;
         }
 
@@ -46,13 +63,8 @@
             outline: 0;
         }
 
-        /* #copy-debug-info {
-            background: #c4c4c4;
-            margin-left: 0;
-        } */
-
         .button:hover {
-            background: #434b53;
+            background: #357ae8;
         }
 
         hr {
@@ -64,20 +76,13 @@
         }
 
         .collapsible {
-            background-color: #f1f1f1;
+            background-color: #ffffff;
             color: #444;
             cursor: pointer;
             width: 100%;
             border: none;
             text-align: left;
             outline: none;
-            font-size: 12px;
-        }
-
-        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-        .active,
-        .collapsible:hover {
-            background-color: #f1f1f1;
             font-size: 12px;
         }
 
@@ -92,22 +97,10 @@
         .active:after {
             content: "\2212";
         }
-
-        /* Style the collapsible content. Note: hidden by default */
+        
         .content {
             display: none;
             overflow: hidden;
-        }
-
-        .r-aligned {
-            margin-right: 0;
-            margin-left: auto;
-        }
-
-        .l-aligned {
-            margin-right: auto;
-            margin-left: 0;
-            text-align: left;
         }
 
         .switch {
@@ -150,11 +143,11 @@
         }
 
         input:checked+.slider {
-            background-color: #2196F3;
+            background-color: #4285f4;
         }
 
         input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
+            box-shadow: 0 0 1px #4285f4;
         }
 
         input:checked+.slider:before {
@@ -162,14 +155,40 @@
             -ms-transform: translateX(12px);
             transform: translateX(12px);
         }
+
+        .a:hover {
+            text-decoration: underline;
+        }
+
+        .a {
+            color: #4285f4;
+            display: inline;
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .footer {
+            background-color: #f0f0f0;
+            color: #636363;
+            font-family: 'Roboto', sans-serif;
+            font-size: 11px;
+            margin-top: 9px;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
     </style>
 </head>
 
 <body>
+    <header>
+
+    </header>
     <div class="form-box">
-        <div class="option-row button-row">
-            <button type="button" class="button" id="check-now">Check Now</button>
-            <button type="button" class="button" id="ms-rewards-link">Visit MS Rewards</button>
+        <div class="option-row button-row d-flex">
+            <button type="button" class="button l-aligned" id="check-now">Check Now</button>
+            <button type="button" class="button r-aligned" id="ms-rewards-link">Visit MS Rewards</button>
         </div>
         <hr />
         <div class="option-row button-row">
@@ -182,12 +201,18 @@
                     </label>
                     <span>Compatibility mode</span>
                 </div>
-                <button type="button" class="button small-button option-row button-row r-aligned" id="copy-debug-info">Copy Debug
+                <button type="button" class="button small-button option-row button-row r-aligned"
+                    id="copy-debug-info">Copy Debug
                     Info</button>
             </div>
         </div>
     </div>
-
+    <footer class="footer">
+        <div>
+            <span> &copy; 2022 tmxkn1 - </span>
+            <a class="a" target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github Repository</a>
+        </div>
+    </footer>
     <!-- <script src="../cookies.js"></script> -->
     <script src="../utility.js"></script>
     <script src="popup.js"></script>
