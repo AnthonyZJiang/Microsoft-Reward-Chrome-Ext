@@ -128,7 +128,11 @@ class DailyRewardStatus {
             throw new ParseJSONFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', null, 'Empty json received.');
         }
         try {
-            this._parseStatusJson(statusJson);
+            if (_compatibilityMode) {
+                this._parseStatusJsonCompatibilityMode(statusJson);
+            } else {
+                this._parseStatusJson(statusJson);
+            }
         } catch (ex) {
             if (ex.name == 'TypeError' || ex.name == 'ReferenceError') {
                 throw new ParseJSONFailedException('DailyRewardStatus::_getPointBreakdownDocumentOld', ex, 'Fail to parse the received json document. Has MSR updated its json structure?');

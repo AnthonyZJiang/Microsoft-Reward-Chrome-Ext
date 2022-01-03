@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Microsoft Rewards Bot",
-  "version": "2.21.3",
+  "version": "2.21.4",
   "icons": {
     "16": "img/bingRwLogo@1x.png",
     "24": "img/bingRwLogo@1.5x.png",
@@ -9,7 +9,7 @@
     "48": "img/bingRwLogo@3x.png",
     "128": "img/bingRwLogo@8x.png"
   },  
-  "description": "A Chrome extension for Microsoft Rewards. Your daily progress is checked every two hours and PC, mobile, EDGE search quests are completed automatically.",
+  "description": "A Chrome extension for Microsoft Rewards that automatically clears PC, mobile and EDGE search quests and displays daily point countdown.",
 
   "background": {
     "persistent": true,

@@ -1,11 +1,17 @@
 'use strict';
 
 function onExtensionLoad() {
-    // fetch("test.json")
-    // .then(response => response.json())
-    // .then(jscode => userDailyStatus._parseStatusJson(jscode));
     setBadge(new GreyBadge());
+    loadSavedSettings();
     setDelayedInitialisation(5000);
+}
+
+function loadSavedSettings() {
+    chrome.storage.sync.get({
+        compatibilityMode: false,
+    }, function (options) {
+        _compatibilityMode = options.compatibilityMode;
+    });
 }
 
 // -----------------------------
@@ -99,6 +105,7 @@ const googleTrend = new GoogleTrend();
 const userDailyStatus = new DailyRewardStatus();
 const searchQuest = new SearchQuest(googleTrend);
 let userAgents;
+let _compatibilityMode;
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {
@@ -112,6 +119,10 @@ chrome.runtime.onInstalled.addListener(function (details) {
 chrome.runtime.onMessage.addListener(function (request) {
     if (request.action == 'checkStatus') {
         doBackgroundWork();
+    }
+    if (request.action == 'updateOptions') {
+        _compatibilityMode = request.content.compatibilityMode;
+        return;
     }
     if (request.action == 'copyDebugInfo') {
         getDebugInfo();
