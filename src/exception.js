@@ -14,6 +14,7 @@ function logException(ex) {
 
 class ErrorWithSourceInnerException extends Error {
     constructor(source, innerException, message) {
+        message = message + '\nInnerEx: ' + innerException.stack;
         super(message);
         this.source = source;
         this.innerException = innerException;
