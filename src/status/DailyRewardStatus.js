@@ -136,11 +136,19 @@ class DailyRewardStatus {
         }
     }
 
-    _parseStatusJson(statusJson) {
+    _parseStatusJsonCompatibilityMode(statusJson) {
         this._parsePcSearch(statusJson);
         this._parseMbSearch(statusJson);
         this._parseQuiz(statusJson);
-        this._parsePunchCards(statusJson);
+        this._parsePunchCards(statusJson, true);
+        this._parseDaily(statusJson);
+    }
+
+    _parseStatusJson(statusJson) {
+        this._parsePcSearch(statusJson);
+        this._parseMbSearch(statusJson);
+        this._parseMorePromo(statusJson);
+        this._parsePunchCards(statusJson, false);
         this._parseDaily(statusJson);
     }
 
@@ -169,14 +177,18 @@ class DailyRewardStatus {
         this._quizAndDaily_.max += statusJson.userStatus.counters.activityAndQuiz[0].pointProgressMax;
     }
 
-    _parsePunchCards(statusJson) {
+    _parsePunchCards(statusJson, flagDeduct) {
         for (let i = 0; i < statusJson.punchCards.length; i++) {
             const parentPromo = statusJson.punchCards[i].parentPromotion;
             if (!parentPromo) continue;
 
             const promoTypes = parentPromo.promotionType.split(',');
-            if (!promoTypes.every((val) => (val == 'urlreward' || val == 'quiz'))) {
+            const isPurchaseCard = !promoTypes.every((val) => (val == 'urlreward' || val == 'quiz'));
+            if (flagDeduct && isPurchaseCard) {
                 this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
+            } else if (!flagDeduct && !isPurchaseCard) {
+                this._quizAndDaily_.max += statusJson.punchCards[i].parentPromotion.pointProgressMax;
+                this._quizAndDaily_.progress += statusJson.punchCards[i].parentPromotion.pointProgress;
             }
         }
     }
@@ -185,7 +197,24 @@ class DailyRewardStatus {
         const dailyset = statusJson.dailySetPromotions[getTodayDate()];
         if (!dailyset) return;
         dailyset.forEach((obj) => {
-            this._quizAndDaily_.progress += obj.pointProgress;
+            if (obj.complete) {
+                this._quizAndDaily_.progress += obj.pointProgressMax;
+            } else {
+                this._quizAndDaily_.progress += obj.pointProgress;
+            }
+            this._quizAndDaily_.max += obj.pointProgressMax;
+        });
+    }
+
+    _parseMorePromo(statusJson) {
+        const morePromo = statusJson.morePromotions;
+        if (!morePromo) return;
+        morePromo.forEach((obj) => {
+            if (obj.complete) {
+                this._quizAndDaily_.progress += obj.pointProgressMax;
+            } else {
+                this._quizAndDaily_.progress += obj.pointProgress;
+            }
             this._quizAndDaily_.max += obj.pointProgressMax;
         });
     }
