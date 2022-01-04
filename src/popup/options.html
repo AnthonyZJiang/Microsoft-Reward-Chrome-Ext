@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Options</title>
+    <style>
+        body {
+            background-color: #fff;
+            font-family: arial, sans-serif;
+            font-size: 13px;
+        }
+
+        div {
+            display: block;
+        }
+
+        hr {
+            margin: 20px 20px 10px;
+        }
+
+        h1 {
+            color: #444;
+            font-size: 1.5em;
+            margin: 0.7em 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        h2 {
+            color: #333333;
+            font-size: 1.3em;
+            font-weight: normal;
+            margin: 0.7em 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        a {
+            color: #4285f4;
+            display: inline;
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            display: block;
+        }
+
+        footer {
+            /* background-color: #f0f0f0; */
+            color: #636363;
+            font-family: 'Roboto', sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 12px 0 10px;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+
+        .separator {
+            width: 100%;
+            font-size: 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .button {
+            color: #ffffff;
+            padding: 5px 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: solid 2px #ffffff;
+            background: #4d90fe;
+            margin-left: 0;
+        }
+
+        .button:focus {
+            outline: 0;
+        }
+
+        .button:hover {
+            background: #357ae8;
+        }
+
+        .option_row {
+            display: table-row;
+            line-height: 30px;
+        }
+
+        .option_name {
+            display: table-cell;
+            font-weight: bold;
+            margin-top: 3px;
+            padding-right: 16px;
+            padding-top: 16px;
+            white-space: nowrap;
+        }
+
+        #content {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin: 40px auto 0px;
+            padding: 20px 40px 30px;
+            width: 350px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <body>
+        <div id="content">
+            <header>
+                <h1>
+                    <img src="../img/bingRwLogo@1.5x.png" title="Rewards Options" alt="">
+                    <span style="padding:0 10px">Microsoft Rewards</span>
+                </h1>
+                <h2>
+                    <div>Chrome Extension Options</div>
+                </h2>
+                <div class="separator"></div>
+            </header>
+            <div class="option_row">
+                <div id="lang-option" class="option_name">Point countdown algorithm:</div>
+                <input class="checkbox" type="checkbox" id="use-old-countdown-algorithm"><label for="use-old-countdown-algorithm">Use
+                    the old algorithm</label>
+            </div>
+
+            <div class="option_row">
+                <div id="popup-option" class="option_name">Debug options:</div>
+                <button type="button" class="button" id="copy-debug-info">Copy debug info</button>
+            </div>
+
+        </div> <!-- end of content div -->
+
+        <footer>
+            <div>
+                &copy; 2022 tmxkn1 - <a href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github
+                    Repository</a>
+            </div>
+        </footer>
+
+        <script src="../utility.js"></script>
+        <script src="options.js"></script>
+    </body>
+
+</html>

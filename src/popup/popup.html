@@ -4,44 +4,36 @@
 <head>
     <title>Options</title>
     <style>
-        .r-aligned {
-            margin-right: 0;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .l-aligned {
-            margin-right: auto;
-            margin-left: 0;
-            text-align: left;
-        }
-
-        .d-flex {            
-            display: flex
-        }
-
         body {
             background-color: #ffffff;
             margin: 0;
+            width: 320px;
         }
 
-        .form-box {
-            width: 300px;
-            padding: 10px;
-            color: #434b53;
-            background-color: #ffffff;
+        div {
+            display: block;
         }
 
-        .option-row {
-            margin: 10px 20px 0;
+        hr {
+            margin: 20px 20px 10px;
         }
 
-        .button-row {
-            text-align: right;
+        footer {
+            /* background-color: #f0f0f0; */
+            color: #636363;
+            font-family: 'Roboto', sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 12px 0 10px;
+            text-align: center;
+            width: 100%;
+            display: block;
         }
 
-        .status-row {
-            margin: 5px 20px 10px 45px;
+        .separator {
+            width: 100%;
+            font-size: 0;
+            border-bottom: 1px solid #ddd;
         }
 
         .button {
@@ -54,106 +46,12 @@
             margin-left: 0;
         }
 
-        .small-button {
-            padding: 2px 8px;
-            font-size: 12px;
-        }
-
         .button:focus {
             outline: 0;
         }
 
         .button:hover {
             background: #357ae8;
-        }
-
-        hr {
-            margin: 20px 20px 10px;
-        }
-
-        #saved-notice {
-            margin: 0 5px;
-        }
-
-        .collapsible {
-            background-color: #ffffff;
-            color: #444;
-            cursor: pointer;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 12px;
-        }
-
-        .collapsible:after {
-            content: '\002B';
-            color: #444;
-            font-weight: bold;
-            float: right;
-            margin-left: 5px;
-        }
-
-        .active:after {
-            content: "\2212";
-        }
-        
-        .content {
-            display: none;
-            overflow: hidden;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 24px;
-            height: 12px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 3px;
-            left: 0;
-            right: 0;
-            bottom: -3px;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 12px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 10px;
-            width: 10px;
-            left: 1px;
-            bottom: 1px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: #4285f4;
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #4285f4;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(12px);
-            -ms-transform: translateX(12px);
-            transform: translateX(12px);
         }
 
         .a:hover {
@@ -167,54 +65,39 @@
             text-decoration: none;
         }
 
-        .footer {
-            background-color: #f0f0f0;
-            color: #636363;
-            font-family: 'Roboto', sans-serif;
-            font-size: 11px;
-            margin-top: 9px;
-            padding: 10px;
-            text-align: center;
+        .ms_button {
             width: 100%;
-            display: block;
+            color: #444;
+            background: #fff;
+            padding: 12px 0;
+            border: 0;
+            margin-left: 0;
+            font: 14px/normal 'Roboto',Helvetica,Sans-Serif;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .ms_button:hover {
+            background: rgb(249, 249, 249);
         }
     </style>
 </head>
 
 <body>
-    <header>
-
-    </header>
-    <div class="form-box">
-        <div class="option-row button-row d-flex">
-            <button type="button" class="button l-aligned" id="check-now">Check Now</button>
-            <button type="button" class="button r-aligned" id="ms-rewards-link">Visit MS Rewards</button>
-        </div>
-        <hr />
-        <div class="option-row button-row">
-            <button class="collapsible">Options</button>
-            <div class="content">
-                <div class="button-row option-row r-aligned">
-                    <label class="switch">
-                        <input type="checkbox" id="compatibility-mode">
-                        <span class="slider"></span>
-                    </label>
-                    <span>Compatibility mode</span>
-                </div>
-                <button type="button" class="button small-button option-row button-row r-aligned"
-                    id="copy-debug-info">Copy Debug
-                    Info</button>
-            </div>
-        </div>
-    </div>
-    <footer class="footer">
+    <iframe id="msr_iframe" frameborder="no" scrolling="no" title="Microsoft News"
+        src="https://www.bing.com/rewardsapp/flyout?channel=0&partnerId=EdgeNTP&pageType=ntp&isDarkMode=0"
+        style="height:517px;width:100%;border:none;overflow:hidden;"></iframe>
+    <div class="separator"></div>
+    <footer>
         <div>
             <span> &copy; 2022 tmxkn1 - </span>
-            <a class="a" target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github Repository</a>
+            <a class="a" target="_blank" href="options.html">Extension Options</a>
+            <span> - </span>
+            <a class="a" target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github
+                Repository</a>
         </div>
     </footer>
-    <!-- <script src="../cookies.js"></script> -->
-    <script src="../utility.js"></script>
     <script src="popup.js"></script>
 </body>
 
