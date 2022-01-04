@@ -10,13 +10,15 @@ This extension will not clear any promotional link or quiz quests and this featu
 
 Use at your own risk. I do not take responsibility for any consequence caused by this extension.
 
-# Install from git
+# Install from GitHub
 
-1. `git clone https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext.git`
-2. Open Chrome.
-3. Go to chrome://extensions/ and enable `Developer mode`.
-4. Click `Load unpacked` and select `src` folder.
-5. Enable the extension.
+1. Head to [Release](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/releases) and download the latest Source code (zip).
+2. Unzip the downloaded file to somewhere you want to keep it.
+3. Open Chrome.
+4. Go to chrome://extensions/ and enable `Developer mode`.
+5. Select `Load unpacked` and select the `src` folder.
+6. Enable the extension.
+
 
 # Install from Chrome web store
 
