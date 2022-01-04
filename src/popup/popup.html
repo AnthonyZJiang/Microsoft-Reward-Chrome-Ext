@@ -18,6 +18,15 @@
             margin: 20px 20px 10px;
         }
 
+        a {
+            text-decoration: none;
+        }
+
+        header {
+            font-family: 16px/22px 'Roboto', Helvetica, Sans-Serif;
+            padding: 0 2px;
+        }
+
         footer {
             /* background-color: #f0f0f0; */
             color: #636363;
@@ -30,61 +39,84 @@
             display: block;
         }
 
+        footer a {
+            color: #4285f4;
+            display: inline;
+            font-size: 11px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
         .separator {
             width: 100%;
             font-size: 0;
             border-bottom: 1px solid #ddd;
+            padding-bottom: 1px;
+            margin: 0px 2px;
         }
 
-        .button {
-            color: #ffffff;
-            padding: 5px 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: solid 2px #ffffff;
-            background: #4d90fe;
-            margin-left: 0;
+        .b_attensionText {
+            font: 16px/22px 'Roboto', Helvetica, Sans-Serif;
+            color: rgb(235, 162, 0);
         }
 
-        .button:focus {
-            outline: 0;
+        .ms_l_s {
+            padding: 12px 10px;
+            position: relative;
+            display: block;
+            border-collapse: collapse;
+            border-spacing: 0;
+            list-style: none;
+            color: #666;
+            font: 14px/normal 'Roboto', Helvetica, Sans-Serif;
         }
 
-        .button:hover {
-            background: #357ae8;
+        .fp_row {
+            display: flex;
+            flex-flow: row nowrap;
         }
 
-        .a:hover {
-            text-decoration: underline;
+        .fp_row.align-center,
+        .fp_col.align-center {
+            align-items: center;
         }
 
-        .a {
-            color: #4285f4;
-            display: inline;
-            font-size: 11px;
-            text-decoration: none;
+        .fc_dyn {
+            flex: 1 1 auto;
+            overflow: hidden;
         }
 
-        .ms_button {
-            width: 100%;
-            color: #444;
-            background: #fff;
-            padding: 12px 0;
-            border: 0;
-            margin-left: 0;
-            font: 14px/normal 'Roboto',Helvetica,Sans-Serif;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
+        .fc_fix20 {
+            flex: 0 0 20px;
         }
 
-        .ms_button:hover {
-            background: rgb(249, 249, 249);
+        .announcement {
+            display: none;
         }
     </style>
 </head>
 
 <body>
+    <header>
+        <div class="announcement" id="update-available">
+            <div class="ms_l_s ">
+                <a target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">
+                    <div class="mfo_c_rh fp_row align-center">
+                        <div class="b_attensionText fc_dyn">Extension Update Avilable</div>
+                        <div class="fc_fix20"><svg class="rw-si chevronRight" width="16" height="16" viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.707 15.707l7-7a1 1 0 0 0 0-1.414l-7-7a1 1 0 1 0-1.414 1.414l6.293 6.293-6.293 6.293a1 1 0 1 0 1.414 1.414z"
+                                    fill="#767676"></path>
+                            </svg></div>
+                    </div>
+                </a>
+            </div>
+            <div class="separator" style="margin:0;"></div>
+        </div>
+    </header>
     <iframe id="msr_iframe" frameborder="no" scrolling="no" title="Microsoft News"
         src="https://www.bing.com/rewardsapp/flyout?channel=0&partnerId=EdgeNTP&pageType=ntp&isDarkMode=0"
         style="height:517px;width:100%;border:none;overflow:hidden;"></iframe>
@@ -92,9 +124,9 @@
     <footer>
         <div>
             <span> &copy; 2022 tmxkn1 - </span>
-            <a class="a" target="_blank" href="options.html">Extension Options</a>
+            <a target="_blank" href="options.html">Extension Options</a>
             <span> - </span>
-            <a class="a" target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github
+            <a target="_blank" href="https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext">Github
                 Repository</a>
         </div>
     </footer>
