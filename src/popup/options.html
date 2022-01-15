@@ -27,8 +27,17 @@
         }
 
         h2 {
-            color: #333333;
+            color: #333;
             font-size: 1.3em;
+            font-weight: normal;
+            margin: 0.7em 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 1em;
             font-weight: normal;
             margin: 0.7em 0;
             display: flex;
@@ -125,17 +134,19 @@
                 <h2>
                     <div>Chrome Extension Options</div>
                 </h2>
+                <h3>
+                    <div id="version-number"></div>
+                </h3>
                 <div class="separator"></div>
             </header>
             <div class="option_row">
-                <div id="lang-option" class="option_name">Point countdown algorithm:</div>
+                <div class="option_name">Point countdown algorithm:</div>
                 <input class="checkbox" type="checkbox" id="use-old-countdown-algorithm"><label
                     for="use-old-countdown-algorithm">Use
                     the old algorithm</label>
             </div>
-
             <div class="option_row">
-                <div id="popup-option" class="option_name">Debug options:</div>
+                <div class="option_name">Debug options:</div>
                 <button type="button" class="button" id="copy-debug-info">Copy debug info</button>
             </div>
 

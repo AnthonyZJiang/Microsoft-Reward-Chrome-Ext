@@ -41,3 +41,5 @@ document.getElementById('copy-debug-info').addEventListener('click', () => {
 });
 
 getElementCountdownAlgorithm().addEventListener('click', saveOptions);
+
+document.getElementById('version-number').innerText = 'V' + chrome.runtime.getManifest().version;
