@@ -119,7 +119,7 @@ async function updateUA() {
             const ua = JSON.parse(text);
             userAgents = {
                 'pc': ua.edge.windows,
-                'mb': ua.edge.ios,
+                'mb': ua.chrome.ios,
             };
         },
     ).catch((ex) => {
