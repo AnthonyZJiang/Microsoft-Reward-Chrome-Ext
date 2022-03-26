@@ -13,7 +13,7 @@ class DailyQuest {
     }
 
     get isValidAndCompleted() {
-        return this.valid && this.isCompleted;
+        return this.isValid && this.isCompleted;
     }
 
     get pointsToGet() {
