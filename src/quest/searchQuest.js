@@ -109,7 +109,6 @@ class SearchQuest {
         if (this._isCurrentSearchCompleted()) {
             return;
         }
-        return;
         let response;
         try {
             response = await fetch(this._getBingSearchUrl());
