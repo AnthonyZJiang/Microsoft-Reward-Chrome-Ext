@@ -73,7 +73,7 @@ class DailyRewardStatus {
                 logException(ex);
                 return await this._getPointBreakdownTextOld();
             }
-            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex, errorMessage);
+            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex, ex.message);
         });
         const doc = getDomFromText(text);
         return DailyRewardStatus.getUserStatusJSON(doc);

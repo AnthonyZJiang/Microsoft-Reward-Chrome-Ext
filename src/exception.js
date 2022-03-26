@@ -87,3 +87,10 @@ class FetchTimeoutException extends ErrorWithSourceInnerException {
         this.name = 'FetchTimeout';
     }
 }
+
+class UserAgentInvalidException extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'UserAgentInvalid';
+    }
+}

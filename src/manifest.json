@@ -38,6 +38,7 @@
     "https://rewards.microsoft.com/pointsbreakdown*",
     "webRequest",
     "webRequestBlocking",
-    "storage"
+    "storage",
+    "notifications"
   ]
 }
