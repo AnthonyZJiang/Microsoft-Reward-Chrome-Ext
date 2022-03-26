@@ -157,7 +157,9 @@ class SearchQuest {
             }
             await getUpdatedUA('mb');
         }
-        notifyStableUAOutdated(flag);
+        if (flag > 0) {
+            notifyStableUAOutdated(flag);
+        }
     }
 }
 
