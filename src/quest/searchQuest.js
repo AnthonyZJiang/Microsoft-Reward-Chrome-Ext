@@ -49,11 +49,10 @@ class SearchQuest {
 
             await this._startSearchQuests();
 
-            const pcSearchProgBefore = this._status_.pcSearchStatus.progress;
-            const mbSearchProgBefore = this._status_.mbSearchStatus.progress;
-            await this._status_.update();
-            const flag = (!this._status_.pcSearchStatus.isValidAndCompleted && (pcSearchProgBefore == this._status_.pcSearchStatus.progress)) + 2 * (!this._status_.mbSearchStatus.isValidAndCompleted && (mbSearchProgBefore == this._status_.mbSearchStatus.progress));
-            await this._checkUA(flag);
+            const flag = await this.isSearchSuccessful();
+            if (flag > 0) {
+                await this._getAlternativeUA(flag);
+            }
         }
     }
 
@@ -61,6 +60,36 @@ class SearchQuest {
         await this._doPcSearch();
         await this._doMbSearch();
         this._quitSearchCleanUp();
+    }
+
+    async isSearchSuccessful() {
+        // Return:
+        // 0 - successful; 1 - pc search failed; 2 - mb search failed; 3 - both failed
+        const pcSearchProgBefore = this._status_.pcSearchStatus.progress;
+        const mbSearchProgBefore = this._status_.mbSearchStatus.progress;
+        await this._status_.update();
+        const flag = (!this._status_.pcSearchStatus.isValidAndCompleted && (pcSearchProgBefore == this._status_.pcSearchStatus.progress));
+        return flag + 2 * (!this._status_.mbSearchStatus.isValidAndCompleted && (mbSearchProgBefore == this._status_.mbSearchStatus.progress));
+    }
+
+    async _getAlternativeUA(flag) {
+        if (flag == 3) {
+            if (userAgents.pcSource == 'updated' && userAgents.mbSource == 'updated') {
+                throw new UserAgentInvalidException('Cannot find working UAs for pc and mobile.');
+            }
+            await getUpdatedUA('both');
+        } else if (flag == 1) {
+            if (userAgents.pcSource == 'updated') {
+                throw new UserAgentInvalidException('Cannot find a working UA for pc.');
+            }
+            await getUpdatedUA('pc');
+        } else if (flag == 2) {
+            if (userAgents.mbSource == 'updated') {
+                throw new UserAgentInvalidException('Cannot find a working UA for mobile.');
+            }
+            await getUpdatedUA('mb');
+        }
+        notifyStableUAOutdated(flag);
     }
 
     async _doPcSearch() {
@@ -139,32 +168,9 @@ class SearchQuest {
             this._currentSearchCount_ >= this._status_.pcSearchStatus.searchNeededCount :
             this._currentSearchCount_ >= this._status_.mbSearchStatus.searchNeededCount;
     }
-
-    async _checkUA(flag) {
-        if (flag == 3) {
-            if (userAgents.pcSource == 'updated' && userAgents.mbSource == 'updated') {
-                throw new UserAgentInvalidException('Cannot find working UAs for pc and mobile.');
-            }
-            await getUpdatedUA('both');
-        } else if (flag == 1) {
-            if (userAgents.pcSource == 'updated') {
-                throw new UserAgentInvalidException('Cannot find a working UA for pc.');
-            }
-            await getUpdatedUA('pc');
-        } else if (flag == 2) {
-            if (userAgents.mbSource == 'updated') {
-                throw new UserAgentInvalidException('Cannot find a working UA for mobile.');
-            }
-            await getUpdatedUA('mb');
-        }
-        if (flag > 0) {
-            notifyStableUAOutdated(flag);
-        }
-    }
 }
 
 function removeUA() {
-    // remove user-agent
     try {
         chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
     } catch (ex) { }
@@ -215,12 +221,14 @@ function sleep(ms) {
 
 function notifyStableUAOutdated(flag) {
     if (developer && developer.notification_ua_stable_outdated) {
+        const message = 'Stable UA is outdated! Flag: ' + (flag == 3 ? 'pc and mobile' : flag == 1 ? 'pc' : 'mobile');
+        console.log(message);
         chrome.notifications.clear('stable_ua_outdated');
         chrome.notifications.create('stable_ua_outdated', {
             type: 'basic',
             iconUrl: 'img/warn@8x.png',
             title: 'Developer notification',
-            message: 'Stable UA is outdated! Flag: ' + flag,
+            message: message,
             priority: 2,
         });
     }
@@ -228,12 +236,14 @@ function notifyStableUAOutdated(flag) {
 
 function notifyUpdatedUAOutdated() {
     if (developer && developer.notification_ua_updated_outdated) {
+        const message = 'Critical!! Updated UA is outdated!';
+        console.log(message);
         chrome.notifications.clear('updated_ua_outdated');
         chrome.notifications.create('updated_ua_outdated', {
             type: 'basic',
             iconUrl: 'img/err@8x.png',
             title: 'Developer notification',
-            message: 'Critical!! Updated UA is outdated!',
+            message: message,
             priority: 2,
         });
     }

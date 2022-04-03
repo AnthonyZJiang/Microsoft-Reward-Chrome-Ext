@@ -239,5 +239,5 @@ class DailyRewardStatus {
     }
 }
 
-const POINT_BREAKDOWN_URL_OLD = 'https://rewards.microsoft.com/pointsbreakdown';
-const POINT_BREAKDOWN_URL_NEW = 'https://rewards.bing.com/pointsbreakdown';
+const POINT_BREAKDOWN_URL_OLD = 'https://rewards.microsoft.com/';
+const POINT_BREAKDOWN_URL_NEW = 'https://rewards.bing.com/';
