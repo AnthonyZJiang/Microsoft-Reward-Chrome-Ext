@@ -38,16 +38,6 @@ class FetchFailedException extends ErrorWithSourceInnerException {
     }
 }
 
-class FetchRedirectedException extends ErrorWithSourceInnerException {
-    constructor(source, innerException, message) {
-        if (!message) {
-            message = 'Fetch failed because redirection occurred.';
-        }
-        super(source, innerException, message);
-        this.name = 'FetchRedirected';
-    }
-}
-
 class ResponseUnexpectedStatusException extends ErrorWithSourceInnerException {
     constructor(source, response, message) {
         if (!message) {
@@ -85,5 +75,19 @@ class FetchTimeoutException extends ErrorWithSourceInnerException {
         }
         super(source, innerException, message);
         this.name = 'FetchTimeout';
+    }
+}
+
+class UserAgentInvalidException extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'UserAgentInvalid';
+    }
+}
+
+class NotRewardUserException extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'UserNotLoggedIn';
     }
 }

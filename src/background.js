@@ -3,6 +3,7 @@
 function onExtensionLoad() {
     setBadge(new GreyBadge());
     loadSavedSettings();
+    getDeveloperSettings();
     setDelayedInitialisation(5000);
 }
 
@@ -11,6 +12,22 @@ function loadSavedSettings() {
         compatibilityMode: false,
     }, function (options) {
         _compatibilityMode = options.compatibilityMode;
+    });
+}
+
+async function getDeveloperSettings() {
+    const devJson = chrome.runtime.getURL('developer.json');
+    const fetchProm = await fetch(devJson, {method: 'GET'}).then((response) => {
+        return response.json();
+    }).then((json) => {
+        developer = json;
+        console.log('Developer mode enabled.');
+        console.log(developer);
+    }).catch((ex) => {
+        if (ex.name == 'TypeError') {
+            return;
+        }
+        throw ex;
     });
 }
 
@@ -47,7 +64,6 @@ async function doBackgroundWork() {
 
     setBadge(new BusyBadge());
 
-    await updateUA();
     checkNewDay();
     await checkDailyRewardStatus();
 
@@ -104,6 +120,7 @@ const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 const googleTrend = new GoogleTrend();
 const userDailyStatus = new DailyRewardStatus();
 const searchQuest = new SearchQuest(googleTrend);
+let developer = false;
 let userAgents;
 let _compatibilityMode;
 

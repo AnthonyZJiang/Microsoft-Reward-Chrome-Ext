@@ -100,7 +100,39 @@ async function getDebugInfo() {
     copyTextToClipboard(text);
 }
 
-async function updateUA() {
+async function getStableUA() {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const fetchProm = fetch('https://raw.githubusercontent.com/tmxkn1/Microsoft-Reward-Chrome-Ext/master/useragents.json', {method: 'GET', signal: signal});
+
+    setTimeout(() => controller.abort(), 3000);
+
+    await fetchProm.then(
+        async (response) => {
+            if (!response.ok) {
+                throw await response.text();
+            }
+            return response.text();
+        },
+    ).then(
+        (text) => {
+            const ua = JSON.parse(text);
+            userAgents = {
+                'pc': ua.stable.edge_win,
+                'mb': ua.stable.chrome_ios,
+                'pcSource': 'stable',
+                'mbSource': 'stable',
+            };
+        },
+    ).catch((ex) => {
+        if (ex.name == 'AbortError') {
+            throw new FetchFailedException('updateUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Do you have internet connection? Otherwise, perhaps Github server is down.');
+        }
+        throw new ResponseUnexpectedStatusException('updateUA::_awaitFetchPromise', ex, ex.message);
+    });
+}
+
+async function getUpdatedUA(type='both') {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchProm = fetch('https://raw.githubusercontent.com/tmxkn1/UpdatedUserAgents/master/useragents.json', {method: 'GET', signal: signal});
@@ -117,15 +149,23 @@ async function updateUA() {
     ).then(
         (text) => {
             const ua = JSON.parse(text);
-            userAgents = {
-                'pc': ua.edge.windows,
-                'mb': ua.chrome.ios,
+            if (type == 'both') {
+                userAgents.pc= ua.edge.windows;
+                userAgents.mb = ua.chrome.chrome_ios;
+                userAgents.pcSource = 'updated';
+                userAgents.mbSource = 'updated';
+            } else if (type == 'pc') {
+                userAgents.pc = ua.edge.windows;
+                userAgents.pcSource = 'updated';
+            } else if (type == 'mb') {
+                userAgents.mb = ua.chrome.ios;
+                userAgents.mbSource = 'updated';
             };
         },
     ).catch((ex) => {
         if (ex.name == 'AbortError') {
             throw new FetchFailedException('updateUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Do you have internet connection? Otherwise, perhaps Github server is down.');
         }
-        throw new ResponseUnexpectedStatusException('updateUA::_awaitFetchPromise', ex, errorMessage);
+        throw new ResponseUnexpectedStatusException('updateUA::_awaitFetchPromise', ex, ex.message);
     });
 }
