@@ -78,25 +78,39 @@ async function copyTextToClipboard(text) {
 }
 
 async function getDebugInfo() {
-    let text = '';
+    let text = '[';
 
     await userDailyStatus.getUserStatusJson().then(
         (statusJson) => {
-            statusJson.userStatus.levelInfo = 'deleted';
-            statusJson.userStatus.availablePoints = 'deleted';
-            statusJson.userStatus.lifetimePoints = 'deleted';
-            statusJson.userStatus.lifetimePointsRedeemed = 'deleted';
-            statusJson.userStatus.ePuid = 'deleted';
-            statusJson.userStatus.redeemGoal = 'deleted';
-            statusJson.userStatus.lastOrder = 'deleted';
-            statusJson.userStatus.dashboardImpression = 'deleted';
-            statusJson.userStatus.referrerProgressInfo = 'deleted';
-            text += JSON.stringify(statusJson);
+            info = {
+                'IsError': statusJson.IsError,
+                'IsRewardsUser': statusJson.IsRewardsUser,
+                'FlyoutResult': {
+                    'DailySetPromotions': statusJson.FlyoutResult.DailySetPromotions,
+                    'MorePromotions': statusJson.FlyoutResult.MorePromotions,
+                },
+                'UserStatus': {
+                    'Counters': statusJson.FlyoutResult.UserStatus.Counters,
+                },
+            };
+            text += JSON.stringify(info);
         },
     ).catch((ex) => {
-        text += ex.message + '\n';
+        text += '"' + ex.message + '"';
     });
 
+    await userDailyStatus.getDetailedUserStatusJson().then(
+        (statusJson) => {
+            info = {
+                'punchCards': statusJson.punchCards,
+            };
+            text += ',' + JSON.stringify(info);
+        },
+    ).catch((ex) => {
+        text += ',"' + ex.message + '"';
+    });
+
+    text += ']';
     copyTextToClipboard(text);
 }
 

@@ -202,16 +202,26 @@ class DailyRewardStatus {
     _parsePunchCards(statusJson, flagDeduct) {
         // flagDeduct: set true to deduct the point progress from the total point progress, only accurate in rare cases, reserved for compatibility mode
         for (let i = 0; i < statusJson.punchCards.length; i++) {
-            const parentPromo = statusJson.punchCards[i].parentPromotion;
-            if (!parentPromo) continue;
+            const card = statusJson.punchCards[i];
+            if (!card) continue;
 
-            const promoTypes = parentPromo.promotionType.split(',');
+            const promoTypes = card.parentPromotion.promotionType.split(',');
             const isPurchaseCard = !promoTypes.every((val) => (val == 'urlreward' || val == 'quiz'));
             if (flagDeduct && isPurchaseCard) {
-                this._quizAndDaily_.max -= statusJson.punchCards[i].parentPromotion.pointProgressMax;
+                this._quizAndDaily_.max -= card.parentPromotion.pointProgressMax;
             } else if (!flagDeduct && !isPurchaseCard) {
-                this._quizAndDaily_.max += statusJson.punchCards[i].parentPromotion.pointProgressMax;
-                this._quizAndDaily_.progress += statusJson.punchCards[i].parentPromotion.pointProgress;
+                let pointProgress = card.parentPromotion.pointProgress;
+                let pointProgressMax = card.parentPromotion.pointProgressMax;
+                for (const j in card.childPromotions) {
+                    if (!j) continue;
+                    if (card.childPromotions[j].pointProgressMax == 1) continue;
+                    pointProgressMax += card.childPromotions[j].pointProgressMax;
+                    pointProgress += card.childPromotions[j].pointProgress;
+                }
+                this._quizAndDaily_.max += pointProgressMax;
+                if (pointProgress == pointProgressMax) {
+                    this._quizAndDaily_.progress += pointProgress;
+                }
             }
         }
     }
