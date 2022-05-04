@@ -204,14 +204,16 @@ class DailyRewardStatus {
         for (let i = 0; i < statusJson.punchCards.length; i++) {
             const card = statusJson.punchCards[i];
             if (!card) continue;
+            const parentPromo = card.parentPromo;
+            if (!parentPromo) continue;
 
-            const promoTypes = card.parentPromotion.promotionType.split(',');
+            const promoTypes = parentPromo.promotionType.split(',');
             const isPurchaseCard = !promoTypes.every((val) => (val == 'urlreward' || val == 'quiz'));
             if (flagDeduct && isPurchaseCard) {
-                this._quizAndDaily_.max -= card.parentPromotion.pointProgressMax;
+                this._quizAndDaily_.max -= parentPromo.pointProgressMax;
             } else if (!flagDeduct && !isPurchaseCard) {
-                let pointProgress = card.parentPromotion.pointProgress;
-                let pointProgressMax = card.parentPromotion.pointProgressMax;
+                let pointProgress = parentPromo.pointProgress;
+                let pointProgressMax = parentPromo.pointProgressMax;
                 for (const j in card.childPromotions) {
                     if (!j) continue;
                     if (card.childPromotions[j].pointProgressMax == 1) continue;
