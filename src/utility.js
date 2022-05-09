@@ -165,7 +165,7 @@ async function getUpdatedUA(type='both') {
             const ua = JSON.parse(text);
             if (type == 'both') {
                 userAgents.pc= ua.edge.windows;
-                userAgents.mb = ua.chrome.chrome_ios;
+                userAgents.mb = ua.chrome.ios;
                 userAgents.pcSource = 'updated';
                 userAgents.mbSource = 'updated';
             } else if (type == 'pc') {
