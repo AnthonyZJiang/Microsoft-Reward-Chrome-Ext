@@ -137,12 +137,13 @@ async function getStableUA() {
                 'pcSource': 'stable',
                 'mbSource': 'stable',
             };
+            assertUA();
         },
     ).catch((ex) => {
         if (ex.name == 'AbortError') {
-            throw new FetchFailedException('updateUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Do you have internet connection? Otherwise, perhaps Github server is down.');
+            throw new FetchFailedException('getStableUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Perhaps, Github server is offline.');
         }
-        throw new ResponseUnexpectedStatusException('updateUA::_awaitFetchPromise', ex, ex.message);
+        throw new ResponseUnexpectedStatusException('getStableUA::_awaitFetchPromise', ex);
     });
 }
 
@@ -175,11 +176,18 @@ async function getUpdatedUA(type='both') {
                 userAgents.mb = ua.chrome.ios;
                 userAgents.mbSource = 'updated';
             };
+            assertUA();
         },
     ).catch((ex) => {
         if (ex.name == 'AbortError') {
-            throw new FetchFailedException('updateUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Do you have internet connection? Otherwise, perhaps Github server is down.');
+            throw new FetchFailedException('getUpdatedUA::_awaitFetchPromise', ex, 'Fetch timed out. Failed to update user agents. Do you have internet connection? Otherwise, perhaps Github server is down.');
         }
-        throw new ResponseUnexpectedStatusException('updateUA::_awaitFetchPromise', ex, ex.message);
+        throw new ResponseUnexpectedStatusException('getUpdatedUA::_awaitFetchPromise', ex);
     });
+}
+
+function assertUA() {
+    if (!userAgents.pc || !userAgents.mb) {
+        throw new UserAgentInvalidException('Failed to assert user agents. \n UA:\n' + JSON.stringify(userAgents));
+    }
 }

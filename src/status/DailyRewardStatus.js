@@ -72,7 +72,7 @@ class DailyRewardStatus {
         const fetchPromise = fetch(USER_STATUS_BING_URL, this._getFetchOptions(signal));
         setTimeout(() => controller.abort(), 3000);
         const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
-            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJsonFromBing', ex, ex.message);
+            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJsonFromBing', ex);
         });
         return DailyRewardStatus.getUserStatusJSON(text);
     }
@@ -88,7 +88,7 @@ class DailyRewardStatus {
                 logException(ex);
                 return null;
             }
-            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex, ex.message);
+            throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex);
         });
         const doc = getDomFromText(text);
         return DailyRewardStatus.getDetailedUserStatusJSON(doc);

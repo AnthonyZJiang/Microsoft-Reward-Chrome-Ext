@@ -39,9 +39,9 @@ class FetchFailedException extends ErrorWithSourceInnerException {
 }
 
 class ResponseUnexpectedStatusException extends ErrorWithSourceInnerException {
-    constructor(source, response, message) {
+    constructor(source, ex, message) {
         if (!message) {
-            message = `Expected response status is within 200-299. Received response status: ${response.status} (${response.statusText})`;
+            message = `Expected response status is within 200-299. Received response: ${ex}`;
         }
         super(source, null, message);
         this.name = 'FetchRedirected';
