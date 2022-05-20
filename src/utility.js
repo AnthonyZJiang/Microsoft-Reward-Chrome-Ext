@@ -11,9 +11,9 @@ function isNewDay() {
     let day;
     if ((day = new Date().getDay()) != _prevWeekDay) {
         _prevWeekDay = day;
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 function getDomFromText(text) {
