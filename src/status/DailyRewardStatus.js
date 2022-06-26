@@ -102,7 +102,7 @@ class DailyRewardStatus {
             if (ex.name == 'TypeError') {
                 throw new FetchFailedException('DailyRewardStatus::_awaitFetchPromise', ex, 'Are we redirected? You probably haven\'t logged in yet.');
             }
-            if (error.name == 'AbortError') {
+            if (ex.name == 'AbortError') {
                 throw new FetchFailedException('DailyRewardStatus::_awaitFetchPromise', ex, 'Fetch timed out. Do you have internet connection? Otherwise, perhaps MSR server is down.');
             }
             throw ex;
