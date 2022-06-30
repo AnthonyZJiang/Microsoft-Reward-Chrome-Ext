@@ -26,7 +26,7 @@ Unfortunately, the extension could not make its way to become visible on web sto
 
 # Use
 
-1. Log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](www.bing.com).
+1. Log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](https://www.bing.com/).
 2. Enjoy.
 
 *Note: You may need to repeat step 1 every time you restart Chrome.*
