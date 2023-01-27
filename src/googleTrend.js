@@ -1,4 +1,6 @@
-class GoogleTrend {
+import {FetchFailedException} from './exception.js';
+
+export class GoogleTrend {
     constructor() {
         this.reset();
     }

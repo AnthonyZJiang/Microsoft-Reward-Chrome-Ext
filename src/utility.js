@@ -1,13 +1,8 @@
+import {userDailyStatus, userAgents} from './background.js';
+
 let _prevWeekDay = -1;
 
-function checkNewDay() {
-    if (isNewDay()) {
-        // if a new day, reset variables
-        resetDayBoundParams();
-    }
-}
-
-function isNewDay() {
+export function isNewDay() {
     let day;
     if ((day = new Date().getDay()) != _prevWeekDay) {
         _prevWeekDay = day;
@@ -16,11 +11,7 @@ function isNewDay() {
     return false;
 }
 
-function getDomFromText(text) {
-    return new DOMParser().parseFromString(text, 'text/html');
-}
-
-function getTodayDate() {
+export function getTodayDate() {
     const today = new Date();
     let dd = today.getDate();
     let mm = today.getMonth() + 1;
@@ -33,12 +24,7 @@ function getTodayDate() {
     return `${mm}/${dd}/${today.getFullYear()}`;
 }
 
-function resetDayBoundParams() {
-    searchQuest.reset();
-    googleTrend.reset();
-}
-
-function isHttpUrlValid(url) {
+export function isHttpUrlValid(url) {
     // rule:
     // starts with https:// or http://
     // followed by non-whitespace character
@@ -46,7 +32,7 @@ function isHttpUrlValid(url) {
     return /^https?:\/\/\S+.*\..*[\w\d]+\)?\/?$/i.test(url);
 }
 
-function getElementByXpath(path, element) {
+export function getElementByXpath(path, element) {
     return document.evaluate(path, element, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
@@ -77,7 +63,7 @@ async function copyTextToClipboard(text) {
     document.body.removeChild(copyFrom);
 }
 
-async function getDebugInfo() {
+export async function getDebugInfo() {
     let text = '[';
 
     await userDailyStatus.getUserStatusJson().then(
@@ -114,7 +100,7 @@ async function getDebugInfo() {
     copyTextToClipboard(text);
 }
 
-async function getStableUA() {
+export async function getStableUA() {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchProm = fetch('https://raw.githubusercontent.com/tmxkn1/Microsoft-Reward-Chrome-Ext/master/useragents.json', {method: 'GET', signal: signal});
@@ -147,7 +133,7 @@ async function getStableUA() {
     });
 }
 
-async function getUpdatedUA(type='both') {
+export async function getUpdatedUA(type='both') {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchProm = fetch('https://raw.githubusercontent.com/tmxkn1/UpdatedUserAgents/master/useragents.json', {method: 'GET', signal: signal});

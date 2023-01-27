@@ -1,4 +1,9 @@
-class DailyRewardStatus {
+import {DailyQuest, DailySearchQuest} from './DailyQuest.js';
+import {logException, ResponseUnexpectedStatusException, ParseJSONFailedException, NotRewardUserException} from '../exception.js';
+import {getTodayDate} from '../utility.js';
+import {STATUS_NONE, STATUS_BUSY, STATUS_DONE, STATUS_ERROR, USER_STATUS_BING_URL, USER_STATUS_DETAILED_URL} from '../constants.js';
+import {_compatibilityMode} from '../background.js';
+export class DailyRewardStatus {
     constructor() {
         this.reset();
     }
@@ -90,8 +95,7 @@ class DailyRewardStatus {
             }
             throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJson', ex);
         });
-        const doc = getDomFromText(text);
-        return DailyRewardStatus.getDetailedUserStatusJSON(doc);
+        return DailyRewardStatus.getDetailedUserStatusJSON(text);
     }
 
     async _awaitFetchPromise(fetchPromise) {
@@ -238,17 +242,11 @@ class DailyRewardStatus {
         }
     }
 
-    static getDetailedUserStatusJSON(doc) {
-        const jsList = doc.querySelectorAll('body script[type=\'text/javascript\']:not([id])');
-        for (let i = 0; i < jsList.length; i++) {
-            const m = /(?=\{"userStatus":).*(=?\}\};)/.exec(jsList[i].text);
-            if (m) {
-                return JSON.parse(m[0].slice(0, m[0].length - 1));
-            }
+    static getDetailedUserStatusJSON(text) {
+        const m = /(?=\{"userStatus":).*(=?\}\};)/.exec(text);
+        if (m) {
+            return JSON.parse(m[0].slice(0, m[0].length - 1));
         }
         return null;
     }
 }
-
-const USER_STATUS_BING_URL = 'https://www.bing.com/rewardsapp/flyout?channel=0&partnerId=EdgeNTP&pageType=ntp&isDarkMode=0';
-const USER_STATUS_DETAILED_URL = 'https://rewards.bing.com/';

@@ -1,4 +1,4 @@
-class DailyQuest {
+export class DailyQuest {
     constructor(progress, max) {
         this.progress = progress;
         this.max = max;
@@ -21,7 +21,7 @@ class DailyQuest {
     }
 }
 
-class DailySearchQuest extends DailyQuest {
+export class DailySearchQuest extends DailyQuest {
     get pointPerSearch() {
         return 3;
     }

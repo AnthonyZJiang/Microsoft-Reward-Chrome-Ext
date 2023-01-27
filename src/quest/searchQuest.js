@@ -1,4 +1,10 @@
-class SearchQuest {
+
+import {getStableUA, getUpdatedUA} from '../utility.js';
+import {UserAgentInvalidException, FetchFailedException} from '../exception.js';
+import {STATUS_NONE, STATUS_BUSY, STATUS_DONE, STATUS_ERROR} from '../constants.js';
+import {developer, userAgents} from '../background.js';
+
+export class SearchQuest {
     constructor(googleTrend) {
         this._googleTrend_ = googleTrend;
         this._searchIntervalMS = 2000;
@@ -146,7 +152,7 @@ class SearchQuest {
         }
 
         if (response.status != 200) {
-            throw new FetchResponseAnomalyException('Search');
+            throw new FetchFailedException('Search', undefined, `response status is {response.status}`);
         }
 
         this._currentSearchCount_++;
@@ -251,8 +257,3 @@ function notifyUpdatedUAOutdated() {
 
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
-const STATUS_NONE = 0;
-const STATUS_BUSY = 1;
-const STATUS_DONE = 20;
-const STATUS_WARNING = 30;
-const STATUS_ERROR = 3;
