@@ -1,4 +1,10 @@
-class SearchQuest {
+
+import {getStableUA, getUpdatedUA} from '../utility.js';
+import {UserAgentInvalidException, FetchFailedException} from '../exception.js';
+import {STATUS_NONE, STATUS_BUSY, STATUS_DONE, STATUS_ERROR} from '../constants.js';
+import {developer, userAgents} from '../background.js';
+
+export class SearchQuest {
     constructor(googleTrend) {
         this._googleTrend_ = googleTrend;
         this._searchIntervalMS = 2000;
@@ -116,13 +122,13 @@ class SearchQuest {
 
     _preparePCSearch() {
         this._currentSearchType_ = SEARCH_TYPE_PC_SEARCH;
-        removeUA();
+        // removeUA();
         setMsEdgeUA();
     }
 
     _prepareMbSearch() {
         this._currentSearchType_ = SEARCH_TYPE_MB_SEARCH;
-        removeUA();
+        // removeUA();
         setMobileUA();
     }
 
@@ -146,7 +152,7 @@ class SearchQuest {
         }
 
         if (response.status != 200) {
-            throw new FetchResponseAnomalyException('Search');
+            throw new FetchFailedException('Search', undefined, `response status is {response.status}`);
         }
 
         this._currentSearchCount_++;
@@ -180,27 +186,49 @@ function removeUA() {
 }
 
 function setMsEdgeUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMsEdgeUA, {
-        urls: ['https://www.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
-}
-
-function toMsEdgeUA(details) {
-    for (const i in details.requestHeaders) {
-        if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = userAgents.pc;
-            break;
-        }
-    }
-    return {
-        requestHeaders: details.requestHeaders,
-    };
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            addRules: [
+                {
+                    id: 1,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        responseHeaders: [
+                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        ],
+                    },
+                    condition: {
+                        domains: ['bing.com'], // on this domain
+                    },
+                },
+            ],
+            removeRuleIds: [2], // this removes old rule if any
+        },
+    );
 }
 
 function setMobileUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {
-        urls: ['https://www.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            addRules: [
+                {
+                    id: 2,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        responseHeaders: [
+                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        ],
+                    },
+                    condition: {
+                        domains: ['bing.com'], // on this domain
+                    },
+                },
+            ],
+            removeRuleIds: [1], // this removes old rule if any
+        },
+    );
 }
 
 function toMobileUA(details) {
@@ -251,8 +279,3 @@ function notifyUpdatedUAOutdated() {
 
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
-const STATUS_NONE = 0;
-const STATUS_BUSY = 1;
-const STATUS_DONE = 20;
-const STATUS_WARNING = 30;
-const STATUS_ERROR = 3;

@@ -32,7 +32,7 @@ class Badge {
     }
 
     setIcon() {
-        chrome.browserAction.setIcon({
+        chrome.action.setIcon({
             path: this.icon,
         });
     }
@@ -43,7 +43,7 @@ class Badge {
             txt = '';
         }
 
-        chrome.browserAction.setBadgeText({
+        chrome.action.setBadgeText({
             text: txt,
         });
     }
@@ -52,61 +52,61 @@ class Badge {
         if (!this.backgroundColor) {
             return;
         }
-        chrome.browserAction.setBadgeBackgroundColor({
+        chrome.action.setBadgeBackgroundColor({
             'color': this.backgroundColor,
         });
     }
 }
 
-class GreyBadge extends Badge {
+export class GreyBadge extends Badge {
     constructor() {
         super('grey', 'img/grey@1.5x.png');
     }
 }
 
-class BusyBadge extends Badge {
+export class BusyBadge extends Badge {
     constructor() {
         super('busy', 'img/busy@1.5x.png');
     }
 }
 
-class DoneBadge extends Badge {
+export class DoneBadge extends Badge {
     constructor() {
         super('done', 'img/done@1.5x.png');
     }
 }
 
-class WarningBadge extends Badge {
+export class WarningBadge extends Badge {
     constructor() {
         super('warn', 'img/warn@1.5x.png');
     }
 }
 
-class QuizAndDailyBadge extends Badge {
+export class QuizAndDailyBadge extends Badge {
     constructor(text) {
         super('quiz', 'img/warn@1.5x.png', text, [255, 201, 71, 100]);
     }
 }
 
-class ErrorBadge extends Badge {
+export class ErrorBadge extends Badge {
     constructor() {
         super('error', 'img/err@1.5x.png', 'err', [255, 51, 51, 100]);
     }
 }
 
-class NoneBadge extends Badge {
+export class NoneBadge extends Badge {
     constructor() {
         super('none', 'img/bingRwLogo@1.5x.png');
     }
 }
 
 let _currentBadge = null;
-function setBadge(badge) {
+export function setBadge(badge) {
     badge.set();
     _currentBadge = badge;
 }
 
-function isCurrentBadge(badgeType) {
+export function isCurrentBadge(badgeType) {
     if (typeof badgeType == 'object') {
         badgeType = badgeType.type;
     }

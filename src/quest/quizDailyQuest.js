@@ -1,6 +1,9 @@
 'use strict';
 
-function checkQuizAndDaily() {
+import {setBadge, QuizAndDailyBadge} from '../badge.js';
+import {userDailyStatus} from '../background.js';
+
+export function checkQuizAndDaily() {
     if (userDailyStatus.quizAndDailyStatus.isCompleted) {
         return;
     }
