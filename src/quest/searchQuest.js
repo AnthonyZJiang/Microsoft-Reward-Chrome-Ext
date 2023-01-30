@@ -122,13 +122,13 @@ export class SearchQuest {
 
     _preparePCSearch() {
         this._currentSearchType_ = SEARCH_TYPE_PC_SEARCH;
-        removeUA();
+        // removeUA();
         setMsEdgeUA();
     }
 
     _prepareMbSearch() {
         this._currentSearchType_ = SEARCH_TYPE_MB_SEARCH;
-        removeUA();
+        // removeUA();
         setMobileUA();
     }
 
@@ -186,27 +186,49 @@ function removeUA() {
 }
 
 function setMsEdgeUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMsEdgeUA, {
-        urls: ['https://www.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
-}
-
-function toMsEdgeUA(details) {
-    for (const i in details.requestHeaders) {
-        if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = userAgents.pc;
-            break;
-        }
-    }
-    return {
-        requestHeaders: details.requestHeaders,
-    };
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            addRules: [
+                {
+                    id: 1,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        responseHeaders: [
+                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        ],
+                    },
+                    condition: {
+                        domains: ['bing.com'], // on this domain
+                    },
+                },
+            ],
+            removeRuleIds: [2], // this removes old rule if any
+        },
+    );
 }
 
 function setMobileUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {
-        urls: ['https://www.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            addRules: [
+                {
+                    id: 2,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        responseHeaders: [
+                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        ],
+                    },
+                    condition: {
+                        domains: ['bing.com'], // on this domain
+                    },
+                },
+            ],
+            removeRuleIds: [1], // this removes old rule if any
+        },
+    );
 }
 
 function toMobileUA(details) {

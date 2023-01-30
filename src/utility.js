@@ -1,4 +1,5 @@
 import {userDailyStatus, userAgents} from './background.js';
+import {ResponseUnexpectedStatusException, FetchFailedException, UserAgentInvalidException} from './exception.js';
 
 let _prevWeekDay = -1;
 
@@ -22,18 +23,6 @@ export function getTodayDate() {
         mm = '0' + mm;
     }
     return `${mm}/${dd}/${today.getFullYear()}`;
-}
-
-export function isHttpUrlValid(url) {
-    // rule:
-    // starts with https:// or http://
-    // followed by non-whitespace character
-    // must end with a word character, a digit, or close bracket (')') with or without forward slash ('/')
-    return /^https?:\/\/\S+.*\..*[\w\d]+\)?\/?$/i.test(url);
-}
-
-export function getElementByXpath(path, element) {
-    return document.evaluate(path, element, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
 async function copyTextToClipboard(text) {
@@ -117,12 +106,10 @@ export async function getStableUA() {
     ).then(
         (text) => {
             const ua = JSON.parse(text);
-            userAgents = {
-                'pc': ua.stable.edge_win,
-                'mb': ua.stable.chrome_ios,
-                'pcSource': 'stable',
-                'mbSource': 'stable',
-            };
+            userAgents.pc = ua.stable.edge_win;
+            userAgents.mb = ua.stable.chrome_ios;
+            userAgents.pcSource = 'stable';
+            userAgents.mbSource = 'stable';
             assertUA();
         },
     ).catch((ex) => {

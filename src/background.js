@@ -132,7 +132,13 @@ const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 
 
 export let developer = false;
-export const userAgents = '';
+// eslint-disable-next-line prefer-const
+export let userAgents = {
+    'pc': '',
+    'mb': '',
+    'pcSource': '',
+    'mbSource': '',
+};
 export let _compatibilityMode = false;
 export const userDailyStatus = new DailyRewardStatus();
 const googleTrend = new GoogleTrend();

@@ -31,7 +31,7 @@ export class GoogleTrend {
         if (this._isGoogleTrendUpToDate()) {
             return;
         }
-        if (this._loadLocalWords()) {
+        if (await this._loadLocalWords()) {
             return;
         }
 
@@ -39,20 +39,19 @@ export class GoogleTrend {
         for (let i = 0; i<3; i++) {
             await this._fetchGoogleTrend(this._getGoogleTrendUrl(dates[i]));
         }
-        this._saveWordsToLocal();
+        await this._saveWordsToLocal();
     }
 
     _isGoogleTrendUpToDate(date=this._googleTrendWords_.date) {
         return date == this._getyyyymmdd(new Date());
     }
 
-    _saveWordsToLocal() {
-        localStorage.setItem('googleTrend', this._googleTrendWords_.words.join('|'));
-        localStorage.setItem('googleTrendDate', this._googleTrendWords_.date);
+    async _saveWordsToLocal() {
+        await chrome.storage.local.set({'googleTrend': this._googleTrendWords_.words.join('|'), 'googleTrendDate': this._googleTrendWords_.date});
     }
 
-    _loadLocalWords() {
-        const date = localStorage.getItem('googleTrendDate');
+    async _loadLocalWords() {
+        const date = await chrome.storage.local.get('googleTrendDate');
         if (date == undefined) {
             return false;
         }
@@ -60,7 +59,7 @@ export class GoogleTrend {
             return false;
         }
         this._googleTrendWords_.date = date;
-        this._googleTrendWords_.words = localStorage.getItem('googleTrend').split('|');
+        this._googleTrendWords_.words = await chrome.storage.local.get('googleTrend').split('|');
         return true;
     }
 
