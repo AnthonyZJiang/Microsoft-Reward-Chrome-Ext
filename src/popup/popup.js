@@ -10,6 +10,6 @@ function someFunction(name = 'test') {
 
 document.getElementById('Solve').addEventListener('click', async () => {
   chrome.tabs.executeScript({
-    file: 'try.js'
+    file: 'content.js'
 });
 });
