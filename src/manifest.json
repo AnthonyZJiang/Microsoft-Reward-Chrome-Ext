@@ -40,6 +40,18 @@
     "webRequest",
     "webRequestBlocking",
     "storage",
-    "notifications"
+    "notifications",
+    "tabs",
+    "activeTab"
+
+  ],
+  "web_accessible_resources": [
+   "try.js"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["try.js"]
+    }
   ]
 }
