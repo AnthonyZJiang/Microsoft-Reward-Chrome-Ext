@@ -47,6 +47,13 @@
   ],
   "web_accessible_resources": [
    "solve.js"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.bing.com/*"],
+      "js": ["autorun.js"],
+      "run_at": "document_end"
+    }
   ]
-  
+ 
 }
