@@ -7,9 +7,12 @@ function someFunction(name = 'test') {
   );
 }
 
+function solve1(){
+  chrome.tabs.executeScript({
+    file: 'runsolve.js'
+});
+}
 
 document.getElementById('Solve').addEventListener('click', async () => {
-  chrome.tabs.executeScript({
-    file: 'content.js'
-});
+  solve1();
 });

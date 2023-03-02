@@ -159,4 +159,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   });
   
 
+chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
+    console.log("aaa");
+if (tab.url.indexOf("http://translate.google.hu/") > -1 && 
+    changeInfo.url === undefined){
+    chrome.tabs.executeScript(tabId, {file: "runsolve.js"} );
+}
+});
 onExtensionLoad();
