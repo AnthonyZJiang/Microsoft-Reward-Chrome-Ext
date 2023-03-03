@@ -1,11 +1,24 @@
-var s = document.createElement('script');
-s.src = chrome.runtime.getURL('getquest.js');
+function runScript(){
+    var s = document.createElement('script');
+s.src = chrome.runtime.getURL('solve.js');
 s.onload = function() {
     this.remove();
 };
 (document.head || document.documentElement).appendChild(s);
 
-document.addEventListener('data', function (e) {
-    var data = e.detail;
-    console.log('received', data);
-});
+}
+
+if (document.getElementsByClassName("TriviaOverlayData").length == 1){
+    if(document.getElementsByClassName("cico rqSumryLogo ").length == 1){
+        console.log("close");
+        document.getElementById("rqCloseBtn").click();
+    }
+    else {
+
+    if(document.getElementById("rqStartQuiz")){
+    document.getElementById("rqStartQuiz").click();
+    }
+    runScript();
+    }
+    
+}

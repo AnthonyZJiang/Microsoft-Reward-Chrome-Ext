@@ -37,6 +37,7 @@
     "https://account.microsoft.com/rewards/*",
     "https://rewards.microsoft.com/*",
     "https://rewards.bing.com/*",
+    "https://www.bing.com/*",
     "webRequest",
     "webRequestBlocking",
     "storage",
@@ -47,13 +48,7 @@
   ],
   "web_accessible_resources": [
    "solve.js"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["https://www.bing.com/*"],
-      "js": ["autorun.js"],
-      "run_at": "document_end"
-    }
   ]
+ 
  
 }

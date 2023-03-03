@@ -159,11 +159,23 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   });
   
 
-chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
-    console.log("aaa");
-if (tab.url.indexOf("http://translate.google.hu/") > -1 && 
-    changeInfo.url === undefined){
-    chrome.tabs.executeScript(tabId, {file: "runsolve.js"} );
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
 }
+
+chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
+    let url = tab.url;
+    
+    if (url.includes("https://www.bing.com/search?q=")){
+        wait(3000);
+        chrome.tabs.executeScript(tabId,{
+            file: 'questContent.js'
+        });
+    }
 });
+
 onExtensionLoad();

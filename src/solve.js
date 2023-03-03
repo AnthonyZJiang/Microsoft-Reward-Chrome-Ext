@@ -48,10 +48,8 @@ function noption() {
     return _w.rewardsQuizRenderInfo.numberOfOptions
 }
 
-let strtbtn = document.getElementById("rqStartQuiz")
-if(strtbtn){
-    strtbtn.click();
-}
+
+
 
 function solve4(){
 let answer = getanswer4();
@@ -62,15 +60,16 @@ for (let i = 0; i < answers.length; i++) {
   }
 }
 }
-console.log("Solve");
-switch (noption()){
-  case 2:
-      solve2();
-      break;
-  case 4:
-      solve4();
-      break;
-  case 8:
-      solve8();
-      break;
+    console.log("Solve");
+    switch (noption()){
+    case 2:
+        solve2();
+        break;
+    case 4:
+        solve4();
+        break;
+    case 8:
+        solve8();
+        break;
 }
+
