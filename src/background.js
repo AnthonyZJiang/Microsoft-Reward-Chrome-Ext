@@ -173,7 +173,7 @@ chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
     if (url.includes("https://www.bing.com/search?q=")){
         wait(3000);
         chrome.tabs.executeScript(tabId,{
-            file: 'questContent.js'
+            file: 'solveContent.js'
         });
     }
 });

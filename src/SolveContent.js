@@ -1,11 +1,3 @@
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
-  
 function runScript(){
     var s = document.createElement('script');
 s.src = chrome.runtime.getURL('solve.js');
@@ -13,18 +5,20 @@ s.onload = function() {
     this.remove();
 };
 (document.head || document.documentElement).appendChild(s);
+
 }
 
-function checkreload(){
-    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-        console.info( "This page is reloaded" );
-      } else {
-        console.info( "This page is not reloaded");
-      }
-}
+if (document.getElementsByClassName("TriviaOverlayData").length == 1){
+    if(document.getElementsByClassName("cico rqSumryLogo ").length == 1){
+        console.log("close");
+        document.getElementById("rqCloseBtn").click();
+    }
+    else {
 
-runScript();
-sleep(2000);
-console.log("aaa")
-sleep(2000);
-console.log("aaa")
+    if(document.getElementById("rqStartQuiz")){
+    document.getElementById("rqStartQuiz").click();
+    }
+    runScript();
+    }
+    
+}
