@@ -147,17 +147,6 @@ chrome.runtime.onMessage.addListener(function (request) {
 });
 
 // Listen for messages from the content script
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.type === 'getMaxQuestions') {
-      // Execute a script in the active tab to retrieve the maxQuestions value
-      chrome.tabs.executeScript({code: 'function main() { return _w.rewardsQuizRenderInfo.maxQuestions } main();'}, function(result) {
-        sendResponse({maxQuestions: result[0]});
-      });
-      // Return true to indicate that sendResponse will be called asynchronously
-      return true;
-    }
-  });
-  
 
 function wait(ms){
     var start = new Date().getTime();
