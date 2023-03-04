@@ -19,7 +19,7 @@ function decodecode(key,name){
 }
 
 
-function solve2(){
+function solve2(){ //solve this or that
 
 let answer = getanswer();
 let answers = document.getElementsByClassName("btOptionCard")
@@ -34,7 +34,7 @@ if (decodecode(key,answers[1].getAttribute("data-option")) == answer){
     
 }
 
-function solve8() {
+function solve8() { //solve 5 correct options
       let answers = document.getElementsByClassName("b_cards bt_lstcl_card btcc btcNoImg")
 for (let i = 0; i < answers.length; i++) {
 
@@ -48,10 +48,7 @@ function noption() {
     return _w.rewardsQuizRenderInfo.numberOfOptions
 }
 
-
-
-
-function solve4(){
+function solve4(){ // solve correct
 let answer = getanswer4();
 let answers = document.getElementsByClassName("rqOption");
 for (let i = 0; i < answers.length; i++) {
@@ -60,16 +57,17 @@ for (let i = 0; i < answers.length; i++) {
   }
 }
 }
-    console.log("Solve");
-    switch (noption()){
-    case 2:
-        solve2();
-        break;
-    case 4:
-        solve4();
-        break;
-    case 8:
-        solve8();
-        break;
+
+console.log("Solve");
+switch (noption()){ //solve depending on type
+case 2:
+    solve2();
+    break;
+case 4:
+    solve4();
+    break;
+case 8:
+    solve8();
+    break;
 }
 
