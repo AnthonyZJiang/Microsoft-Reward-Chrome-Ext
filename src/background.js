@@ -156,15 +156,23 @@ function wait(ms){
    }
 }
 
-chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
+chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
     
-    if (url.includes("https://www.bing.com/search?q=")){
+    if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loadibnfg
+    
+        // execute code once
+        
+        console.log("once")
+        
         wait(3000);
         chrome.tabs.executeScript(tabId,{
             file: 'solveContent.js'
         });
-    }
+    
+    
+    
+     }
 });
 
 onExtensionLoad();
