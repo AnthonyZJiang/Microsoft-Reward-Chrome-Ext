@@ -37,8 +37,12 @@ if (decodecode(key,answers[1].getAttribute("data-option")) == answer){
 function solve8() { //solve 5 correct options
       let answers = document.getElementsByClassName("b_cards bt_lstcl_card btcc btcNoImg")
 for (let i = 0; i < answers.length; i++) {
-
-      answers[i].click();
+    try{
+        answers[i].click();
+    }
+    catch{
+        console.log("a");
+    }
   
 }
 
@@ -59,6 +63,7 @@ for (let i = 0; i < answers.length; i++) {
 }
 
 console.log("Solve");
+
 switch (noption()){ //solve depending on type
 case 2:
     solve2();
