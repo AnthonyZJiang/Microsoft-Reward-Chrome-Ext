@@ -10,8 +10,10 @@ function onExtensionLoad() {
 function loadSavedSettings() {
     chrome.storage.sync.get({
         compatibilityMode: false,
+        AutoSolve: false
     }, function (options) {
         _compatibilityMode = options.compatibilityMode;
+        _autosolve = options.AutoSolve
     });
 }
 
@@ -123,7 +125,7 @@ const searchQuest = new SearchQuest(googleTrend);
 let developer = false;
 let userAgents;
 let _compatibilityMode;
-
+let _autosolve;
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {
 
@@ -139,10 +141,11 @@ chrome.runtime.onMessage.addListener(function (request) {
     }
     if (request.action == 'updateOptions') {
         _compatibilityMode = request.content.compatibilityMode;
+        _autosolve = request.content.AutoSolve;
         return;
     }
     if (request.action == 'copyDebugInfo') {
-        getDebugInfo();
+        getDetailInfo();
     }
 });
 
@@ -156,23 +159,26 @@ function wait(ms){
    }
 }
 
+
+
 chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
-    
-    if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loadibnfg
-    
+    if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
         // execute code once
-        
-        console.log("once")
-        
-        wait(3000);
-        chrome.tabs.executeScript(tabId,{
-            file: 'solveContent.js'
-        });
-    
-    
-    
-     }
+        if(_autosolve){// if autosolve is enabled
+            console.log("once");
+            wait(3000); // wait for page load or refresh
+            try{ // sometimes it gives error bc page is not loaded
+                chrome.tabs.executeScript(tabId,{
+                    file: 'solveContent.js'
+                });
+            }
+            catch{
+                console.log("error")
+            }
+                
+        }
+    }
 });
 
 onExtensionLoad();
