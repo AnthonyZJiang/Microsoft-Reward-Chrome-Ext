@@ -14,11 +14,15 @@ if (document.getElementsByClassName("TriviaOverlayData").length == 1){
         document.getElementById("rqCloseBtn").click();
     }
     else {
-
-    if(document.getElementById("rqStartQuiz")){
-    document.getElementById("rqStartQuiz").click();
+    if (document.getElementById("btoption0")){
+        console.log("quiz")
+        document.getElementById("btoption0").click();
     }
-    runScript();
+    else {
+        if(document.getElementById("rqStartQuiz")){
+        document.getElementById("rqStartQuiz").click();
+        }
+        runScript();
     }
-    
+    }
 }

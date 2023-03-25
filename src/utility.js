@@ -76,8 +76,7 @@ async function copyTextToClipboard(text) {
     // other elements can get access to this.
     document.body.removeChild(copyFrom);
 }
-
-async function getDebugInfo() {
+async function getDetailJson(){
     let text = '[';
 
     await userDailyStatus.getUserStatusJson().then(
@@ -111,7 +110,12 @@ async function getDebugInfo() {
     });
 
     text += ']';
-    copyTextToClipboard(text);
+    return text
+}
+
+async function getDebugInfo() {
+
+    copyTextToClipboard(await getDetailJson());
 }
 
 async function getStableUA() {
