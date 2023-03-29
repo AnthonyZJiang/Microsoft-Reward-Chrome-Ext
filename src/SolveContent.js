@@ -9,14 +9,14 @@ s.onload = function() {
 }
 
 if (document.getElementsByClassName("TriviaOverlayData").length == 1){
-    if(document.getElementsByClassName("cico rqSumryLogo ").length == 1){
-        console.log("close");
-        document.getElementById("rqCloseBtn").click();
+    if(document.getElementById("quizCompleteContainer")){
+        window.close();
     }
     else {
     if (document.getElementById("btoption0")){
         console.log("quiz")
         document.getElementById("btoption0").click();
+        setTimeout()
     }
     else {
         if(document.getElementById("rqStartQuiz")){
