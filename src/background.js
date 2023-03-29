@@ -118,15 +118,12 @@ async function doSearchQuests() {
     }
 }
 
-async function opentabs(urls,tbsId){
+async function opentabs(urls){
     for (let i =0 ; i< urls.length;i++)
     chrome.tabs.create(
         {
             url: urls[i],
             active: false
-        },
-        (tab) => {
-            tbsId.push(tab.id)
         }
     )
 }
@@ -134,11 +131,9 @@ async function openQuizzes(){
     let tabsId = [];
     let daily = userDailyStatus.dailySetUrls.quiz; //get daily array
     let more = userDailyStatus.dailySetUrls.quiz; //get mora promos array
-    opentabs(daily,tabsId);//open daily urls
-    opentabs(more,tabsId); //open more promos urls
-    setTimeout(() => chrome.tabs.remove(
-        tabsId
-    ),45000)
+    opentabs(daily);//open daily urls
+    opentabs(more); //open more promos urls
+    
 }
 const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic background works are carried out, in ms.
 const WAIT_FOR_ONLINE_TIMEOUT = 60000;
@@ -179,7 +174,12 @@ chrome.runtime.onMessage.addListener(function (request) {
         console.log(userDailyStatus.morePromosUrls.quiz)
         console.log(userDailyStatus.dailySetUrls.urlReward)
         console.log(userDailyStatus.morePromosUrls.urlReward)*/
-        openQuizzes();
+        //openQuizzes();
+        chrome.tabs.executeScript({
+            code: "document.querySelector(`div[data-bi-id='ESstar_Rewards_DailyGlobalOffer_Evergreen_Wednesday']`).children[0].click()"
+        }
+
+        )
     }
 });
 
