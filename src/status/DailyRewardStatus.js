@@ -7,13 +7,19 @@ class DailyRewardStatus {
         this._pcSearch_ = new DailySearchQuest(0, 0);
         this._mbSearch_ = new DailySearchQuest(0, 0);
         this._quizAndDaily_ = new DailyQuest(0, 0);
+
+        this._dailySet_ = new CardUrls([],[]);
+        this._morePromos_ = new CardUrls([],[]);
+
         this._jobStatus_ = STATUS_NONE;
     }
 
     get jobStatus() {
         return this._jobStatus_;
     }
-
+    get quizUrls() {
+        return this._quizUrls_;
+    }
     get pcSearchStatus() {
         return this._pcSearch_;
     }
@@ -24,6 +30,14 @@ class DailyRewardStatus {
 
     get quizAndDailyStatus() {
         return this._quizAndDaily_;
+    }
+
+    get dailySetUrls() {
+        return this._dailySet_;
+    }
+
+    get morePromosUrls() {
+        return this._morePromos_;
     }
 
     get summary() {
@@ -70,7 +84,7 @@ class DailyRewardStatus {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(USER_STATUS_BING_URL, this._getFetchOptions(signal));
-        setTimeout(() => controller.abort(), 3000);
+        setTimeout(() => controller.abort(), 6000);
         const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJsonFromBing', ex);
         });
@@ -139,6 +153,8 @@ class DailyRewardStatus {
             this._parseMbSearch(statusJson.FlyoutResult);
             this._parseActivityAndQuiz(statusJson.FlyoutResult);
             this._parseDaily(statusJson.FlyoutResult);
+            this._parseDailySetUrls(statusJson.FlyoutResult);
+            this._parseMorePromosUrls(statusJson.FlyoutResult);
         } catch (ex) {
             if (ex.name == 'TypeError' || ex.name == 'ReferenceError') {
                 throw new ParseJSONFailedException('DailyRewardStatus::_parseDetailedUserStatus', ex, 'Fail to parse the received json document. Has MSR updated its json structure?');
@@ -146,7 +162,16 @@ class DailyRewardStatus {
             throw ex;
         }
     }
-
+    _parseDailySetUrls(statusJson){
+        const dailySet = statusJson.DailySetPromotions[getTodayDate()]
+        this._dailySet_.quiz= getUrlsFromArr(dailySet,"quiz");
+        this._dailySet_.urlReward= getUrlsFromArr(dailySet,"urlreward");
+    }
+    _parseMorePromosUrls(statusJson){
+        const morePromos = statusJson.MorePromotions
+        this._morePromos_.quiz= getUrlsFromArr(morePromos,"quiz");
+        this._morePromos_.urlReward= getUrlsFromArr(morePromos,"urlreward");
+    }
     _parseRewardUser(statusJson) {
         this._userIsError = statusJson.hasOwnProperty('IsError') && statusJson.IsError;
         this._isRewardsUser = statusJson.hasOwnProperty('IsRewardsUser') && statusJson.IsRewardsUser;

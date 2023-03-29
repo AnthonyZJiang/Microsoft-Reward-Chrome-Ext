@@ -33,6 +33,19 @@ function getTodayDate() {
     return `${mm}/${dd}/${today.getFullYear()}`;
 }
 
+function getUrlsFromArr(list,criteria){
+    let urls = [];
+for(let i = 0; i< list.length;i++){
+    
+    let type = list[i].Attributes.type;
+    if (list[i].Attributes.complete == 'False' && type == criteria){
+        urls.push(list[i].DestinationUrl);
+    }
+
+}
+return urls
+}
+
 function resetDayBoundParams() {
     searchQuest.reset();
     googleTrend.reset();
