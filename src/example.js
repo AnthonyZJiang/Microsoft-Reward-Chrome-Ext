@@ -27,7 +27,7 @@ for(let i = 0; i< list.length;i++){
 }
 return urls
 }
-º
+
 let dailySet = data[0].FlyoutResult.DailySetPromotions[getTodayDate()]
 let MorePromotions = data[0].FlyoutResult.MorePromotions;
 console.log(getUrlsFromArr(dailySet,"quiz"))

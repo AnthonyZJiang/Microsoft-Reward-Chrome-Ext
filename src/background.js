@@ -98,9 +98,7 @@ async function checkDailyRewardStatus() {
     }
 
     await doSearchQuests();
-    if(_autosolve){
-        openQuizzes();
-    }
+    
     checkQuizAndDaily();
 }
 
@@ -118,23 +116,9 @@ async function doSearchQuests() {
     }
 }
 
-async function opentabs(urls){
-    for (let i =0 ; i< urls.length;i++)
-    chrome.tabs.create(
-        {
-            url: urls[i],
-            active: false
-        }
-    )
-}
-async function openQuizzes(){
-    let tabsId = [];
-    let daily = userDailyStatus.dailySetUrls.quiz; //get daily array
-    let more = userDailyStatus.dailySetUrls.quiz; //get mora promos array
-    opentabs(daily);//open daily urls
-    opentabs(more); //open more promos urls
-    
-}
+
+
+
 const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic background works are carried out, in ms.
 const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 
@@ -145,18 +129,10 @@ let developer = false;
 let userAgents;
 let _compatibilityMode;
 let _autosolve;
-chrome.runtime.onInstalled.addListener(function (details) {
-    if (details.reason == 'install') {
 
-    }
-    if (details.reason == 'update') {
-
-    }
-});
-
-chrome.runtime.onMessage.addListener(function (request) {
+chrome.runtime.onMessage.addListener(async function (request,sender) {
     if (request.action == 'checkStatus') {
-        doBackgroundWork();
+        await doBackgroundWork();
     }
     if (request.action == 'updateOptions') {
         _compatibilityMode = request.content.compatibilityMode;
@@ -164,26 +140,79 @@ chrome.runtime.onMessage.addListener(function (request) {
         return;
     }
     if (request.action == 'copyDebugInfo') {
-        getDebugInfo();
-        
+        await getDebugInfo();
+    }
+    if (request.action == 'closeTab') {
+        //console.log(sender.tab.id)
+        if(_autosolve){
+            await chrome.tabs.remove(sender.tab.id);
+        }
         
     }
     if (request.action == 'test') {
-        //getDebugInfo();
-        /*console.log(userDailyStatus.dailySetUrls.quiz)
-        console.log(userDailyStatus.morePromosUrls.quiz)
-        console.log(userDailyStatus.dailySetUrls.urlReward)
-        console.log(userDailyStatus.morePromosUrls.urlReward)*/
-        //openQuizzes();
-        chrome.tabs.executeScript({
-            code: "document.querySelector(`div[data-bi-id='ESstar_Rewards_DailyGlobalOffer_Evergreen_Wednesday']`).children[0].click()"
-        }
 
-        )
+        //userDailyStatus.dailySetUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
+        //userDailyStatus.morePromosUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
+        //userDailyStatus.morePromosUrls.quiz = ["https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/"]
+        await openUrlRewards();
+        await openQuizzes();
+        
     }
 });
 
-// Listen for messages from the content script
+async function openQuizzes(){
+    let daily = userDailyStatus.dailySetUrls.quiz; //get daily array
+    let more = userDailyStatus.morePromosUrls.quiz; //get mora promos array
+    await opentabs(daily);//open daily urls
+    await opentabs(more); //open more promos urls
+    return;
+}
+
+async function opentabs(urls){
+    for (let i =0 ; i< urls.length;i++)
+    await chrome.tabs.create(
+        {
+            url: urls[i],
+            active: false
+        }
+    )
+    return;
+}
+
+async function openUrlRewards(){
+
+    chrome.tabs.create(
+        {
+            url: "https://rewards.bing.com/",
+            active: false
+        },
+        async (tab) => {
+            let tabID = tab.id
+            wait(1000);
+            await openCards(userDailyStatus.dailySetUrls.urlReward,tabID);
+            
+            await openCards(userDailyStatus.morePromosUrls.urlReward,tabID);
+            setTimeout(() =>  chrome.tabs.remove(tabID),1000) // we wait 1000ms to avoid erorrs
+
+           
+        }
+    )
+    return;
+}
+
+async function openCards(cardsIDs,tabId){
+    for (let i =0 ; i< cardsIDs.length;i++){
+        await chrome.tabs.executeScript(
+            tabId,
+            {
+            code: `document.querySelector("div[data-bi-id='${cardsIDs[i]}']").children[0].click()` // click the card with the provied id
+        }
+        )
+    }
+    
+    return;
+}
+
 
 function wait(ms){
     var start = new Date().getTime();
@@ -198,20 +227,24 @@ function wait(ms){
 chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
     if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
-        // execute code once
-        if(_autosolve){// if autosolve is enabled
-            console.log("once");
-            wait(3000); // wait for page load or refresh
-            try{ // sometimes it gives error bc page is not loaded
-                chrome.tabs.executeScript(tabId,{
-                    file: 'solveContent.js'
-                });
+        if (url.includes("PUBL=RewardsDO")){ // url reward tab opened by script
+            console.log("closing");
+            if(_autosolve){ // check if autosolving is enabled so it has been opening the tab auto
+                setTimeout(() => chrome.tabs.remove(tabId),1000) 
             }
-            catch{
-                console.log("error")
-            }
-                
+            
         }
+        else{
+            if(_autosolve){// if autosolve is enabled
+            console.log("once");
+            setTimeout(() => 
+            chrome.tabs.executeScript(tabId,{
+                file: 'solveContent.js'
+            }),3000);// wait for page load or refresh
+        }
+    }
+        // execute code once
+        
     }
 });
 

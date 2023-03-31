@@ -26,3 +26,9 @@ function checkUpdate() {
 }
 
 checkUpdate();
+
+document.getElementById('test').addEventListener('click', () => {
+    chrome.runtime.sendMessage({
+        action: 'test',
+    });
+});

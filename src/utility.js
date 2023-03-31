@@ -34,12 +34,19 @@ function getTodayDate() {
 }
 
 function getUrlsFromArr(list,criteria){
+
     let urls = [];
 for(let i = 0; i< list.length;i++){
     
     let type = list[i].Attributes.type;
     if (list[i].Attributes.complete == 'False' && type == criteria){
-        urls.push(list[i].DestinationUrl);
+        if(criteria == "urlreward"){
+            urls.push(list[i].OfferId);
+        }
+        else{
+            urls.push(list[i].DestinationUrl);
+        }
+        
     }
 
 }
