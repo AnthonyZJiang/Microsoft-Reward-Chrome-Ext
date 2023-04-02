@@ -170,12 +170,7 @@ chrome.runtime.onMessage.addListener(async function (request) {
         await chrome.tabs.remove(sender.tab.id);
     }
     if (request.action == 'solve') {
-        //userDailyStatus.dailySetUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
-        //userDailyStatus.morePromosUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
-        //userDailyStatus.morePromosUrls.quiz = ["https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/"]
         solveCards();
-
-        console.log(_autosolve)
     }
 });
 
@@ -214,8 +209,7 @@ async function opentabs(urls){
 }
 
 async function openUrlRewards(){
-    console.log(userDailyStatus.dailySetUrls.urlReward)
-    console.log(userDailyStatus.morePromosUrls.urlReward)
+    
     if (userDailyStatus.dailySetUrls.urlReward.length != 0 || userDailyStatus.morePromosUrls.urlReward.length != 0){
         chrome.tabs.create(
             {

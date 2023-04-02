@@ -40,9 +40,7 @@ for (let i = 0; i < answers.length; i++) {
     try{
         answers[i].click();
     }
-    catch{
-        console.log("a");
-    }
+    catch{ }
   
 }
 
@@ -67,8 +65,6 @@ for (let i = 0; i < answers.length; i++) {
   }
 }
 }
-
-console.log("Solve");
 
 switch (noption()){ //solve depending on type
 case 2:
