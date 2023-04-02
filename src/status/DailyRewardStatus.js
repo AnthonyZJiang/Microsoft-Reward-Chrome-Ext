@@ -8,8 +8,8 @@ class DailyRewardStatus {
         this._mbSearch_ = new DailySearchQuest(0, 0);
         this._quizAndDaily_ = new DailyQuest(0, 0);
 
-        this._dailySet_ = new CardUrls([],[]);
-        this._morePromos_ = new CardUrls([],[]);
+        this._dailySet_ = new CardUrls([],[],[]);
+        this._morePromos_ = new CardUrls([],[],[]);
 
         this._jobStatus_ = STATUS_NONE;
     }
@@ -166,11 +166,13 @@ class DailyRewardStatus {
         const dailySet = statusJson.DailySetPromotions[getTodayDate()]
         this._dailySet_.quiz= getUrlsFromArr(dailySet,"quiz");
         this._dailySet_.urlReward= getUrlsFromArr(dailySet,"urlreward");
+        this._dailySet_.urlRewardUrls = getUrlsFromArr(dailySet,"urlreward",true);
     }
     _parseMorePromosUrls(statusJson){
         const morePromos = statusJson.MorePromotions
         this._morePromos_.quiz= getUrlsFromArr(morePromos,"quiz");
         this._morePromos_.urlReward= getUrlsFromArr(morePromos,"urlreward");
+        this._morePromos_.urlRewardUrls = getUrlsFromArr(morePromos,"urlreward",true);
     }
     _parseRewardUser(statusJson) {
         this._userIsError = statusJson.hasOwnProperty('IsError') && statusJson.IsError;

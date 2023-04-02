@@ -49,7 +49,13 @@ for (let i = 0; i < answers.length; i++) {
 }
 
 function noption() {
-    return _w.rewardsQuizRenderInfo.numberOfOptions
+    try {
+        return _w.rewardsQuizRenderInfo.numberOfOptions
+    }
+    catch{
+        return 0;
+    }
+    
 }
 
 function solve4(){ // solve correct

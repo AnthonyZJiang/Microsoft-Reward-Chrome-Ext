@@ -116,8 +116,13 @@ async function doSearchQuests() {
     }
 }
 
-
-
+async function tryUpdate(){
+    try {
+        let result = await userDailyStatus.update();
+    } catch (ex) {
+        handleException(ex);
+    }
+}
 
 const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic background works are carried out, in ms.
 const WAIT_FOR_ONLINE_TIMEOUT = 60000;
@@ -144,9 +149,9 @@ chrome.runtime.onMessage.addListener(async function (request,sender) {
     }
     if (request.action == 'closeTab') {
         //console.log(sender.tab.id)
-        if(_autosolve){
+        
             await chrome.tabs.remove(sender.tab.id);
-        }
+        
         
     }
     if (request.action == 'solve') {
@@ -156,7 +161,7 @@ chrome.runtime.onMessage.addListener(async function (request,sender) {
         //userDailyStatus.morePromosUrls.quiz = ["https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/"]
         await openUrlRewards();
         await openQuizzes();
-        
+        setTimeout(async () =>  await tryUpdate(),60000)
     }
 });
 
@@ -227,22 +232,21 @@ function wait(ms){
 
 chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
-    if (url.includes("PUBL=RewardsDO") && changeInfo.status == 'complete'){ // url reward tab opened by script and loading completed
+    if ((userDailyStatus.dailySetUrls.urlRewardUrls.includes(url) || userDailyStatus.morePromosUrls.urlRewardUrls.includes(url)) && changeInfo.status == 'complete'){ // url reward tab opened by script and loading completed
         console.log("closing");
-        if(_autosolve){ // check if autosolving is enabled so it has been opening the tab auto
-            setTimeout(() => chrome.tabs.remove(tabId),3000) 
-        }
+         // check if autosolving is enabled so it has been opening the tab auto
+            setTimeout(() => chrome.tabs.remove(tabId),1000) 
+        
         
     }
     else{
-        if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
-            if(_autosolve){// if autosolve is enabled
+        if ( url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
             console.log("once");
-            setTimeout(() => 
+            setTimeout(
+            () => 
             chrome.tabs.executeScript(tabId,{
                 file: 'solveContent.js'
             }),3000);// wait for page load or refresh
-        }
     }
     }
     });

@@ -33,17 +33,17 @@ function getTodayDate() {
     return `${mm}/${dd}/${today.getFullYear()}`;
 }
 
-function getUrlsFromArr(list,criteria){
+function getUrlsFromArr(list,criteria,url=false){
 
     let urls = [];
 for(let i = 0; i< list.length;i++){
     
     let type = list[i].Attributes.type;
     if (list[i].Attributes.complete == 'False' && type == criteria){
-        if(criteria == "urlreward"){
+        if(criteria == "urlreward" && url == false){ //card id
             urls.push(list[i].OfferId);
         }
-        else{
+        else{ // card url
             urls.push(list[i].DestinationUrl);
         }
         
