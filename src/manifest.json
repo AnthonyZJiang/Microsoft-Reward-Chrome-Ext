@@ -33,6 +33,7 @@
   },
 
   "permissions": ["https://www.bing.com/search?q=*",
+    "https://cn.bing.com/search?q=*",
     "https://trends.google.com/trends/*",
     "https://account.microsoft.com/rewards/*",
     "https://rewards.microsoft.com/*",
