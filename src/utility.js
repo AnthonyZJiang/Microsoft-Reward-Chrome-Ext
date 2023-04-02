@@ -214,7 +214,7 @@ function assertUA() {
     }
 }
 
-function getUrlsFromArr(list,criteria,url=false) {
+function getUrlsFromArr(list, criteria, url=false) {
     const urls = [];
 for (let i = 0; i< list.length; i++) {
     const type = list[i].Attributes.type;
