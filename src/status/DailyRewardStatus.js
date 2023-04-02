@@ -8,8 +8,8 @@ class DailyRewardStatus {
         this._mbSearch_ = new DailySearchQuest(0, 0);
         this._quizAndDaily_ = new DailyQuest(0, 0);
 
-        this._dailySet_ = new CardUrls([],[],[]);
-        this._morePromos_ = new CardUrls([],[],[]);
+        this._dailySet_ = new CardUrls([], [], []);
+        this._morePromos_ = new CardUrls([], [], []);
 
         this._jobStatus_ = STATUS_NONE;
     }

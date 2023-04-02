@@ -261,9 +261,9 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
             if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete') { // make sure the page has finished loading
                 setTimeout(
                 () =>
-                chrome.tabs.executeScript(tabId,{ // run scruipt to solve answers
+                chrome.tabs.executeScript(tabId, { // run scruipt to solve answers
                     file: 'solveContent.js'
-                }),3000);// wait for page load or refresh
+                }), 3000);// wait for page load or refresh
         }
         }
     }
