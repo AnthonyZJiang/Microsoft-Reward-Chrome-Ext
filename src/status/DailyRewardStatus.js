@@ -7,7 +7,19 @@ class DailyRewardStatus {
         this._pcSearch_ = new DailySearchQuest(0, 0);
         this._mbSearch_ = new DailySearchQuest(0, 0);
         this._quizAndDaily_ = new DailyQuest(0, 0);
+
+        this._dailySet_ = new CardUrls([],[],[]);
+        this._morePromos_ = new CardUrls([],[],[]);
+
         this._jobStatus_ = STATUS_NONE;
+    }
+
+    get dailySetUrls() {
+        return this._dailySet_;
+    }
+
+    get morePromosUrls() {
+        return this._morePromos_;
     }
 
     get jobStatus() {
@@ -138,6 +150,8 @@ class DailyRewardStatus {
             this._parseMbSearch(statusJson.FlyoutResult);
             this._parseActivityAndQuiz(statusJson.FlyoutResult);
             this._parseDaily(statusJson.FlyoutResult);
+            this._parseDailySetUrls(statusJson.FlyoutResult);
+            this._parseMorePromosUrls(statusJson.FlyoutResult);
         } catch (ex) {
             if (ex.name == 'TypeError' || ex.name == 'ReferenceError') {
                 throw new ParseJSONFailedException('DailyRewardStatus::_parseDetailedUserStatus', ex, 'Fail to parse the received json document. Has MSR updated its json structure?');
@@ -145,7 +159,18 @@ class DailyRewardStatus {
             throw ex;
         }
     }
-
+    _parseDailySetUrls(statusJson){
+        const dailySet = statusJson.DailySetPromotions[getTodayDate()]
+        this._dailySet_.quiz= getUrlsFromArr(dailySet,"quiz");
+        this._dailySet_.urlReward= getUrlsFromArr(dailySet,"urlreward");
+        this._dailySet_.urlRewardUrls = getUrlsFromArr(dailySet,"urlreward",true);
+    }
+    _parseMorePromosUrls(statusJson){
+        const morePromos = statusJson.MorePromotions
+        this._morePromos_.quiz= getUrlsFromArr(morePromos,"quiz");
+        this._morePromos_.urlReward= getUrlsFromArr(morePromos,"urlreward");
+        this._morePromos_.urlRewardUrls = getUrlsFromArr(morePromos,"urlreward",true);
+    }
     _parseRewardUser(statusJson) {
         this._userIsError = statusJson.hasOwnProperty('IsError') && statusJson.IsError;
         this._isRewardsUser = statusJson.hasOwnProperty('IsRewardsUser') && statusJson.IsRewardsUser;
