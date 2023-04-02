@@ -127,7 +127,7 @@ async function getUA() {
     }
     await getStableUA();
     if (_pcUaOverrideEnable) {
-        userAgents['pc'] = _pcUaOverrideEnable;
+        userAgents['pc'] = _pcUaOverrideValue;
         userAgents['pcSource'] = 'override';
     } else if (_mbUaOverrideEnable) {
         userAgents['mb'] = _mbUaOverrideValue;
