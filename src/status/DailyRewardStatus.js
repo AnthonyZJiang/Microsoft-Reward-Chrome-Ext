@@ -159,14 +159,14 @@ class DailyRewardStatus {
             throw ex;
         }
     }
-    _parseDailySetUrls(statusJson){
-        const dailySet = statusJson.DailySetPromotions[getTodayDate()]
+    _parseDailySetUrls(statusJson) {
+        const dailySet = statusJson.DailySetPromotions[getTodayDate()];
         this._dailySet_.quiz= getUrlsFromArr(dailySet,"quiz");
         this._dailySet_.urlReward= getUrlsFromArr(dailySet,"urlreward");
         this._dailySet_.urlRewardUrls = getUrlsFromArr(dailySet,"urlreward",true);
     }
-    _parseMorePromosUrls(statusJson){
-        const morePromos = statusJson.MorePromotions
+    _parseMorePromosUrls(statusJson) {
+        const morePromos = statusJson.MorePromotions;
         this._morePromos_.quiz= getUrlsFromArr(morePromos,"quiz");
         this._morePromos_.urlReward= getUrlsFromArr(morePromos,"urlreward");
         this._morePromos_.urlRewardUrls = getUrlsFromArr(morePromos,"urlreward",true);

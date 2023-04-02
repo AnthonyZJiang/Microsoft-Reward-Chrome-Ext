@@ -1,72 +1,65 @@
-function getanswer4(){
+function getanswer4() {
     return _w.rewardsQuizRenderInfo.correctAnswer;
 }
 
-function getanswer(){
+function getanswer() {
     return parseInt(_w.rewardsQuizRenderInfo.correctAnswer);
 }
-function getkey(){
-     return  _G.IG;
+function getkey() {
+     return _G.IG;
 }
 
-function decodecode(key,name){
+function decodecode(key,name) {
     let t = 0;
     for (let i = 0; i < name.length; i++) {
        t += name.charCodeAt(i);
 }
-     t+= parseInt(key.slice(-2),16)
-    return t
+     t+= parseInt(key.slice(-2),16);
+    return t;
 }
 
 
-function solve2(){ //solve this or that
+function solve2() { // solve this or that
+const answer = getanswer();
+const answers = document.getElementsByClassName("btOptionCard");
+const key = getkey();
 
-let answer = getanswer();
-let answers = document.getElementsByClassName("btOptionCard")
-let key = getkey();
-    
-if (decodecode(key,answers[0].getAttribute("data-option")) == answer){
+if (decodecode(key,answers[0].getAttribute("data-option")) == answer) {
     answers[0].click();
 }
-if (decodecode(key,answers[1].getAttribute("data-option")) == answer){
+if (decodecode(key,answers[1].getAttribute("data-option")) == answer) {
     answers[1].click();
 }
-    
 }
 
-function solve8() { //solve 5 correct options
-      let answers = document.getElementsByClassName("b_cards bt_lstcl_card btcc btcNoImg")
+function solve8() { // solve 5 correct options
+      const answers = document.getElementsByClassName("b_cards bt_lstcl_card btcc btcNoImg");
 for (let i = 0; i < answers.length; i++) {
-    try{
+    try {
         answers[i].click();
-    }
-    catch{ }
-  
+    } catch { }
 }
-
 }
 
 function noption() {
     try {
-        return _w.rewardsQuizRenderInfo.numberOfOptions
-    }
-    catch{
+        return _w.rewardsQuizRenderInfo.numberOfOptions;
+    } catch {
         return 0;
     }
-    
 }
 
-function solve4(){ // solve correct
-let answer = getanswer4();
-let answers = document.getElementsByClassName("rqOption");
+function solve4() { // solve correct
+const answer = getanswer4();
+const answers = document.getElementsByClassName("rqOption");
 for (let i = 0; i < answers.length; i++) {
-  if(answers[i].getAttribute("value")==answer){
+  if (answers[i].getAttribute("value")==answer) {
       answers[i].click();
   }
 }
 }
 
-switch (noption()){ //solve depending on type
+switch (noption()) { // solve depending on type
 case 2:
     solve2();
     break;
