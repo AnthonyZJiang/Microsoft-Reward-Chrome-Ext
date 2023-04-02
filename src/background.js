@@ -201,8 +201,8 @@ async function opentabs(urls) {
         await chrome.tabs.create(
         {
             url: urls[i],
-            active: false
-        }
+            active: false,
+        },
     );
     wait(500); // delay to make sure everylink opens
     }
@@ -214,7 +214,7 @@ async function openUrlRewards() {
         chrome.tabs.create(
             {
                 url: "https://rewards.bing.com/",
-                active: false
+                active: false,
             },
             async (tab) => {
                 const tabID = tab.id;
@@ -222,7 +222,7 @@ async function openUrlRewards() {
                 await openCards(userDailyStatus.dailySetUrls.urlReward, tabID); // open daily
                 await openCards(userDailyStatus.morePromosUrls.urlReward, tabID); // open more promos
                 setTimeout(() => chrome.tabs.remove(tabID), 3000); // we wait 3000ms to avoid erorrs
-            }
+            },
         );
         return;
     }
@@ -233,8 +233,8 @@ async function openCards(cardsIDs, tabId) {
         await chrome.tabs.executeScript(
             tabId,
             {
-            code: `document.querySelector("div[data-bi-id='${cardsIDs[i]}']").children[0].click()` // click the card with the provied id
-        }
+            code: `document.querySelector("div[data-bi-id='${cardsIDs[i]}']").children[0].click()`, // click the card with the provied id
+        },
         );
         wait(1000); // we wait 1s so opening the links is registered as so
     }
@@ -262,7 +262,7 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
                 setTimeout(
                 () =>
                 chrome.tabs.executeScript(tabId, { // run scruipt to solve answers
-                    file: 'solveContent.js'
+                    file: 'solveContent.js',
                 }), 3000);// wait for page load or refresh
         }
         }
