@@ -35,7 +35,6 @@ class DailySearchQuest extends DailyQuest {
     }
 }
 
-
 class CardUrls{
     constructor(quiz, urlReward,urlRewardUrls) {
         this.quiz = quiz;

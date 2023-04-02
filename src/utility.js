@@ -33,26 +33,6 @@ function getTodayDate() {
     return `${mm}/${dd}/${today.getFullYear()}`;
 }
 
-function getUrlsFromArr(list,criteria,url=false){
-
-    let urls = [];
-for(let i = 0; i< list.length;i++){
-    
-    let type = list[i].Attributes.type;
-    if (list[i].Attributes.complete == 'False' && type == criteria){
-        if(criteria == "urlreward" && url == false){ //card id
-            urls.push(list[i].OfferId);
-        }
-        else{ // card url
-            urls.push(list[i].DestinationUrl);
-        }
-        
-    }
-
-}
-return urls
-}
-
 function resetDayBoundParams() {
     searchQuest.reset();
     googleTrend.reset();
@@ -96,6 +76,7 @@ async function copyTextToClipboard(text) {
     // other elements can get access to this.
     document.body.removeChild(copyFrom);
 }
+
 async function getDebugInfo() {
     let text = '[';
 
@@ -131,30 +112,6 @@ async function getDebugInfo() {
 
     text += ']';
     copyTextToClipboard(text);
-}
-
-
-
-async function getUA() {
-    if (_pcUaOverrideEnable && _mbUaOverrideEnable) {
-        userAgents = {
-            'pc': _pcUaOverrideValue,
-            'mb': _mbUaOverrideValue,
-            'pcSource': 'override',
-            'mbSource': 'override',
-        };
-        assertUA();
-        return;
-    }
-    await getStableUA();
-    if (_pcUaOverrideEnable) {
-        userAgents['pc'] = _pcUaOverrideValue;
-        userAgents['pcSource'] = 'override';
-    } else if (_mbUaOverrideEnable) {
-        userAgents['mb'] = _mbUaOverrideValue;
-        userAgents['mbSource'] = 'override';
-    }
-    assertUA();
 }
 
 async function getUA() {
@@ -255,4 +212,24 @@ function assertUA() {
     if (!userAgents.pc || !userAgents.mb) {
         throw new UserAgentInvalidException('Failed to assert user agents. \n UA:\n' + JSON.stringify(userAgents));
     }
+}
+
+function getUrlsFromArr(list,criteria,url=false){
+
+    let urls = [];
+for(let i = 0; i< list.length;i++){
+    
+    let type = list[i].Attributes.type;
+    if (list[i].Attributes.complete == 'False' && type == criteria && list[i].Attributes.max != '0'){
+        if(criteria == "urlreward" && url == false){ //card id
+            urls.push(list[i].OfferId);
+        }
+        else{ // card url
+            urls.push(list[i].DestinationUrl);
+        }
+        
+    }
+
+}
+return urls
 }

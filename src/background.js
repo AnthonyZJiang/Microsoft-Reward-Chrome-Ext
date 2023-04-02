@@ -10,19 +10,19 @@ function onExtensionLoad() {
 
 function loadSavedSettings() {
     chrome.storage.sync.get({
+        AutoSolve: false,
         compatibilityMode: false,
         pcUaOverrideEnable: false,
         mbUaOverrideEnable: false,
-        AutoSolve: false,
         pcUaOverrideValue: '',
         mbUaOverrideValue: '',
     }, function (options) {
         _compatibilityMode = options.compatibilityMode;
+        _autosolve = options.AutoSolve
         _pcUaOverrideEnable = options.pcUaOverrideEnable;
         _mbUaOverrideEnable = options.mbUaOverrideEnable;
         _pcUaOverrideValue = options.pcUaOverrideValue;
         _mbUaOverrideValue = options.mbUaOverrideValue;
-        _autosolve = options.AutoSolve
     });
 }
 
@@ -127,14 +127,6 @@ async function doSearchQuests() {
     }
 }
 
-async function tryUpdate(){
-    try {
-        let result = await userDailyStatus.update();
-    } catch (ex) {
-        handleException(ex);
-    }
-}
-
 const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic background works are carried out, in ms.
 const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 
@@ -144,6 +136,7 @@ const searchQuest = new SearchQuest(googleTrend);
 let developer = false;
 let userAgents;
 let _compatibilityMode;
+let _autosolve;
 let _pcUaOverrideEnable;
 let _mbUaOverrideEnable;
 let _pcUaOverrideValue;
@@ -164,31 +157,32 @@ chrome.runtime.onMessage.addListener(async function (request) {
     }
     if (request.action == 'updateOptions') {
         _compatibilityMode = request.content.compatibilityMode;
+        _autosolve = request.content.AutoSolve;
         _pcUaOverrideEnable = request.content.pcUaOverrideEnable;
         _mbUaOverrideEnable = request.content.mbUaOverrideEnable;
         _pcUaOverrideValue = request.content.pcUaOverrideValue;
         _mbUaOverrideValue = request.content.mbUaOverrideValue;
-        _autosolve = request.content.AutoSolve;
         return;
     }
     if (request.action == 'copyDebugInfo') {
         getDebugInfo();
     }
     if (request.action == 'closeTab') {
-        //console.log(sender.tab.id)
-        
-            await chrome.tabs.remove(sender.tab.id);
-        
-        
+        await chrome.tabs.remove(sender.tab.id);
     }
     if (request.action == 'solve') {
-
-        //userDailyStatus.dailySetUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
-        //userDailyStatus.morePromosUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
-        //userDailyStatus.morePromosUrls.quiz = ["https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/"]
         solveCards();
     }
 });
+
+async function tryUpdate(){
+    try {
+        let result = await userDailyStatus.update();
+    } catch (ex) {
+        handleException(ex);
+    }
+}
+
 async function solveCards(){
     await openUrlRewards();
     await openQuizzes();
@@ -212,27 +206,28 @@ async function opentabs(urls){
     )
     wait(500) // delay to make sure everylink opens
     }
-   
     return;
 }
 
 async function openUrlRewards(){
-
-    chrome.tabs.create(
-        {
-            url: "https://rewards.bing.com/",
-            active: false
-        },
-        async (tab) => {
-            let tabID = tab.id
-            wait(1000);
-            await openCards(userDailyStatus.dailySetUrls.urlReward,tabID); // open daily
-            
-            await openCards(userDailyStatus.morePromosUrls.urlReward,tabID); //open more promos
-            setTimeout(() =>  chrome.tabs.remove(tabID),3000) // we wait 3000ms to avoid erorrs
-        }
-    )
-    return;
+    
+    if (userDailyStatus.dailySetUrls.urlReward.length != 0 || userDailyStatus.morePromosUrls.urlReward.length != 0){
+        chrome.tabs.create(
+            {
+                url: "https://rewards.bing.com/",
+                active: false
+            },
+            async (tab) => {
+                let tabID = tab.id
+                
+                await openCards(userDailyStatus.dailySetUrls.urlReward,tabID); // open daily
+                await openCards(userDailyStatus.morePromosUrls.urlReward,tabID); //open more promos
+                setTimeout(() =>  chrome.tabs.remove(tabID),3000) // we wait 3000ms to avoid erorrs
+            }
+        )
+        return;
+    }
+    
 }
 
 async function openCards(cardsIDs,tabId){
@@ -261,23 +256,21 @@ function wait(ms){
 
 chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
-    if ((userDailyStatus.dailySetUrls.urlRewardUrls.includes(url) || userDailyStatus.morePromosUrls.urlRewardUrls.includes(url)) && changeInfo.status == 'complete'){ // url reward tab opened by script and loading completed
-        console.log("closing");
-         // check if autosolving is enabled so it has been opening the tab auto
+    if(url){
+        if ((userDailyStatus.dailySetUrls.urlRewardUrls.includes(url) || userDailyStatus.morePromosUrls.urlRewardUrls.includes(url)) && changeInfo.status == 'complete'){ // url reward tab opened by script and loading completed
             setTimeout(() => chrome.tabs.remove(tabId),1000) 
-        
-        
+        }
+        else{
+            if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading 
+                setTimeout(
+                () => 
+                chrome.tabs.executeScript(tabId,{ //run scruipt to solve answers
+                    file: 'solveContent.js'
+                }),3000);// wait for page load or refresh
+        }
+        }
     }
-    else{
-        if ( url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading 
-            console.log("once");
-            setTimeout(
-            () => 
-            chrome.tabs.executeScript(tabId,{ //run scruipt to solve answers
-                file: 'solveContent.js'
-            }),3000);// wait for page load or refresh
-    }
-    }
-    });
+    
+});
 
 onExtensionLoad();

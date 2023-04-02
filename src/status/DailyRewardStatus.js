@@ -14,12 +14,18 @@ class DailyRewardStatus {
         this._jobStatus_ = STATUS_NONE;
     }
 
+    get dailySetUrls() {
+        return this._dailySet_;
+    }
+
+    get morePromosUrls() {
+        return this._morePromos_;
+    }
+
     get jobStatus() {
         return this._jobStatus_;
     }
-    get quizUrls() {
-        return this._quizUrls_;
-    }
+
     get pcSearchStatus() {
         return this._pcSearch_;
     }
@@ -30,14 +36,6 @@ class DailyRewardStatus {
 
     get quizAndDailyStatus() {
         return this._quizAndDaily_;
-    }
-
-    get dailySetUrls() {
-        return this._dailySet_;
-    }
-
-    get morePromosUrls() {
-        return this._morePromos_;
     }
 
     get summary() {
@@ -84,7 +82,7 @@ class DailyRewardStatus {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(USER_STATUS_BING_URL, this._getFetchOptions(signal));
-        setTimeout(() => controller.abort(), 6000);
+        setTimeout(() => controller.abort(), 3000);
         const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             throw new ResponseUnexpectedStatusException('DailyRewardStatus::getUserStatusJsonFromBing', ex);
         });
@@ -95,7 +93,7 @@ class DailyRewardStatus {
         const controller = new AbortController();
         const signal = controller.signal;
         const fetchPromise = fetch(USER_STATUS_DETAILED_URL, this._getFetchOptions(signal));
-        setTimeout(() => controller.abort(), 8000);
+        setTimeout(() => controller.abort(), 3000);
         const text = await this._awaitFetchPromise(fetchPromise).catch(async (ex) => {
             if (ex.name == 'FetchFailed::TypeError') {
                 console.log('An error occurred in the first status update attempt:');
@@ -132,7 +130,6 @@ class DailyRewardStatus {
     _getFetchOptions(signal) {
         return {
             method: 'GET',
-            redirect: 'follow',
             signal: signal,
         };
     }
@@ -268,8 +265,6 @@ class DailyRewardStatus {
 
     static getDetailedUserStatusJSON(doc) {
         const jsList = doc.querySelectorAll('body script[type=\'text/javascript\']:not([id])');
-        console.log(doc);
-        console.log(jsList)
         for (let i = 0; i < jsList.length; i++) {
             const m = /(?=\{"userStatus":).*(=?\}\};)/.exec(jsList[i].text);
             if (m) {
