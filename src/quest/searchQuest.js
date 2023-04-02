@@ -24,7 +24,7 @@ class SearchQuest {
         this._status_ = status;
         this._jobStatus_ = STATUS_BUSY;
         try {
-            await getStableUA();
+            await getUA();
             await this._googleTrend_.getGoogleTrendWords();
             await this._doWorkLoop();
         } catch (ex) {

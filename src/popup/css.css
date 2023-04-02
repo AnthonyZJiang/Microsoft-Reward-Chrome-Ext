@@ -113,3 +113,10 @@ footer {
     padding: 20px 40px 30px;
     width: 350px;
 }
+
+input[type=checkbox] + label + input[class="checked_shown"] {
+    display: none;
+  } 
+input[type=checkbox]:checked + label + input[class="checked_shown"] {
+    display: inline;
+  }

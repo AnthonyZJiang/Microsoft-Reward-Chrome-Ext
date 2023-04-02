@@ -25,9 +25,26 @@
                 <div class="separator"></div>
             </header>
             <div class="option_row">
+                <div class="option_name">PC user agent override:</div>
+                <input class="checkbox" type="checkbox" id="pc-ua-override-enable">
+                <label for="edge-search-disable" style="margin-left: 3px;">Enable</label>
+                <input type="text" name="text-input" id="pc-ua-override-value" autofocus="" class="checked_shown">
+            </div>
+            <div class="option_row">
+                <div class="option_name">Mobile user agent override:</div>
+                <input class="checkbox" type="checkbox" id="mb-ua-override-enable">
+                <label for="edge-search-disable" style="margin-left: 3px;">Enable</label>
+                <input type="text" name="text-input" id="mb-ua-override-value" autofocus="" class="checked_shown">
+            </div>
+            <div class="option_row">
+                <div class="option_name">Edge Search:</div>
+                <input class="checkbox" type="checkbox" id="edge-search-disable">
+                <label for="edge-search-disable" style="margin-left: 3px;">Disable</label>
+            </div>
+            <div class="option_row">
                 <div class="option_name">Point countdown algorithm:</div>
                 <input class="checkbox" type="checkbox" id="use-old-countdown-algorithm">
-                <label for="use-old-countdown-algorithm" class="tooltip-bottom-left" data-tooltip="If point countdown is not working for you, try enabling this. It is normally inaccurate, however.">
+                <label for="use-old-countdown-algorithm" style="margin-left: 3px;" class="tooltip-bottom-left" data-tooltip="If point countdown is not working for you, try enabling this. It is normally inaccurate, however.">
                     Use the old algorithm
                 </label>
             </div>

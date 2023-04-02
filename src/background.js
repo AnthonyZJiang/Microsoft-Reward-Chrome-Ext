@@ -10,8 +10,16 @@ function onExtensionLoad() {
 function loadSavedSettings() {
     chrome.storage.sync.get({
         compatibilityMode: false,
+        pcUaOverrideEnable: false,
+        mbUaOverrideEnable: false,
+        pcUaOverrideValue: '',
+        mbUaOverrideValue: '',
     }, function (options) {
         _compatibilityMode = options.compatibilityMode;
+        _pcUaOverrideEnable = options.pcUaOverrideEnable;
+        _mbUaOverrideEnable = options.mbUaOverrideEnable;
+        _pcUaOverrideValue = options.pcUaOverrideValue;
+        _mbUaOverrideValue = options.mbUaOverrideValue;
     });
 }
 
@@ -123,6 +131,10 @@ const searchQuest = new SearchQuest(googleTrend);
 let developer = false;
 let userAgents;
 let _compatibilityMode;
+let _pcUaOverrideEnable;
+let _mbUaOverrideEnable;
+let _pcUaOverrideValue;
+let _mbUaOverrideValue;
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {

@@ -114,6 +114,28 @@ async function getDebugInfo() {
     copyTextToClipboard(text);
 }
 
+async function getUA() {
+    if (_pcUaOverrideEnable && _mbUaOverrideEnable) {
+        userAgents = {
+            'pc': _pcUaOverrideValue,
+            'mb': _mbUaOverrideValue,
+            'pcSource': 'override',
+            'mbSource': 'override',
+        };
+        assertUA();
+        return;
+    }
+    await getStableUA();
+    if (_pcUaOverrideEnable) {
+        userAgents['pc'] = _pcUaOverrideEnable;
+        userAgents['pcSource'] = 'override';
+    } else if (_mbUaOverrideEnable) {
+        userAgents['mb'] = _mbUaOverrideValue;
+        userAgents['mbSource'] = 'override';
+    }
+    assertUA();
+}
+
 async function getStableUA() {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -137,7 +159,6 @@ async function getStableUA() {
                 'pcSource': 'stable',
                 'mbSource': 'stable',
             };
-            assertUA();
         },
     ).catch((ex) => {
         if (ex.name == 'AbortError') {
@@ -187,6 +208,7 @@ async function getUpdatedUA(type='both') {
 }
 
 function assertUA() {
+    console.log('User agents: ' + JSON.stringify(userAgents));
     if (!userAgents.pc || !userAgents.mb) {
         throw new UserAgentInvalidException('Failed to assert user agents. \n UA:\n' + JSON.stringify(userAgents));
     }
