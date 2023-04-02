@@ -37,7 +37,7 @@ Unfortunately, the extension could not make its way to become visible on web sto
 
 ### Background Work
 
-The extension checks your daily Microsoft Rewards progress every two hours and clears any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number indicating the amount of points they worth.
+The extension checks your daily Microsoft Rewards progress every two hours and clears any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number indicating the amount of points they worth.If autosolving is enabled, this will open tabs to solve them
 
 ### Action Button
 
