@@ -1,3 +1,4 @@
+
 'use strict';
 
 function onExtensionLoad() {
@@ -10,9 +11,17 @@ function onExtensionLoad() {
 function loadSavedSettings() {
     chrome.storage.sync.get({
         compatibilityMode: false,
-        AutoSolve: false
+        pcUaOverrideEnable: false,
+        mbUaOverrideEnable: false,
+        AutoSolve: false,
+        pcUaOverrideValue: '',
+        mbUaOverrideValue: '',
     }, function (options) {
         _compatibilityMode = options.compatibilityMode;
+        _pcUaOverrideEnable = options.pcUaOverrideEnable;
+        _mbUaOverrideEnable = options.mbUaOverrideEnable;
+        _pcUaOverrideValue = options.pcUaOverrideValue;
+        _mbUaOverrideValue = options.mbUaOverrideValue;
         _autosolve = options.AutoSolve
     });
 }
@@ -135,19 +144,35 @@ const searchQuest = new SearchQuest(googleTrend);
 let developer = false;
 let userAgents;
 let _compatibilityMode;
-let _autosolve;
+let _pcUaOverrideEnable;
+let _mbUaOverrideEnable;
+let _pcUaOverrideValue;
+let _mbUaOverrideValue;
 
-chrome.runtime.onMessage.addListener(async function (request,sender) {
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (details.reason == 'install') {
+
+    }
+    if (details.reason == 'update') {
+
+    }
+});
+
+chrome.runtime.onMessage.addListener(async function (request) {
     if (request.action == 'checkStatus') {
-        await doBackgroundWork();
+        doBackgroundWork();
     }
     if (request.action == 'updateOptions') {
         _compatibilityMode = request.content.compatibilityMode;
+        _pcUaOverrideEnable = request.content.pcUaOverrideEnable;
+        _mbUaOverrideEnable = request.content.mbUaOverrideEnable;
+        _pcUaOverrideValue = request.content.pcUaOverrideValue;
+        _mbUaOverrideValue = request.content.mbUaOverrideValue;
         _autosolve = request.content.AutoSolve;
         return;
     }
     if (request.action == 'copyDebugInfo') {
-        await getDebugInfo();
+        getDebugInfo();
     }
     if (request.action == 'closeTab') {
         //console.log(sender.tab.id)

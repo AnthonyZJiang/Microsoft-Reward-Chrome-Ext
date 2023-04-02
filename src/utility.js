@@ -96,7 +96,7 @@ async function copyTextToClipboard(text) {
     // other elements can get access to this.
     document.body.removeChild(copyFrom);
 }
-async function getDetailJson(){
+async function getDebugInfo() {
     let text = '[';
 
     await userDailyStatus.getUserStatusJson().then(
@@ -119,9 +119,7 @@ async function getDetailJson(){
     });
 
     await userDailyStatus.getDetailedUserStatusJson().then(
-        
         (statusJson) => {
-            console.log(statusJson)
             info = {
                 'punchCards': statusJson.punchCards,
             };
@@ -132,12 +130,53 @@ async function getDetailJson(){
     });
 
     text += ']';
-    return text
+    copyTextToClipboard(text);
 }
 
-async function getDebugInfo() {
 
-    copyTextToClipboard(await getDetailJson());
+
+async function getUA() {
+    if (_pcUaOverrideEnable && _mbUaOverrideEnable) {
+        userAgents = {
+            'pc': _pcUaOverrideValue,
+            'mb': _mbUaOverrideValue,
+            'pcSource': 'override',
+            'mbSource': 'override',
+        };
+        assertUA();
+        return;
+    }
+    await getStableUA();
+    if (_pcUaOverrideEnable) {
+        userAgents['pc'] = _pcUaOverrideValue;
+        userAgents['pcSource'] = 'override';
+    } else if (_mbUaOverrideEnable) {
+        userAgents['mb'] = _mbUaOverrideValue;
+        userAgents['mbSource'] = 'override';
+    }
+    assertUA();
+}
+
+async function getUA() {
+    if (_pcUaOverrideEnable && _mbUaOverrideEnable) {
+        userAgents = {
+            'pc': _pcUaOverrideValue,
+            'mb': _mbUaOverrideValue,
+            'pcSource': 'override',
+            'mbSource': 'override',
+        };
+        assertUA();
+        return;
+    }
+    await getStableUA();
+    if (_pcUaOverrideEnable) {
+        userAgents['pc'] = _pcUaOverrideValue;
+        userAgents['pcSource'] = 'override';
+    } else if (_mbUaOverrideEnable) {
+        userAgents['mb'] = _mbUaOverrideValue;
+        userAgents['mbSource'] = 'override';
+    }
+    assertUA();
 }
 
 async function getStableUA() {
@@ -163,7 +202,6 @@ async function getStableUA() {
                 'pcSource': 'stable',
                 'mbSource': 'stable',
             };
-            assertUA();
         },
     ).catch((ex) => {
         if (ex.name == 'AbortError') {
@@ -213,6 +251,7 @@ async function getUpdatedUA(type='both') {
 }
 
 function assertUA() {
+    console.log('User agents: ' + JSON.stringify(userAgents));
     if (!userAgents.pc || !userAgents.mb) {
         throw new UserAgentInvalidException('Failed to assert user agents. \n UA:\n' + JSON.stringify(userAgents));
     }
