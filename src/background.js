@@ -98,7 +98,9 @@ async function checkDailyRewardStatus() {
     }
 
     await doSearchQuests();
-    
+    if (_autosolve) {// autyoslve cards enabled
+        await solveCards();
+    }
     checkQuizAndDaily();
 }
 
@@ -159,12 +161,14 @@ chrome.runtime.onMessage.addListener(async function (request,sender) {
         //userDailyStatus.dailySetUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
         //userDailyStatus.morePromosUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
         //userDailyStatus.morePromosUrls.quiz = ["https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/","https://www.google.es/"]
-        await openUrlRewards();
-        await openQuizzes();
-        setTimeout(async () =>  await tryUpdate(),60000)
+        solveCards();
     }
 });
-
+async function solveCards(){
+    await openUrlRewards();
+    await openQuizzes();
+    setTimeout(async () =>  await tryUpdate(),60000)
+}
 async function openQuizzes(){
     let daily = userDailyStatus.dailySetUrls.quiz; //get daily array
     let more = userDailyStatus.morePromosUrls.quiz; //get mora promos array
@@ -240,11 +244,11 @@ chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
         
     }
     else{
-        if ( url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
+        if ( url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading 
             console.log("once");
             setTimeout(
             () => 
-            chrome.tabs.executeScript(tabId,{
+            chrome.tabs.executeScript(tabId,{ //run scruipt to solve answers
                 file: 'solveContent.js'
             }),3000);// wait for page load or refresh
     }
