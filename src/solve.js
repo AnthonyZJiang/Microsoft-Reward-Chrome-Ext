@@ -14,7 +14,7 @@ function decodecode(key,name) {
     for (let i = 0; i < name.length; i++) {
        t += name.charCodeAt(i);
 }
-     t+= parseInt(key.slice(-2),16);
+     t+= parseInt(key.slice(-2), 16);
     return t;
 }
 

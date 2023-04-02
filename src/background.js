@@ -186,7 +186,7 @@ async function tryUpdate() {
 async function solveCards() {
     await openUrlRewards();
     await openQuizzes();
-    setTimeout(async () => await tryUpdate(),60000);
+    setTimeout(async () => await tryUpdate(), 60000);
 }
 async function openQuizzes() {
     const daily = userDailyStatus.dailySetUrls.quiz; // get daily array
@@ -219,16 +219,16 @@ async function openUrlRewards() {
             async (tab) => {
                 const tabID = tab.id;
 
-                await openCards(userDailyStatus.dailySetUrls.urlReward,tabID); // open daily
-                await openCards(userDailyStatus.morePromosUrls.urlReward,tabID); // open more promos
-                setTimeout(() => chrome.tabs.remove(tabID),3000); // we wait 3000ms to avoid erorrs
+                await openCards(userDailyStatus.dailySetUrls.urlReward, tabID); // open daily
+                await openCards(userDailyStatus.morePromosUrls.urlReward, tabID); // open more promos
+                setTimeout(() => chrome.tabs.remove(tabID), 3000); // we wait 3000ms to avoid erorrs
             }
         );
         return;
     }
 }
 
-async function openCards(cardsIDs,tabId) {
+async function openCards(cardsIDs, tabId) {
     for (let i =0; i< cardsIDs.length; i++) {
         await chrome.tabs.executeScript(
             tabId,
@@ -252,11 +252,11 @@ function wait(ms) {
 }
 
 
-chrome.tabs.onUpdated.addListener(async function (tabId,changeInfo,tab) {
+chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
     const url = tab.url;
     if (url) {
         if ((userDailyStatus.dailySetUrls.urlRewardUrls.includes(url) || userDailyStatus.morePromosUrls.urlRewardUrls.includes(url)) && changeInfo.status == 'complete') { // url reward tab opened by script and loading completed
-            setTimeout(() => chrome.tabs.remove(tabId),1000);
+            setTimeout(() => chrome.tabs.remove(tabId), 1000);
         } else {
             if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete') { // make sure the page has finished loading
                 setTimeout(
