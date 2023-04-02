@@ -36,7 +36,6 @@ function sendOptions(options) {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 
 
-
 getElementAutoSolve().addEventListener('click', saveOptions);
 
 

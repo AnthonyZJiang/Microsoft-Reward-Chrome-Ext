@@ -214,22 +214,17 @@ function assertUA() {
     }
 }
 
-function getUrlsFromArr(list,criteria,url=false){
-
-    let urls = [];
-for(let i = 0; i< list.length;i++){
-    
-    let type = list[i].Attributes.type;
-    if (list[i].Attributes.complete == 'False' && type == criteria && list[i].Attributes.max != '0'){
-        if(criteria == "urlreward" && url == false){ //card id
+function getUrlsFromArr(list,criteria,url=false) {
+    const urls = [];
+for (let i = 0; i< list.length; i++) {
+    const type = list[i].Attributes.type;
+    if (list[i].Attributes.complete == 'False' && type == criteria && list[i].Attributes.max != '0') {
+        if (criteria == "urlreward" && url == false) { // card id
             urls.push(list[i].OfferId);
-        }
-        else{ // card url
+        } else { // card url
             urls.push(list[i].DestinationUrl);
         }
-        
     }
-
 }
-return urls
+return urls;
 }
