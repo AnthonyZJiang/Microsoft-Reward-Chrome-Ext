@@ -151,6 +151,10 @@ chrome.runtime.onMessage.addListener(function (request) {
     }
     if (request.action == 'updateOptions') {
         _compatibilityMode = request.content.compatibilityMode;
+        _pcUaOverrideEnable = request.content.pcUaOverrideEnable;
+        _mbUaOverrideEnable = request.content.mbUaOverrideEnable;
+        _pcUaOverrideValue = request.content.pcUaOverrideValue;
+        _mbUaOverrideValue = request.content.mbUaOverrideValue;
         return;
     }
     if (request.action == 'copyDebugInfo') {
