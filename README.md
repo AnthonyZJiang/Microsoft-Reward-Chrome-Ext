@@ -49,7 +49,7 @@ The extension checks your daily Microsoft Rewards progress every two hours and c
    3. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
 
 ### Solve Cards
-Next to extension options you can click solve cards to try to solve any promo links and quizzes manually. New tabs will open, do not close them, the will close automatically when completed , so dont worry. 
+Next to extension options you can click solve cards to try to solve any promo links and quizzes manually. New tabs will open, do not close them, the will close automatically when completed ,so dont worry.  
 ### Action Button Badge
 
 The colour of the badge changes depending on your daily reward progress or the status of the extension:
