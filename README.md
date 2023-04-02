@@ -4,7 +4,9 @@
 
 A Chrome extension for Microsoft Rewards, which automatically clears PC, mobile and Edge search quests and displays daily point countdown.
 
-This extension will not clear any promotional link or quiz quests and this feature will not be implemented.
+~~This extension will not clear any promotional link or quiz quests and this feature will not be implemented.~~
+
+**The fork of this extension will solve most promotional link or quiz quests and this feature is be implemented. -WIP**
 
 **This is a bot!**
 
@@ -43,7 +45,11 @@ The extension checks your daily Microsoft Rewards progress every two hours and c
 2. A link to Microsoft Rewards.
 3. Options:
    1. Compatibility Mode. Toggle to enable/disable a different way of calculating point countdown. Try this if you have any issues with the current point countdown method.
-   2. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
+   2. Autosolve. This also tries to solve all promotional links and quizzes automatically when the search quests are done.Thsi can be done manually, see below.
+   3. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
+
+### Solve Cards
+Next to extension options you can click solve cards to try to solve any promo links and quizzes manually. New tabs will open, do not close them, the will close automatically when completed , so dony worry. 
 
 ### Action Button Badge
 
