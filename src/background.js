@@ -149,7 +149,7 @@ chrome.runtime.onMessage.addListener(async function (request,sender) {
         }
         
     }
-    if (request.action == 'test') {
+    if (request.action == 'solve') {
 
         //userDailyStatus.dailySetUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
         //userDailyStatus.morePromosUrls.urlReward = ["ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b","ESES_moreactivities_offer_20230331b"]
@@ -169,13 +169,16 @@ async function openQuizzes(){
 }
 
 async function opentabs(urls){
-    for (let i =0 ; i< urls.length;i++)
-    await chrome.tabs.create(
+    for (let i =0 ; i< urls.length;i++){
+        await chrome.tabs.create(
         {
             url: urls[i],
             active: false
         }
     )
+    wait(500) // delay to make sure everylink opens
+    }
+   
     return;
 }
 
@@ -189,12 +192,10 @@ async function openUrlRewards(){
         async (tab) => {
             let tabID = tab.id
             wait(1000);
-            await openCards(userDailyStatus.dailySetUrls.urlReward,tabID);
+            await openCards(userDailyStatus.dailySetUrls.urlReward,tabID); // open daily
             
-            await openCards(userDailyStatus.morePromosUrls.urlReward,tabID);
-            setTimeout(() =>  chrome.tabs.remove(tabID),1000) // we wait 1000ms to avoid erorrs
-
-           
+            await openCards(userDailyStatus.morePromosUrls.urlReward,tabID); //open more promos
+            setTimeout(() =>  chrome.tabs.remove(tabID),3000) // we wait 3000ms to avoid erorrs
         }
     )
     return;
@@ -208,6 +209,7 @@ async function openCards(cardsIDs,tabId){
             code: `document.querySelector("div[data-bi-id='${cardsIDs[i]}']").children[0].click()` // click the card with the provied id
         }
         )
+        wait(1000); // we wait 1s so opening the links is registered as so
     }
     
     return;
@@ -223,18 +225,17 @@ function wait(ms){
 }
 
 
-
 chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
     let url = tab.url;
-    if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
-        if (url.includes("PUBL=RewardsDO")){ // url reward tab opened by script
-            console.log("closing");
-            if(_autosolve){ // check if autosolving is enabled so it has been opening the tab auto
-                setTimeout(() => chrome.tabs.remove(tabId),1000) 
-            }
-            
+    if (url.includes("PUBL=RewardsDO") && changeInfo.status == 'complete'){ // url reward tab opened by script and loading completed
+        console.log("closing");
+        if(_autosolve){ // check if autosolving is enabled so it has been opening the tab auto
+            setTimeout(() => chrome.tabs.remove(tabId),3000) 
         }
-        else{
+        
+    }
+    else{
+        if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete'){ //make sure the page has finished loading
             if(_autosolve){// if autosolve is enabled
             console.log("once");
             setTimeout(() => 
@@ -243,9 +244,7 @@ chrome.tabs.onUpdated.addListener(async function(tabId,changeInfo,tab){
             }),3000);// wait for page load or refresh
         }
     }
-        // execute code once
-        
     }
-});
+    });
 
 onExtensionLoad();

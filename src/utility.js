@@ -119,7 +119,9 @@ async function getDetailJson(){
     });
 
     await userDailyStatus.getDetailedUserStatusJson().then(
+        
         (statusJson) => {
+            console.log(statusJson)
             info = {
                 'punchCards': statusJson.punchCards,
             };

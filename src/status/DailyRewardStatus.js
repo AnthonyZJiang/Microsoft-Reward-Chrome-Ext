@@ -266,6 +266,8 @@ class DailyRewardStatus {
 
     static getDetailedUserStatusJSON(doc) {
         const jsList = doc.querySelectorAll('body script[type=\'text/javascript\']:not([id])');
+        console.log(doc);
+        console.log(jsList)
         for (let i = 0; i < jsList.length; i++) {
             const m = /(?=\{"userStatus":).*(=?\}\};)/.exec(jsList[i].text);
             if (m) {

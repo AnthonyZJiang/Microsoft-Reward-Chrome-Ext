@@ -41,3 +41,10 @@ class CardUrls{
         this.urlReward = urlReward;
     }
 }
+class CardUrls{
+    constructor(quiz, urlReward) {
+        this.quiz = quiz;
+        this.urlReward = urlReward;
+        
+    }
+}
