@@ -151,7 +151,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     }
 });
 
-chrome.runtime.onMessage.addListener(async function (request) {
+chrome.runtime.onMessage.addListener(async function (request,sender) {
     if (request.action == 'checkStatus') {
         doBackgroundWork();
     }
@@ -168,7 +168,7 @@ chrome.runtime.onMessage.addListener(async function (request) {
         getDebugInfo();
     }
     if (request.action == 'closeTab') {
-        await chrome.tabs.remove(sender.tab.id);
+         chrome.tabs.remove(sender.tab.id);
     }
     if (request.action == 'solve') {
         solveCards();
