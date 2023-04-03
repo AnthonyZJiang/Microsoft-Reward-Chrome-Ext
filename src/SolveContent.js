@@ -12,7 +12,7 @@ if (document.getElementsByClassName("TriviaOverlayData").length == 1) {
         document.getElementById("rqCloseBtn").click();// click the x close button to close pop up
         chrome.runtime.sendMessage({// tell background to close the tab after 1s to give time to close the popup
             action: 'closeTab',
-        })
+        });
     } else {
     if (document.getElementById("btoption0")) { // daily quiz
         document.getElementById("btoption0").click();
