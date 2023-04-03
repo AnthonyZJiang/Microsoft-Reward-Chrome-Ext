@@ -151,7 +151,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     }
 });
 
-chrome.runtime.onMessage.addListener(async function (request,sender) {
+chrome.runtime.onMessage.addListener(async function (request, sender) {
     if (request.action == 'checkStatus') {
         doBackgroundWork();
     }
