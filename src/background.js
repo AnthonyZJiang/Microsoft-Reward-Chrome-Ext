@@ -256,7 +256,7 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
     const url = tab.url;
     if (url) {
         if ((userDailyStatus.dailySetUrls.urlRewardUrls.includes(url) || userDailyStatus.morePromosUrls.urlRewardUrls.includes(url)) && changeInfo.status == 'complete') { // url reward tab opened by script and loading completed
-            setTimeout(() => chrome.tabs.remove(tabId), 1000);
+            setTimeout(() => chrome.tabs.remove(tabId), 3000);
         } else {
             if (url.includes("https://www.bing.com/search?q=") && changeInfo.status == 'complete') { // make sure the page has finished loading
                 setTimeout(
