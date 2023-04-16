@@ -7,10 +7,6 @@ assignees: ''
 
 ---
 
-You can find the type of error by visiting chrome://extensions page and clicking the Errors next to this extension.
-
----------------------------------------------------------
-
 **Describe the bug**
 A clear and concise description of what the bug is.
 
