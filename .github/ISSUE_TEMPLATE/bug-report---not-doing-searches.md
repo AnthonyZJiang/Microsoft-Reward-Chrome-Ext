@@ -7,12 +7,11 @@ assignees: ''
 
 ---
 
-What NOT to report:
-- UserAgentInvalid errors that JUST occurred. Report this only if it repeatedly occurs over three days. Normally the issue will be hot-fixed without an update!
-
-You can find the type of error by visiting chrome://extensions page and clicking the Errors next to this extension.
+Do not report invalid user agents.
 
 ---------------------------------------------------------
+**I have read [Troubleshooting](troubleshooting.md)**
+Yes/No
 
 **Describe the bug**
 A clear and concise description of what the bug is.
