@@ -4,27 +4,29 @@ There are several reasons why you see an unhappy red error icon. Here are some p
 
 ## General steps
 
-1. Click on the extension icon and see if you can see your reward account statistics. 
-2. If you can't see any statistics and it is asking you to log in or join Microsoft Reward, please see [Not logged in](#Not-logged-in).
-3. If you can, then try visit the [Microsoft Rewards page](https://rewards.bing.com/).
-4. If the page is not responding or very slow, then the issue is likely to be  [Temporary issue with Microsoft Rewards #1](#temporary-issue-with-microsoft-rewards-1).
-5. If the page loads without an issue, check symptoms in [Region issue](#region-issue). 
-6. If it is not a region issue, try to do some manual search on Bing and see if the counter changes. If not, the issue is possibly [Temporary issue with Microsoft Rewards #2](#temporary-issue-with-microsoft-rewards-2).
-7. Depending on the browser you use, check what errors the extension reports. If it is `UserAgentInvalid`, then check [User agents invalid](#user-agents-invalid).
-8. If none of the above helps, please report it.
+1. Click on the extension icon, wait for a few seconds and see if it resolves the issue.
+2. If not, and if you can't see your Microsoft Reward statistics but asking you to log in or join Microsoft Reward, please see [Not logged in](#Not-logged-in).
+4. If you can, then try visit the [Microsoft Rewards page](https://rewards.bing.com/).
+5. If the page is not responding or very slow, then the issue is likely to be  [Temporary issue with Microsoft Rewards #1](#temporary-issue-with-microsoft-rewards-1).
+6. If the page loads without an issue, check symptoms in [Region issue](#region-issue). 
+7. If it is not a region issue, try to do some manual search on Bing and see if the counter changes. If not, the issue is possibly [Temporary issue with Microsoft Rewards #2](#temporary-issue-with-microsoft-rewards-2).
+8. Depending on the browser you use, check what errors the extension reports. If it is `UserAgentInvalid`, then check [User agents invalid](#user-agents-invalid).
+9. If none of the above helps, please report it.
 
 # Common issues
 ## Not logged in
 #### Symptoms
-- An error saying `UserNotLoggedIn`.
+- An error saying `UserNotLoggedIn` and or `FetchRedirected: expected response status is within 200-299`.
 - Not doing any search.
-- Popup page shows a *log in* or *join now* button instead of quests and statistics about your reward account.
+- [possible] Popup page shows a *log in* or *join now* button instead of quests and statistics about your reward account.
 
 #### Explanations
 - You have not logged into your Microsoft account.
+- You have logged into your Microsoft account but the extension is not able to detect it.
 
 #### What to do
-- Hold down control button and click the *log in* or *join now* link, log into your MS account, then try again.
+- Click the extension icon again. This normally resolves the issue.
+- If you are still seeing the *log in* or *join now* page, hold down control button and click the link, log into your MS account, then try again.
 
 #### When to report
 - Report it only if the above does not resolve the issue.
