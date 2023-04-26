@@ -7,10 +7,11 @@ assignees: ''
 
 ---
 
-Do not report invalid user agents.
+- Do not report invalid user agents.
+- Make sure you have read the troubleshooting before submitting a bug report.
 
----------------------------------------------------------
-**I have read [Troubleshooting](troubleshooting.md)**
+----
+**I have read the Troubleshooting**
 Yes/No
 
 **Describe the bug**
