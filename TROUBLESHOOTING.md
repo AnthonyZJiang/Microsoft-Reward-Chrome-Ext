@@ -83,7 +83,7 @@ There are several reasons why you see an unhappy red error icon. Here are some p
    - https://www.whatismybrowser.com/guides/the-latest-user-agent/
    - https://whatmyuseragent.com/engines
    - https://techblog.willshouse.com/2012/01/03/most-common-user-agents/
-- A correct user agent looks like:
+- A correct user agent looks like, strictly no whitespaces at the start or end:
 ```
 Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/83.0.4103.106 Mobile/13E238 Safari/604.1
 ```
