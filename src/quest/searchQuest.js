@@ -122,13 +122,11 @@ export class SearchQuest {
 
     _preparePCSearch() {
         this._currentSearchType_ = SEARCH_TYPE_PC_SEARCH;
-        // removeUA();
         setMsEdgeUA();
     }
 
     _prepareMbSearch() {
         this._currentSearchType_ = SEARCH_TYPE_MB_SEARCH;
-        // removeUA();
         setMobileUA();
     }
 
@@ -137,7 +135,7 @@ export class SearchQuest {
             this._jobStatus_ = STATUS_DONE;
         }
         this._currentSearchType_ = null;
-        removeUA();
+        restoreBrowserUA();
     }
 
     async _requestBingSearch() {
@@ -176,34 +174,30 @@ export class SearchQuest {
     }
 }
 
-function removeUA() {
-    try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
-    } catch (ex) { }
-    try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMsEdgeUA);
-    } catch (ex) { }
-}
-
 function setMsEdgeUA() {
     chrome.declarativeNetRequest.updateDynamicRules(
         {
+            removeRuleIds: [1],
             addRules: [
                 {
                     id: 1,
                     priority: 1,
                     action: {
                         type: 'modifyHeaders',
-                        responseHeaders: [
-                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        requestHeaders: [
+                            {
+                                'header': 'User-Agent',
+                                'operation': 'set',
+                                'value': userAgents.pc,
+                            },
                         ],
                     },
                     condition: {
-                        domains: ['bing.com'], // on this domain
+                        urlFilter: '||bing.com/search*',
+                        resourceTypes: ['xmlhttprequest'],
                     },
                 },
             ],
-            removeRuleIds: [2], // this removes old rule if any
         },
     );
 }
@@ -211,24 +205,34 @@ function setMsEdgeUA() {
 function setMobileUA() {
     chrome.declarativeNetRequest.updateDynamicRules(
         {
+            removeRuleIds: [1],
             addRules: [
                 {
-                    id: 2,
+                    id: 1,
                     priority: 1,
                     action: {
                         type: 'modifyHeaders',
-                        responseHeaders: [
-                            {'header': 'User-Agent', 'operation': 'set', 'value': userAgents.pc},
+                        requestHeaders: [
+                            {'header': 'User-Agent',
+                                'operation': 'set',
+                                'value': userAgents.mb},
                         ],
                     },
                     condition: {
-                        domains: ['bing.com'], // on this domain
+                        urlFilter: '||bing.com/search*',
+                        resourceTypes: ['xmlhttprequest'],
                     },
                 },
             ],
-            removeRuleIds: [1], // this removes old rule if any
         },
     );
+}
+
+function restoreBrowserUA() {
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            removeRuleIds: [1],
+        });
 }
 
 function toMobileUA(details) {
