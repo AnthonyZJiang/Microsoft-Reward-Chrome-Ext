@@ -79,10 +79,14 @@ There are several reasons why you see an unhappy red error icon. Here are some p
 
 #### What to do
 - Wait for me to update user agents.
-- As a temporary fix, enable the relevant user agents override in extension option, select one from the following list and copy and paste into the box. I suggest Edge browser for PC and safari ios for mobile.
+- As a temporary fix, enable the relevant user agents override in extension option, select one from the following list and copy and paste into the box. I suggest Edge browser for PC and Safari iOS for mobile.
    - https://www.whatismybrowser.com/guides/the-latest-user-agent/
    - https://whatmyuseragent.com/engines
    - https://techblog.willshouse.com/2012/01/03/most-common-user-agents/
+- A correct user agent looks like, strictly no whitespaces at the start or end:
+```
+Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/83.0.4103.106 Mobile/13E238 Safari/604.1
+```
 
 #### When to report
 - When this issue happens, it is likely to affect multiple users if not all, and others may have already reported it. If you see an existing issue, do not open a new one, but add your comments in the existing issue.
