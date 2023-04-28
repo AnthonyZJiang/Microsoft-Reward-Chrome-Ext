@@ -32,12 +32,10 @@
     "default_popup": "popup/popup.html"
   },
 
-  "permissions": ["https://www.bing.com/search?q=*",
-    "https://cn.bing.com/search?q=*",
+  "permissions": [
     "https://trends.google.com/trends/*",
-    "https://account.microsoft.com/rewards/*",
-    "https://rewards.microsoft.com/*",
-    "https://rewards.bing.com/*",
+    "https://*.microsoft.com/*",
+    "https://*.bing.com/*",
     "webRequest",
     "webRequestBlocking",
     "storage",
