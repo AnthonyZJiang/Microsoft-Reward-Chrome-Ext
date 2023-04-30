@@ -185,23 +185,12 @@ function setPCReqHeaders() {
     }, ['blocking', 'requestHeaders']);
 }
 
-function toPCReqHeaders(details) {
+function toPCReqHeaders() {
     const newHeaders = [];
-    const acceptedHeaders = ['accept'];
-    for (const i in details.requestHeaders) {
-        if (Object.hasOwn(details, i)) {
-            continue;
-        }
-        const entry = details.requestHeaders[i];
-        if (acceptedHeaders.includes(entry.name.toLowerCase())) {
-            newHeaders.push(entry);
-        }
-    }
     newHeaders.push({name: 'accept', value: '*/*'});
     newHeaders.push({name: 'User-Agent', value: userAgents.pc});
-    details.requestHeaders = newHeaders;
     return {
-        requestHeaders: details.requestHeaders,
+        requestHeaders: newHeaders,
     };
 }
 
@@ -211,23 +200,12 @@ function setMobileReqHeaders() {
     }, ['blocking', 'requestHeaders']);
 }
 
-function toMobileReqHeaders(details) {
+function toMobileReqHeaders() {
     const newHeaders = [];
-    const acceptedHeaders = ['accept'];
-    for (const i in details.requestHeaders) {
-        if (Object.hasOwn(details, i)) {
-            continue;
-        }
-        const entry = details.requestHeaders[i];
-        if (acceptedHeaders.includes(entry.name.toLowerCase())) {
-            newHeaders.push(entry);
-        }
-    }
     newHeaders.push({name: 'accept', value: '*/*'});
     newHeaders.push({name: 'User-Agent', value: userAgents.mb});
-    details.requestHeaders = newHeaders;
     return {
-        requestHeaders: details.requestHeaders,
+        requestHeaders: newHeaders,
     };
 }
 
