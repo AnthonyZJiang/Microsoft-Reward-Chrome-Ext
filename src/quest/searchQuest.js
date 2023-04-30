@@ -117,13 +117,13 @@ class SearchQuest {
     _preparePCSearch() {
         this._currentSearchType_ = SEARCH_TYPE_PC_SEARCH;
         removeUA();
-        setMsEdgeUA();
+        setPCReqHeaders();
     }
 
     _prepareMbSearch() {
         this._currentSearchType_ = SEARCH_TYPE_MB_SEARCH;
         removeUA();
-        setMobileUA();
+        setMobileReqHeaders();
     }
 
     _quitSearchCleanUp() {
@@ -172,48 +172,65 @@ class SearchQuest {
 
 function removeUA() {
     try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileUA);
+        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileReqHeaders);
     } catch (ex) { }
     try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMsEdgeUA);
+        chrome.webRequest.onBeforeSendHeaders.removeListener(toPCReqHeaders);
     } catch (ex) { }
 }
 
-function setMsEdgeUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMsEdgeUA, {
-        urls: ['https://www.bing.com/search?q=*'],
+function setPCReqHeaders() {
+    chrome.webRequest.onBeforeSendHeaders.addListener(toPCReqHeaders, {
+        urls: ['https://*.bing.com/search?q=*'],
     }, ['blocking', 'requestHeaders']);
 }
 
-function toMsEdgeUA(details) {
+function toPCReqHeaders(details) {
+    const newHeaders = [];
+    const acceptedHeaders = ['accept'];
     for (const i in details.requestHeaders) {
-        if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = userAgents.pc;
-            break;
+        if (Object.hasOwn(details, i)) {
+            continue;
+        }
+        const entry = details.requestHeaders[i];
+        if (acceptedHeaders.includes(entry.name.toLowerCase())) {
+            newHeaders.push(entry);
         }
     }
+    newHeaders.push({name: 'accept', value: '*/*'});
+    newHeaders.push({name: 'User-Agent', value: userAgents.pc});
+    details.requestHeaders = newHeaders;
     return {
         requestHeaders: details.requestHeaders,
     };
 }
 
-function setMobileUA() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMobileUA, {
-        urls: ['https://www.bing.com/search?q=*'],
+function setMobileReqHeaders() {
+    chrome.webRequest.onBeforeSendHeaders.addListener(toMobileReqHeaders, {
+        urls: ['https://*.bing.com/search?q=*'],
     }, ['blocking', 'requestHeaders']);
 }
 
-function toMobileUA(details) {
+function toMobileReqHeaders(details) {
+    const newHeaders = [];
+    const acceptedHeaders = ['accept'];
     for (const i in details.requestHeaders) {
-        if (details.requestHeaders[i].name === 'User-Agent') {
-            details.requestHeaders[i].value = userAgents.mb;
-            break;
+        if (Object.hasOwn(details, i)) {
+            continue;
+        }
+        const entry = details.requestHeaders[i];
+        if (acceptedHeaders.includes(entry.name.toLowerCase())) {
+            newHeaders.push(entry);
         }
     }
+    newHeaders.push({name: 'accept', value: '*/*'});
+    newHeaders.push({name: 'User-Agent', value: userAgents.mb});
+    details.requestHeaders = newHeaders;
     return {
         requestHeaders: details.requestHeaders,
     };
 }
+
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
