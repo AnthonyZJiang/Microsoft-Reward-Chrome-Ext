@@ -1,12 +1,11 @@
+
 [![CodeFactor](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext/badge)](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext)
 
 # Microsoft Rewards Bot
 
 A Chrome extension for Microsoft Rewards, which automatically clears PC, mobile and Edge search quests and displays daily point countdown.
 
-~~This extension will not clear any promotional link or quiz quests and this feature will not be implemented.~~
-
-**The fork of this extension will solve most promotional link or quiz quests and this feature is be implemented. -WIP**
+This extension will not clear any promotional link or quiz quests and this feature will not be implemented.
 
 **This is a bot!**
 
@@ -37,7 +36,7 @@ Unfortunately, the extension could not make its way to become visible on web sto
 
 ### Background Work
 
-The extension checks your daily Microsoft Rewards progress every two hours and clears any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number indicating the amount of points they worth.If autosolving is enabled, this will open tabs to solve them
+The extension checks your daily Microsoft Rewards progress every two hours and clears any incomplete search quests. When you have any available quiz/link quests yet to complete, a yellow badge will show with a number indicating the amount of points they worth.
 
 ### Action Button
 
@@ -45,11 +44,8 @@ The extension checks your daily Microsoft Rewards progress every two hours and c
 2. A link to Microsoft Rewards.
 3. Options:
    1. Compatibility Mode. Toggle to enable/disable a different way of calculating point countdown. Try this if you have any issues with the current point countdown method.
-   2. Autosolve. This also tries to solve all promotional links and quizzes automatically when the search quests are done.Thsi can be done manually, see below.
-   3. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
+   2. Copy Debug Info. This will place a bunch of information in your clipboard. The information is not useful for end users.
 
-### Solve Cards
-Next to extension options you can click solve cards to try to solve any promo links and quizzes manually. New tabs will open, do not close them, the will close automatically when completed ,so dont worry.  
 ### Action Button Badge
 
 The colour of the badge changes depending on your daily reward progress or the status of the extension:
@@ -62,4 +58,4 @@ The colour of the badge changes depending on your daily reward progress or the s
 
 ![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - Attention! You still have some points to earn through quests.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Opps... an error occurred - Have you logged into your Microsoft account? Try log into [Microsoft Rewards](https://account.microsoft.com/rewards) and [Bing](www.bing.com) and use the Check Now button to force it do another round of work. If the error persists, please report it to me. Thanks!
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Opps... an error occurred - Check out [Troubleshooting](TROUBLESHOOTING.md).

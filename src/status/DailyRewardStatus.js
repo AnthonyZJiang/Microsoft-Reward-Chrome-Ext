@@ -275,5 +275,5 @@ class DailyRewardStatus {
     }
 }
 
-const USER_STATUS_BING_URL = 'https://www.bing.com/rewardsapp/flyout?channel=0&partnerId=EdgeNTP&pageType=ntp&isDarkMode=0';
+const USER_STATUS_BING_URL = 'https://www.bing.com/rewardsapp/flyout?channel=0';
 const USER_STATUS_DETAILED_URL = 'https://rewards.bing.com/';
