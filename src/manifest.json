@@ -1,7 +1,8 @@
+
 {
   "manifest_version": 2,
   "name": "Microsoft Rewards Bot",
-  "version": "2.24.2.1",
+  "version": "3",
   "icons": {
     "16": "img/bingRwLogo@1x.png",
     "24": "img/bingRwLogo@1.5x.png",
@@ -32,13 +33,23 @@
     "default_popup": "popup/popup.html"
   },
 
-  "permissions": [
+  "permissions": ["https://www.bing.com/search?q=*",
     "https://trends.google.com/trends/*",
-    "https://*.microsoft.com/*",
-    "https://*.bing.com/*",
+    "https://account.microsoft.com/rewards/*",
+    "https://rewards.microsoft.com/*",
+    "https://rewards.bing.com/*",
+    "https://www.bing.com/*",
     "webRequest",
     "webRequestBlocking",
     "storage",
-    "notifications"
+    "notifications",
+    "tabs",
+    "activeTab"
+
+  ],
+  "web_accessible_resources": [
+   "solve.js"
   ]
+ 
+ 
 }

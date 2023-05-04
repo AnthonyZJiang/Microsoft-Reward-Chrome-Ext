@@ -34,3 +34,11 @@ class DailySearchQuest extends DailyQuest {
         return this.max / this.pointPerSearch - this.searchPerformedCount;
     }
 }
+
+class CardUrls {
+    constructor(quiz, urlReward, urlRewardUrls) {
+        this.quiz = quiz;
+        this.urlReward = urlReward;
+        this.urlRewardUrls = urlRewardUrls;
+    }
+}
