@@ -133,7 +133,8 @@ const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 
 export let developer = false;
 // eslint-disable-next-line prefer-const
-export let userAgents = {
+export let userAgents;
+userAgents = {
     'pc': '',
     'mb': '',
     'pcSource': '',
