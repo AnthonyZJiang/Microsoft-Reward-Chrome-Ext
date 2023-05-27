@@ -57,4 +57,4 @@ The colour of the badge changes depending on your daily reward progress or the s
 
 ![yellowLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/warn@1x.png?raw=true) - Attention! You still have some points to earn through quests.
 
-![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Opps... an error occurred - Check out [Troubleshooting](TROUBLESHOOTING.md).
+![redLogo](https://github.com/tmxkn1/Microsoft-Reward-Chrome-Ext/blob/master/src/img/err@1x.png?raw=true) - Oops... an error occurred - Check out [Troubleshooting](TROUBLESHOOTING.md).
