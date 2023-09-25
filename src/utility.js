@@ -171,7 +171,7 @@ async function getStableUA() {
 async function getUpdatedUA(type='both') {
     const controller = new AbortController();
     const signal = controller.signal;
-    const fetchProm = fetch('https://raw.githubusercontent.com/XxBAJNOKxX/UpdatedUserAgents/master/useragents.json', {method: 'GET', signal: signal});
+    const fetchProm = fetch('https://raw.githubusercontent.com/tmxkn1/UpdatedUserAgents/master/useragents.json', {method: 'GET', signal: signal});
 
     setTimeout(() => controller.abort(), 3000);
 
