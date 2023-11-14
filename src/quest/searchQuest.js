@@ -160,7 +160,7 @@ class SearchQuest {
             this._googleTrend_.nextPCWord :
             this._googleTrend_.nextMBWord;
 
-        return `https://www.bing.com/search?q=${word}`;
+        return `https://www.bing.com/search?q=${word}&form=QBRE`;
     }
 
     _isCurrentSearchCompleted() {
