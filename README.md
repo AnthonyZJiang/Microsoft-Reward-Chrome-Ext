@@ -1,4 +1,4 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext/badge)](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext)
+I have stopped developing this extension. Likely, this is no longer working.
 
 # Microsoft Rewards Bot
 
